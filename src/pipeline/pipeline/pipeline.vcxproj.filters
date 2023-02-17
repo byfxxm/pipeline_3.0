@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{b6832d46-638d-4c48-9f66-ef1c773a85d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="default">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="workers">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="public">
+      <UniqueIdentifier>{4cd21db0-d7f8-470d-b68c-37c42cffb1db}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>default</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>default</Filter>
+    </ClInclude>
+    <ClInclude Include="ring_buffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline_imp.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="coroutine.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="worker.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="code.h">
+      <Filter>public</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pipeline.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>default</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>default</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

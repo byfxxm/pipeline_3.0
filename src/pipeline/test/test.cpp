@@ -46,7 +46,7 @@ int main()
 	auto pipeline = pipeline_new();
 
 	FirstWorker first;
-	TestWorker workers[5];
+	TestWorker workers[2];
 	pipeline_add_worker(pipeline, &first);
 	for (auto& w : workers) {
 		pipeline_add_worker(pipeline, &w);

@@ -1,125 +1,99 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "common.h"
-#include "coroutine.h"
+#include "coro.h"
 #include "worker.h"
 #include "ring_buffer.h"
 
-NAMESPACE_BEGIN
-class PipelineImp {
-public:
+namespace byfxxm {
 	using Fifo = RingBuffer<Code*, 4>;
+	using WriteFunc = std::function<void(Code*)>;
 
-	class Station {
+	struct Station {
+		Worker* worker = nullptr;
+		std::unique_ptr<Fifo> next = std::make_unique<Fifo>();
+		Fifo* prev = nullptr;
+		bool done = false;
+	};
+
+	class PipelineImp {
 	public:
-		Station(PipelineImp& p, Worker& w) : _pipeline(p), _worker(w) {}
-
-		void Write(Code* code) {
-			while (!_next->Write(code)) {
-				if (_pipeline._cur_station == _pipeline._station_list.size() - 1)
-					break;
-
-				++_pipeline._cur_station;
-				_handle();
-			}
-		}
-
-		Code* Read() {
-			Code* ret = nullptr;
-			while (!_prev->Read(ret)) {
-				if (_pipeline._cur_station == 0)
-					break;
-
-				--_pipeline._cur_station;
-				_handle();
-			}
-
-			return ret;
-		}
-
-		void Do() {
-			auto write = [this](Code* p) {
-				Write(p);
-			};
-
-			if (IsFirst()) {
-				_worker.Process(nullptr, write);
+		void Start() {
+			if (_station_list.empty())
 				return;
+
+			_co.SetMain([this](CoMainHelper* helper, void*) {
+				while (!_stop && _cur_station < _station_list.size()) {
+					helper->SwitchToSub(_cur_station);
+				}
+				});
+
+			for (auto& sta : _station_list) {
+				_co.AddSub([&, this](CoSubHelper* helper, void*) {
+					auto read = [&, this]()->Code* {
+						Code* code = nullptr;
+						while (!sta->prev->Read(code)) {
+							if (_cur_station > 0 && _station_list[_cur_station - 1]->done) {
+								_station_list[_cur_station]->done = true;
+								++_cur_station;
+							}
+							else {
+								--_cur_station;
+							}
+							helper->SwitchToMain();
+						}
+
+						return code;
+					};
+
+					auto write = [&, this](Code* code) {
+						while (!sta->next->Write(code)) {
+							++_cur_station;
+							helper->SwitchToMain();
+						}
+					};
+
+					if (sta->prev == nullptr) {
+						sta->worker->Do(nullptr, write);
+						write(nullptr);
+					}
+					else {
+						while (1) {
+							Code* code = read();
+							if (!code)
+								break;
+
+							sta->worker->Do(code, write);
+						}
+					}
+
+					sta->done = true;
+					++_cur_station;
+					helper->SwitchToMain();
+					});
 			}
 
-			while (1) {
-				Code* code = Read();
-				if (code == nullptr)
-					break;
-
-				_worker.Process(nullptr, write);
-			}
+			_stop = false;
+			_co.Run();
 		}
 
-		void Link(Station& station) {
-			station._prev = _next.get();
+		void Stop() {
+			_stop = true;
 		}
 
-		bool IsFirst() const {
-			return _prev == nullptr;
-		}
+		void AddWorker(void* worker) {
+			auto station = std::make_unique<Station>();
+			station->worker = static_cast<Worker*>(worker);
+			if (!_station_list.empty())
+				station->prev = _station_list.back()->next.get();
 
-		void SetCoHandle(std::coroutine_handle<CoTask::promise_type> h) {
-			_handle = h;
-		}
-
-		auto GetCoHandle() const {
-			return _handle;
-		}
-
-		CoTask Coroutine() {
-			Do();
-			co_return;
+			_station_list.emplace_back(std::move(station));
 		}
 
 	private:
-		PipelineImp& _pipeline;
-		Worker& _worker;
-		std::unique_ptr<Fifo> _next = std::make_unique<Fifo>();
-		Fifo* _prev = nullptr;
-		std::coroutine_handle<CoTask::promise_type> _handle;
+		std::vector<std::unique_ptr<Station>> _station_list;
+		size_t _cur_station = 0;
+		Coro _co;
+		bool _stop = false;
 	};
-
-	void Start() {
-		if (_station_list.empty())
-			return;
-
-		_Schedule();
-	}
-
-	void Stop() {
-
-	}
-
-	void AddWorker(void* worker) {
-		auto station = std::make_unique<Station>(*this, *static_cast<Worker*>(worker));
-		if (!_station_list.empty())
-			_station_list.back()->Link(*station);
-
-		_station_list.emplace_back(std::move(station));
-	}
-
-private:
-	void _Schedule() {
-		_cur_station = 0;
-		for (auto& w : _station_list) {
-			w->Coroutine();
-		}
-
-		while (_cur_station < _station_list.size()) {
-			_station_list[_cur_station]->GetCoHandle().resume();
-		}
-	}
-
-private:
-	std::vector<std::unique_ptr<Station>> _station_list;
-	size_t _cur_station = 0;
-};
-
-NAMESPACE_END
+}

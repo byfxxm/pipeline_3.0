@@ -33,20 +33,17 @@
     <ClInclude Include="pipeline_imp.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="coroutine.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="pipeline.h">
       <Filter>public</Filter>
     </ClInclude>
     <ClInclude Include="worker.h">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>public</Filter>
-    </ClInclude>
     <ClInclude Include="code.h">
       <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="coro.h">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

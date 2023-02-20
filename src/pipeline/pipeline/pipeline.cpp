@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "pipeline.h"
 #include "pipeline_imp.h"
-USING_NAMESPACE;
+using namespace byfxxm;
 
 void* pipeline_new() {
 	return new PipelineImp();

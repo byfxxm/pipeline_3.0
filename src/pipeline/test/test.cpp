@@ -18,7 +18,7 @@ public:
 	~FirstWorker() override = default;
 
 	void Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) override {
-		for (size_t i = 0; i < 100; ++i) {
+		for (size_t i = 0; i < 10000; ++i) {
 			write(new TestCode(i));
 		}
 	}
@@ -39,6 +39,7 @@ public:
 
 	void Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) override {
 		std::cout << static_cast<TestCode*>(code)->_n << std::endl;
+		delete code;
 	}
 };
 

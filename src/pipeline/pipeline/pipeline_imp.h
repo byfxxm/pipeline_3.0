@@ -7,8 +7,6 @@
 
 namespace byfxxm {
 	using Fifo = RingBuffer<Code*, 4>;
-	using WriteFunc = std::function<void(Code*)>;
-
 	struct Station {
 		Worker* worker = nullptr;
 		std::unique_ptr<Fifo> next = std::make_unique<Fifo>();

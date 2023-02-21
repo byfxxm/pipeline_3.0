@@ -72,7 +72,7 @@ namespace byfxxm {
 			}
 
 			_stop = false;
-			_co.Run();
+			_co.AsyncRun();
 		}
 
 		void Stop() {

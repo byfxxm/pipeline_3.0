@@ -17,7 +17,7 @@ class FirstWorker : public byfxxm::Worker {
 public:
 	~FirstWorker() override = default;
 
-	void Do(byfxxm::Code* code, byfxxm::WriteFunc write) override {
+	void Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) override {
 		for (size_t i = 0; i < 100; ++i) {
 			write(new TestCode(i));
 		}
@@ -28,7 +28,7 @@ class TestWorker : public byfxxm::Worker {
 public:
 	~TestWorker() override = default;
 
-	void Do(byfxxm::Code* code, byfxxm::WriteFunc write) override {
+	void Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) override {
 		write(code);
 	}
 };
@@ -36,7 +36,8 @@ public:
 class LastWorker : public byfxxm::Worker {
 public:
 	~LastWorker() override = default;
-	void Do(byfxxm::Code* code, byfxxm::WriteFunc write) override {
+
+	void Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) override {
 		std::cout << static_cast<TestCode*>(code)->_n << std::endl;
 	}
 };
@@ -44,7 +45,6 @@ public:
 int main()
 {
 	auto pipeline = pipeline_new();
-
 	FirstWorker first;
 	TestWorker workers[2];
 	pipeline_add_worker(pipeline, &first);

@@ -8,6 +8,6 @@ namespace byfxxm {
 	class Worker {
 	public:
 		virtual ~Worker() = default;
-		virtual void Do(Code*, WriteFunc) = 0;
+		virtual void Do(Code*, const WriteFunc&) = 0;
 	};
 }

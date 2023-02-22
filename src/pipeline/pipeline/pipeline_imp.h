@@ -73,8 +73,9 @@ namespace byfxxm {
 						}
 					}
 					catch (const PipelineException&) {
-						sta->done = true;
+						Stop();
 						helper->SwitchToMain();
+						return;
 					}
 
 					sta->done = true;

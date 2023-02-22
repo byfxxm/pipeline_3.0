@@ -31,6 +31,9 @@ public:
 	~TestWorker() override = default;
 
 	bool Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) noexcept override {
+		if (static_cast<TestCode*>(code)->_n == 1000)
+			return false;
+
 		write(code);
 		return true;
 	}

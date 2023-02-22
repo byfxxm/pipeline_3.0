@@ -14,6 +14,9 @@ namespace byfxxm {
 		bool done = false;
 	};
 
+	struct PipelineException : public std::exception {
+	};
+
 	class PipelineImp {
 	public:
 		void Start() {
@@ -51,18 +54,27 @@ namespace byfxxm {
 						}
 					};
 
-					if (sta->prev == nullptr) {
-						sta->worker->Do(nullptr, write);
-						write(nullptr);
-					}
-					else {
-						while (1) {
-							Code* code = read();
-							if (!code)
-								break;
-
-							sta->worker->Do(code, write);
+					try {
+						if (sta->prev == nullptr) {
+							if (!sta->worker->Do(nullptr, write)) {
+								throw PipelineException();
+							}
+							write(nullptr);
 						}
+						else {
+							while (1) {
+								Code* code = read();
+								if (!code)
+									break;
+
+								if (!sta->worker->Do(code, write))
+									throw PipelineException();
+							}
+						}
+					}
+					catch (const PipelineException&) {
+						sta->done = true;
+						helper->SwitchToMain();
 					}
 
 					sta->done = true;

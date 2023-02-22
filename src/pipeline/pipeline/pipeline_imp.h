@@ -27,8 +27,8 @@ namespace byfxxm {
 				});
 
 			for (auto& sta : _station_list) {
-				_co.AddSub([&, this](CoSubHelper* helper, void*) {
-					auto read = [&, this]()->Code* {
+				_co.AddSub([&](CoSubHelper* helper, void*) {
+					auto read = [&]()->Code* {
 						Code* code = nullptr;
 						while (!sta->prev->Read(code)) {
 							if (_cur_station > 0 && _station_list[_cur_station - 1]->done) {
@@ -44,7 +44,7 @@ namespace byfxxm {
 						return code;
 					};
 
-					auto write = [&, this](Code* code) {
+					auto write = [&](Code* code) {
 						while (!sta->next->Write(code)) {
 							++_cur_station;
 							helper->SwitchToMain();

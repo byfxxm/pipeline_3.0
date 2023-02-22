@@ -105,6 +105,6 @@ namespace byfxxm {
 		std::vector<std::unique_ptr<Station>> _station_list;
 		size_t _cur_station = 0;
 		Coro _co;
-		bool _stop = false;
+		std::atomic<bool> _stop = false;
 	};
 }

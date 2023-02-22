@@ -32,7 +32,7 @@ namespace byfxxm {
 						Code* code = nullptr;
 						while (!sta->prev->Read(code)) {
 							if (_cur_station > 0 && _station_list[_cur_station - 1]->done) {
-								_station_list[_cur_station]->done = true;
+								sta->done = true;
 								++_cur_station;
 							}
 							else {

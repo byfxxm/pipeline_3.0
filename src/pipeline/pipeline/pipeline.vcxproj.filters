@@ -19,6 +19,9 @@
     <Filter Include="public">
       <UniqueIdentifier>{4cd21db0-d7f8-470d-b68c-37c42cffb1db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="parser">
+      <UniqueIdentifier>{481c276b-ff5f-4001-930f-4a30847192b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -44,6 +47,33 @@
     </ClInclude>
     <ClInclude Include="coro.h">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="lexer.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="token.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="g_parser.h">
+      <Filter>workers</Filter>
+    </ClInclude>
+    <ClInclude Include="syntax.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="identifier.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="keyword.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="delimiter.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="space.h">
+      <Filter>parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

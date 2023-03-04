@@ -5,6 +5,7 @@
 #include "../pipeline/pipeline.h"
 #include "../pipeline/worker.h"
 #include "../pipeline/code.h"
+#include "../pipeline/lexer.h"
 
 #pragma comment(lib, "../x64/Debug/pipeline.lib")
 
@@ -50,8 +51,7 @@ public:
 	}
 };
 
-int main()
-{
+void TestPipeline() {
 	auto pipeline = pipeline_new();
 	FirstWorker first;
 	TestWorker workers[2];
@@ -63,6 +63,34 @@ int main()
 	pipeline_add_worker(pipeline, &last);
 	pipeline_start(pipeline);
 	pipeline_delete(pipeline);
+}
+
+#if 0
+void TestLexer() {
+	std::string s = R"(
+		if (x > 1)
+			do1();
+		else
+			do2();
+		)";
+
+	std::vector<byfxxm::Token> res;
+	byfxxm::Token tok;
+	byfxxm::Lexer lex(s);
+	while ((tok = lex.GetNextToken()).kind != byfxxm::Kind::KEOF) {
+		res.emplace_back(std::move(tok));
+	}
+
+	std::for_each(res.begin(), res.end(), [](const byfxxm::Token& tok) {
+		std::cout << static_cast<int>(tok.kind) << std::endl;
+		});
+}
+#endif
+
+int main()
+{
+	TestPipeline();
+	//TestLexer();
 	return 0;
 }
 

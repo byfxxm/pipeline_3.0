@@ -10,4 +10,13 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 
+#include <variant>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+#include <functional>
+#include <optional>
+#include <any>
+#include <cassert>
+
 #endif //PCH_H

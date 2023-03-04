@@ -145,11 +145,20 @@
   <ItemGroup>
     <ClInclude Include="code.h" />
     <ClInclude Include="coro.h" />
+    <ClInclude Include="delimiter.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="g_parser.h" />
+    <ClInclude Include="identifier.h" />
+    <ClInclude Include="keyword.h" />
+    <ClInclude Include="lexer.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pipeline.h" />
     <ClInclude Include="pipeline_imp.h" />
     <ClInclude Include="ring_buffer.h" />
+    <ClInclude Include="space.h" />
+    <ClInclude Include="syntax.h" />
+    <ClInclude Include="token.h" />
     <ClInclude Include="worker.h" />
   </ItemGroup>
   <ItemGroup>

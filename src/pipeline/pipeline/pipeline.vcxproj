@@ -149,7 +149,6 @@
     <ClInclude Include="coro.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="grammar.h" />
     <ClInclude Include="g_parser.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="parser.h" />

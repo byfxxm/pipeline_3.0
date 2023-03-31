@@ -78,9 +78,6 @@
     <ClInclude Include="predicate.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="grammar.h">
-      <Filter>parser</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">

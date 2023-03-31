@@ -5,7 +5,6 @@
 #include "lexer.h"
 #include "abstree.h"
 #include "address.h"
-#include "grammar.h"
 
 namespace byfxxm {
 	template <class T>
@@ -29,6 +28,10 @@ namespace byfxxm {
 		{Kind::SHARP, {5, predicate::Sharp}},
 		{Kind::CON, {10}},
 	};
+
+	using SyntaxNode = std::variant<Token, std::unique_ptr<Abstree::Node>>;
+	using NodeList = std::vector<SyntaxNode>;
+	using SubList = decltype(std::ranges::subrange(NodeList().begin(), NodeList().end()));
 
 	class Expresion {
 	public:

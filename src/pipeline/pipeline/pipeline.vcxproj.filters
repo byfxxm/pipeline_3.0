@@ -63,16 +63,22 @@
     <ClInclude Include="syntax.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="identifier.h">
+    <ClInclude Include="exception.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="keyword.h">
+    <ClInclude Include="word.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="delimiter.h">
+    <ClInclude Include="abstree.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="space.h">
+    <ClInclude Include="address.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="predicate.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="grammar.h">
       <Filter>parser</Filter>
     </ClInclude>
   </ItemGroup>
@@ -85,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>default</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

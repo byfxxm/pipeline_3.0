@@ -1,22 +1,36 @@
-#pragma once
+﻿#pragma once
 #include <filesystem>
 #include <variant>
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include <cctype>
+#include <optional>
+#include <type_traits>
+
 #include "token.h"
-#include "keyword.h"
-#include "space.h"
-#include "delimiter.h"
+#include "exception.h"
+#include "word.h"
 
 namespace byfxxm {
+    inline void _SkipSpace(auto&& stream) {
+        while (IsSpace(stream.peek())) {
+            stream.get();
+        }
+    }
+
 	class Lexer {
 	public:
+		using StreamType = std::variant<std::ifstream, std::stringstream>;
+
 		Lexer(const std::filesystem::path& file) : _stream(std::ifstream(file)) {
 		}
 
 		Lexer(const std::string& memory) : _stream(std::stringstream(memory)) {
 		}
+
+		//Lexer(T&& stream) noexcept : _stream(std::move(stream)) {
+		//}
 
 		void Reset(const std::filesystem::path& file) {
 			_stream = std::ifstream(file);
@@ -26,48 +40,28 @@ namespace byfxxm {
 			_stream = std::stringstream(memory);
 		}
 
-		TokenCode GetNextToken() {
-			if (std::get_if<std::ifstream>(&_stream))
-				return _GetNextToken<std::ifstream>();
+		Token Next() {
+			return std::visit(
+				[](auto&& stream)
+				{
+					if (stream.eof())
+						return Token{ Kind::KEOF, std::nullopt };
 
-			if (std::get_if<std::stringstream>(&_stream))
-				return _GetNextToken<std::stringstream>();
+					std::string word;
+                    _SkipSpace(stream);
+					auto ch = stream.get();
+					word.push_back(ch);
 
-			assert(0);
-			return {};
+					for (const auto& p : WordsList::words) {
+						if (std::optional<Token> tok; p->First(ch) && (tok = p->Rest(word, [&]() {return stream.peek(); }, [&]() {return stream.get(); })).has_value())
+							return tok.value();
+					}
+
+					throw LexException();
+				}, _stream);
 		}
 
 	private:
-		template <class Stream>
-		TokenCode _GetNextToken() {
-			auto& stream = std::get<Stream>(_stream);
-			std::string word;
-			while (!_SkipSpace<Stream>()) {
-				auto ch = stream.peek();
-				word.push_back(stream.get());
-				//if (IsKeyword(word)) {
-				//	break;
-				//}
-			}
-
-			return { Kind::KEOF, nullptr};
-		}
-
-		template <class Stream>
-		bool _SkipSpace() {
-			auto& stream = std::get<Stream>(_stream);
-			while (!stream.eof()) {
-				if (!Space::IsSpace(stream.peek()))
-					return stream.eof();
-
-				stream.get();
-			}
-
-			return true;
-		}
-
-
-	private:
-		std::variant<std::ifstream, std::stringstream> _stream;
+		StreamType _stream;
 	};
 }

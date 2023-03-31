@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef PIPELINE_EXPORTS
 #define PIPELINE_API __declspec(dllexport)
@@ -15,6 +15,6 @@ extern "C" {
 
 	PIPELINE_API void* garser_new();
 	PIPELINE_API void garser_delete(void* gparser);
-	PIPELINE_API bool garser_loadfile(void* gparser, const char* file);
-	PIPELINE_API bool garser_loadmemory(void* gparser, const char* file);
+	//PIPELINE_API bool garser_loadfile(void* gparser, const char* file);
+	//PIPELINE_API bool garser_loadmemory(void* gparser, const char* file);
 }

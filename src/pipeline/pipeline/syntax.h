@@ -28,8 +28,6 @@ namespace byfxxm {
 		{Kind::DIV, {4, predicate::Div}},
 		{Kind::SHARP, {5, predicate::Sharp}},
 		{Kind::CON, {10}},
-		{Kind::LB, {}},
-		{Kind::RB, {}},
 	};
 
 	class Expresion {
@@ -39,29 +37,20 @@ namespace byfxxm {
 		}
 
 	private:
-		static auto _FindMinPriority(SubList list) {
-			return std::ranges::min_element(list | std::views::reverse, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
-				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(rhs))
-					return true;
-				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(lhs))
-					return false;
+		static std::unique_ptr<Abstree::Node> _Expression(SubList sublist) {
+			if (sublist.empty())
+				return {};
 
-				return token_kind_tuples[std::get<Token>(lhs).kind].priority < token_kind_tuples[std::get<Token>(rhs).kind].priority;
-				}
-			).base() - 1;
-		}
+			NodeList list = _SplitList(sublist, _Expression);
+			auto min_priority = _FindMinPriority(list);
+			auto node = _CurNode(*min_priority);
 
-		static auto _CurNode(SyntaxNode& node) {
-			auto ret = std::make_unique<Abstree::Node>();
-			if (auto absnode = std::get_if<std::unique_ptr<Abstree::Node>>(&node)) {
-				ret = std::move(*absnode);
-			}
-			else {
-				auto tok = std::get<Token>(node);
-				ret->pred = tok.value.has_value() ? tok.value.value() : token_kind_tuples.at(tok.kind).pred;
-			}
+			if (auto first = _Expression(SubList(list.begin(), min_priority)))
+				node->subs.emplace_back(std::move(first));
+			if (auto second = _Expression(SubList(min_priority + 1, list.end())))
+				node->subs.emplace_back(std::move(second));
 
-			return ret;
+			return node;
 		}
 
 		static NodeList _SplitList(SubList& list, auto&& callable) {
@@ -97,20 +86,29 @@ namespace byfxxm {
 			return main;
 		}
 
-		static std::unique_ptr<Abstree::Node> _Expression(SubList sublist) {
-			if (sublist.empty())
-				return {};
+		static NodeList::iterator _FindMinPriority(SubList list) {
+			return std::ranges::min_element(list | std::views::reverse, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
+				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(rhs))
+					return true;
+				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(lhs))
+					return false;
 
-			NodeList list = _SplitList(sublist, _Expression);
-			auto min_priority = _FindMinPriority(list);
-			auto node = _CurNode(*min_priority);
+				return token_kind_tuples[std::get<Token>(lhs).kind].priority < token_kind_tuples[std::get<Token>(rhs).kind].priority;
+				}
+			).base() - 1;
+		}
 
-			if (auto first = _Expression(SubList(list.begin(), min_priority)))
-				node->subs.emplace_back(std::move(first));
-			if (auto second = _Expression(SubList(min_priority + 1, list.end())))
-				node->subs.emplace_back(std::move(second));
+		static std::unique_ptr<Abstree::Node> _CurNode(SyntaxNode& node) {
+			auto ret = std::make_unique<Abstree::Node>();
+			if (auto abs = std::get_if<std::unique_ptr<Abstree::Node>>(&node)) {
+				ret = std::move(*abs);
+			}
+			else {
+				auto tok = std::get<Token>(node);
+				ret->pred = tok.value.has_value() ? tok.value.value() : token_kind_tuples.at(tok.kind).pred;
+			}
 
-			return node;
+			return ret;
 		}
 	};
 

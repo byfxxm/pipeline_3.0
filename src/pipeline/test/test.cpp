@@ -93,7 +93,7 @@ void TestSyntax() {
 		#2 = 20
 		#30 = 5
 		#10 =#1+#30*#2
-		#3=#[#[#1+ #2]*2]
+		#3=#[2*#[#1+ #2]]
 )";
 
 	auto syntax = byfxxm::Syntax(byfxxm::Lexer(s));

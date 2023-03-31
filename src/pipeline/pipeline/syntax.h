@@ -59,7 +59,7 @@ namespace byfxxm {
 		static NodeList _SplitList(SubList& list, auto&& callable) {
 			NodeList main;
 			NodeList sub;
-			size_t level = 0;
+			int level = 0;
 			for (auto& node : list) {
 				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(node)) {
 					main.push_back(std::move(node));
@@ -82,8 +82,10 @@ namespace byfxxm {
 
 				if (level > 0)
 					sub.push_back(tok);
-				else
+				else if (level == 0)
 					main.push_back(tok);
+				else
+					throw SyntaxException();
 			}
 
 			return main;

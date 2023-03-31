@@ -10,6 +10,6 @@ namespace byfxxm {
 		}
 
 	private:
-        std::unique_ptr<Parser<Syntax<Lexer>>> _parser;
+		std::unique_ptr<Parser<Syntax<Lexer>>> _parser;
 	};
 }

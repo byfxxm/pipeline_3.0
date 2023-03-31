@@ -83,12 +83,6 @@ namespace byfxxm {
 
 				return Value{ l };
 				}, lhs, rhs);
-
-			//if (lhs.index() != rhs.index())
-			//	throw SyntaxException();
-
-			//lhs = rhs;
-			//return lhs;
 		};
 
 		inline auto Neg = [](const Value& value) {
@@ -100,12 +94,21 @@ namespace byfxxm {
 				}, value);
 		};
 
+		inline auto Pos = [](const Value& value) {
+			return std::visit([](auto&& v)->Value {
+				if constexpr (IsDouble(v))
+					return Value{ v };
+				else
+					throw SyntaxException();
+				}, value);
+		};
+
 		inline auto Sharp = [](const Value& value, Address& addr) {
 			return std::visit([&](auto&& v)->Value {
-                if constexpr (IsDouble(v))
-                    return addr[v].get();
-                else if constexpr (IsDoublePtr(v))
-                    return addr[*v].get();
+				if constexpr (IsDouble(v))
+					return addr[v].get();
+				else if constexpr (IsDoublePtr(v))
+					return addr[*v].get();
 				else
 					throw SyntaxException();
 				}, value);

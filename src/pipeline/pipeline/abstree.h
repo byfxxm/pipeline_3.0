@@ -13,7 +13,7 @@ namespace byfxxm {
 	// 一元操作符
 	using Unary = decltype(declval(
 		predicate::Neg
-		//, DoSharp
+		, predicate::Pos
 	));
 
 	// 二元操作符
@@ -44,8 +44,8 @@ namespace byfxxm {
 		//Abstree(const Token&) {
 		//}
 
-        Abstree(std::unique_ptr<Node>&& root, Address& addr, bool* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _cond(cond) {
-        }
+		Abstree(std::unique_ptr<Node>&& root, Address& addr, bool* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _cond(cond) {
+		}
 
 		Value Execute() {
 			return _Execute(_root);
@@ -58,7 +58,7 @@ namespace byfxxm {
 
 			std::vector<Value> v;
 			std::ranges::for_each(node->subs, [&](auto&& p) {
-                v.emplace_back(_Execute(p));
+				v.emplace_back(_Execute(p));
 				});
 
 			return std::visit(
@@ -68,21 +68,12 @@ namespace byfxxm {
 						return value;
 					},
 					[&](const Unary& unary) {
-						if (v.size() != 1)
-							throw SyntaxException();
-
 						return std::visit([&](auto&& func) { return func(v[0]); }, unary);
 					},
 					[&](const Binary& binary) {
-						if (v.size() != 2)
-							throw SyntaxException();
-
 						return std::visit([&](auto&& func) { return func(v[0], v[1]); }, binary);
 					},
 					[&](const Sharp& sharp) {
-						if (v.size() != 1)
-							throw SyntaxException();
-
 						return std::visit([&](auto&& func) { return func(v[0], _addr); }, sharp);
 					}
 				}, node->pred);

@@ -15,7 +15,7 @@ namespace byfxxm {
 		//SLP,				// (
 		//SRP,				// )
 		LB,             // [
-        RB,            // ]
+		RB,            // ]
 		//LP,				// {
 		//RP,				// }
 		//SEMI,			// ;

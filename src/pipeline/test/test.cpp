@@ -89,11 +89,12 @@ void TestLexer() {
 void TestSyntax() {
 	std::string s =
 		R"(
-		#1 = 10
+		#1 = -10
 		#2 = 20
 		#30 = 5
 		#10 =#1+#30*#2
-		#3=#[2*#[#1+ #2]]
+		#180 = 2
+		#3=#[2*#[#1+ #2]]/5
 )";
 
 	auto syntax = byfxxm::Syntax(byfxxm::Lexer(s));

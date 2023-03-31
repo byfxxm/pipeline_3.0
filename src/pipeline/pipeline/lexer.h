@@ -13,11 +13,11 @@
 #include "word.h"
 
 namespace byfxxm {
-    inline void _SkipSpace(auto&& stream) {
-        while (IsSpace(stream.peek())) {
-            stream.get();
-        }
-    }
+	inline void _SkipSpace(auto&& stream) {
+		while (IsSpace(stream.peek())) {
+			stream.get();
+		}
+	}
 
 	class Lexer {
 	public:
@@ -48,7 +48,7 @@ namespace byfxxm {
 						return Token{ Kind::KEOF, std::nullopt };
 
 					std::string word;
-                    _SkipSpace(stream);
+					_SkipSpace(stream);
 					auto ch = stream.get();
 					word.push_back(ch);
 

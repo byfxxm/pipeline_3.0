@@ -14,8 +14,10 @@ namespace byfxxm {
 		T(std::declval<const std::string&>());
 	};
 
+	inline constexpr size_t default_priority = -1;
+
 	struct TokenKindTuple {
-		size_t priority{ static_cast<size_t>(-1) };
+		size_t priority{ default_priority };
 		Predicate pred;
 	};
 
@@ -26,11 +28,11 @@ namespace byfxxm {
 		{Kind::MUL, {4, predicate::Multi}},
 		{Kind::DIV, {4, predicate::Div}},
 		{Kind::SHARP, {5, predicate::Sharp}},
-		{Kind::CON, {10}},
+		{Kind::CON, {}},
 	};
 
 	using SyntaxNode = std::variant<Token, std::unique_ptr<Abstree::Node>>;
-	using NodeList = std::vector<SyntaxNode>;
+	using NodeList = std::pmr::vector<SyntaxNode>;
 	using SubList = decltype(std::ranges::subrange(NodeList().begin(), NodeList().end()));
 
 	class Expresion {
@@ -44,7 +46,7 @@ namespace byfxxm {
 			if (sublist.empty())
 				return {};
 
-			NodeList list = _SplitList(sublist, _Expression);
+			NodeList list = _NormalizeList(sublist, _Expression);
 			auto min_priority = _FindMinPriority(list);
 			auto node = _CurNode(*min_priority);
 
@@ -53,10 +55,12 @@ namespace byfxxm {
 			if (auto second = _Expression(SubList(min_priority + 1, list.end())))
 				node->subs.emplace_back(std::move(second));
 
+			_Statement(node);
+			_CheckError(node);
 			return node;
 		}
 
-		static NodeList _SplitList(SubList& list, auto&& callable) {
+		static NodeList _NormalizeList(SubList& list, auto&& callable) {
 			NodeList main;
 			NodeList sub;
 			int level = 0;
@@ -93,12 +97,15 @@ namespace byfxxm {
 
 		static NodeList::iterator _FindMinPriority(SubList list) {
 			return std::ranges::min_element(list | std::views::reverse, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
-				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(rhs))
-					return true;
-				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(lhs))
-					return false;
+				size_t lhs_pri = default_priority;
+				size_t rhs_pri = default_priority;
 
-				return token_kind_tuples[std::get<Token>(lhs).kind].priority < token_kind_tuples[std::get<Token>(rhs).kind].priority;
+				if (auto p = std::get_if<Token>(&lhs))
+					lhs_pri = token_kind_tuples[p->kind].priority;
+				if (auto p = std::get_if<Token>(&rhs))
+					rhs_pri = token_kind_tuples[p->kind].priority;
+
+				return lhs_pri < rhs_pri;
 				}
 			).base() - 1;
 		}
@@ -114,6 +121,38 @@ namespace byfxxm {
 			}
 
 			return ret;
+		}
+
+		static void _Statement(std::unique_ptr<Abstree::Node>& node) {
+			if (auto binary = std::get_if<Binary>(&node->pred); binary && node->subs.size() == 1) {
+				if (std::holds_alternative<decltype(predicate::Minus)>(*binary))
+					node->pred = predicate::Neg;
+				else if (std::holds_alternative<decltype(predicate::Plus)>(*binary))
+					node->pred = predicate::Neg;
+			}
+		}
+
+		static void _CheckError(const std::unique_ptr<Abstree::Node>& node) {
+			std::visit(
+				Overload
+				{
+					[&](const Value& value) {
+						if (!node->subs.empty())
+							throw SyntaxException();
+					},
+					[&](const Unary& unary) {
+						if (node->subs.size() != 1)
+							throw SyntaxException();
+					},
+					[&](const Binary& binary) {
+						if (node->subs.size() != 2)
+							throw SyntaxException();
+					},
+					[&](const Sharp& sharp) {
+						if (node->subs.size() != 1)
+							throw SyntaxException();
+					}
+				}, node->pred);
 		}
 	};
 

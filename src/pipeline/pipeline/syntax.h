@@ -128,7 +128,7 @@ namespace byfxxm {
 				if (std::holds_alternative<decltype(predicate::Minus)>(*binary))
 					node->pred = predicate::Neg;
 				else if (std::holds_alternative<decltype(predicate::Plus)>(*binary))
-					node->pred = predicate::Neg;
+					node->pred = predicate::Pos;
 			}
 		}
 

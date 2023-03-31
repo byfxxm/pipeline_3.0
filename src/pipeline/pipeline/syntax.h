@@ -37,6 +37,8 @@ namespace byfxxm {
 
 	class Expresion {
 	public:
+		consteval Expresion() = default;
+
 		std::unique_ptr<Abstree::Node> operator()(SubList sublist) const {
 			return _Expression(sublist);
 		}

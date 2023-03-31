@@ -5,7 +5,7 @@
 namespace byfxxm {
 	using SyntaxNode = std::variant<Token, std::unique_ptr<Abstree::Node>>;
 	using NodeList = std::vector<SyntaxNode>;
-	using Sublist = decltype(std::ranges::subrange(NodeList().begin(), NodeList().end()));
+	using SubList = decltype(std::ranges::subrange(NodeList().begin(), NodeList().end()));
 
 	namespace grammar {
 		using Next = std::function<Token()>;

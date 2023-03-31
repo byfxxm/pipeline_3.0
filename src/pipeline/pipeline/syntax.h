@@ -32,51 +32,39 @@ namespace byfxxm {
 		{Kind::RB, {}},
 	};
 
-	template <LexerConcept Lex>
-	class Syntax {
+	class Expresion {
 	public:
-		Syntax(Lex&& lex) noexcept : _lex(std::move(lex)) {
-		}
-
-		std::optional<Abstree> Next() {
-			NodeList nodelist;
-			while (1) {
-				auto tok = _lex.Next();
-
-				if (tok.kind == Kind::KEOF)
-					return std::nullopt;
-
-				if (tok.kind == Kind::NEWLINE) {
-					++_lineno;
-					if (nodelist.empty())
-						continue;
-					break;
-				}
-
-				nodelist.emplace_back(std::move(tok));
-			}
-
-			return Abstree(_Expression(nodelist), _addr);
+		std::unique_ptr<Abstree::Node> operator()(SubList sublist) const {
+			return _Expression(sublist);
 		}
 
 	private:
-		static std::unique_ptr<Abstree::Node> _Expression(Sublist sublist) {
-			if (sublist.empty())
-				return {};
+		static auto _FindMinPriority(SubList list) {
+			return std::ranges::min_element(list | std::views::reverse, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
+				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(rhs))
+					return true;
+				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(lhs))
+					return false;
 
-			NodeList list = _SplitList(sublist, _Expression);
-			auto min_priority = _FindMinPriority(list);
-			auto node = _CurNode(*min_priority);
-
-			if (auto first = _Expression(Sublist(list.begin(), min_priority)))
-				node->subs.emplace_back(std::move(first));
-			if (auto second = _Expression(Sublist(min_priority + 1, list.end())))
-				node->subs.emplace_back(std::move(second));
-
-			return node;
+				return token_kind_tuples[std::get<Token>(lhs).kind].priority < token_kind_tuples[std::get<Token>(rhs).kind].priority;
+				}
+			).base() - 1;
 		}
 
-		static NodeList _SplitList(Sublist& list, auto&& callable) {
+		static auto _CurNode(SyntaxNode& node) {
+			auto ret = std::make_unique<Abstree::Node>();
+			if (auto absnode = std::get_if<std::unique_ptr<Abstree::Node>>(&node)) {
+				ret = std::move(*absnode);
+			}
+			else {
+				auto tok = std::get<Token>(node);
+				ret->pred = tok.value.has_value() ? tok.value.value() : token_kind_tuples.at(tok.kind).pred;
+			}
+
+			return ret;
+		}
+
+		static NodeList _SplitList(SubList& list, auto&& callable) {
 			NodeList main;
 			NodeList sub;
 			size_t level = 0;
@@ -109,29 +97,50 @@ namespace byfxxm {
 			return main;
 		}
 
-		static auto _FindMinPriority(Sublist list) {
-			return std::ranges::min_element(list | std::views::reverse, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
-				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(rhs))
-					return true;
-				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(lhs))
-					return false;
+		static std::unique_ptr<Abstree::Node> _Expression(SubList sublist) {
+			if (sublist.empty())
+				return {};
 
-				return token_kind_tuples[std::get<Token>(lhs).kind].priority < token_kind_tuples[std::get<Token>(rhs).kind].priority;
-				}
-			).base() - 1;
+			NodeList list = _SplitList(sublist, _Expression);
+			auto min_priority = _FindMinPriority(list);
+			auto node = _CurNode(*min_priority);
+
+			if (auto first = _Expression(SubList(list.begin(), min_priority)))
+				node->subs.emplace_back(std::move(first));
+			if (auto second = _Expression(SubList(min_priority + 1, list.end())))
+				node->subs.emplace_back(std::move(second));
+
+			return node;
+		}
+	};
+
+	inline constexpr Expresion expr;
+
+	template <LexerConcept Lex>
+	class Syntax {
+	public:
+		Syntax(Lex&& lex) noexcept : _lex(std::move(lex)) {
 		}
 
-		static auto _CurNode(SyntaxNode& node) {
-			auto ret = std::make_unique<Abstree::Node>();
-			if (auto absnode = std::get_if<std::unique_ptr<Abstree::Node>>(&node)) {
-				ret = std::move(*absnode);
-			}
-			else {
-				auto tok = std::get<Token>(node);
-				ret->pred = tok.value.has_value() ? tok.value.value() : token_kind_tuples.at(tok.kind).pred;
+		std::optional<Abstree> Next() {
+			NodeList nodelist;
+			while (1) {
+				auto tok = _lex.Next();
+
+				if (tok.kind == Kind::KEOF)
+					return std::nullopt;
+
+				if (tok.kind == Kind::NEWLINE) {
+					++_lineno;
+					if (nodelist.empty())
+						continue;
+					break;
+				}
+
+				nodelist.emplace_back(std::move(tok));
 			}
 
-			return ret;
+			return Abstree(expr(nodelist), _addr);
 		}
 
 	private:

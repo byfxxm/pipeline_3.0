@@ -68,12 +68,21 @@ namespace byfxxm {
 						return value;
 					},
 					[&](const Unary& unary) {
+						if (v.size() != 1)
+							throw SyntaxException();
+
 						return std::visit([&](auto&& func) { return func(v[0]); }, unary);
 					},
 					[&](const Binary& binary) {
+						if (v.size() != 2)
+							throw SyntaxException();
+
 						return std::visit([&](auto&& func) { return func(v[0], v[1]); }, binary);
 					},
 					[&](const Sharp& sharp) {
+						if (v.size() != 1)
+							throw SyntaxException();
+
 						return std::visit([&](auto&& func) { return func(v[0], _addr); }, sharp);
 					}
 				}, node->pred);

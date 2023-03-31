@@ -37,8 +37,6 @@ namespace byfxxm {
 
 	class Expresion {
 	public:
-		consteval Expresion() = default;
-
 		std::unique_ptr<Abstree::Node> operator()(SubList sublist) const {
 			return _Expression(sublist);
 		}
@@ -48,13 +46,13 @@ namespace byfxxm {
 			if (sublist.empty())
 				return {};
 
-			NodeList list = _NormalizeList(sublist, _Expression);
-			auto min_priority = _FindMinPriority(list);
-			auto node = _CurNode(*min_priority);
+			NodeList list = _ModifyList(sublist, _Expression);
+			auto min_pri = _FindMinPriority(list);
+			auto node = _CurNode(*min_pri);
 
-			if (auto first = _Expression(SubList(list.begin(), min_priority)))
+			if (auto first = _Expression(SubList(list.begin(), min_pri)))
 				node->subs.emplace_back(std::move(first));
-			if (auto second = _Expression(SubList(min_priority + 1, list.end())))
+			if (auto second = _Expression(SubList(min_pri + 1, list.end())))
 				node->subs.emplace_back(std::move(second));
 
 			_Statement(node);
@@ -62,7 +60,7 @@ namespace byfxxm {
 			return node;
 		}
 
-		static NodeList _NormalizeList(SubList& list, auto&& callable) {
+		static NodeList _ModifyList(SubList& list, auto&& callable) {
 			NodeList main;
 			NodeList sub;
 			int level = 0;

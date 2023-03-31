@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "worker.h"
 #include "parser.h"
 
@@ -10,6 +10,6 @@ namespace byfxxm {
 		}
 
 	private:
-		 std::unique_ptr<Parser> _parser;
+        std::unique_ptr<Parser<Syntax<Lexer>>> _parser;
 	};
 }

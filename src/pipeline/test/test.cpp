@@ -6,6 +6,7 @@
 #include "../pipeline/worker.h"
 #include "../pipeline/code.h"
 #include "../pipeline/lexer.h"
+#include "../pipeline/syntax.h"
 
 #pragma comment(lib, "../x64/Debug/pipeline.lib")
 
@@ -65,19 +66,18 @@ void TestPipeline() {
 	pipeline_delete(pipeline);
 }
 
-#if 0
 void TestLexer() {
-	std::string s = R"(
-		if (x > 1)
-			do1();
-		else
-			do2();
-		)";
+	std::string s =
+		R"(
+		#1 = 10
+		#2 = 20
+		#3=[#1+ #2]*30
+)";
 
 	std::vector<byfxxm::Token> res;
 	byfxxm::Token tok;
 	byfxxm::Lexer lex(s);
-	while ((tok = lex.GetNextToken()).kind != byfxxm::Kind::KEOF) {
+	while ((tok = lex.Next()).kind != byfxxm::Kind::KEOF) {
 		res.emplace_back(std::move(tok));
 	}
 
@@ -85,12 +85,33 @@ void TestLexer() {
 		std::cout << static_cast<int>(tok.kind) << std::endl;
 		});
 }
-#endif
+
+void TestSyntax() {
+	std::string s =
+		R"(
+		#1 = 10
+		#2 = 20
+		#30 = 5
+		#10 =7
+		#3=#[#[#1+ #2]*2]
+)";
+
+	auto syntax = byfxxm::Syntax(byfxxm::Lexer(s));
+	while (1) {
+		auto tree = syntax.Next();
+		if (!tree.has_value())
+			break;
+		tree.value().Execute();
+	}
+
+	return;
+}
 
 int main()
 {
-	TestPipeline();
-	//TestLexer();
+	//TestPipeline();
+	TestLexer();
+	TestSyntax();
 	return 0;
 }
 

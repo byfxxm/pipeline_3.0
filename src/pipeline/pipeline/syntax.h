@@ -101,9 +101,9 @@ namespace byfxxm {
 				size_t rhs_pri = default_priority;
 
 				if (auto p = std::get_if<Token>(&lhs))
-					lhs_pri = token_kind_tuples[p->kind].priority;
+					lhs_pri = token_kind_tuples.at(p->kind).priority;
 				if (auto p = std::get_if<Token>(&rhs))
-					rhs_pri = token_kind_tuples[p->kind].priority;
+					rhs_pri = token_kind_tuples.at(p->kind).priority;
 
 				return lhs_pri < rhs_pri;
 				}

@@ -46,21 +46,21 @@ namespace byfxxm {
 			if (sublist.empty())
 				return {};
 
-			NodeList list = _ModifyList(sublist, _Expression);
+			NodeList list = _ProcessBracket(sublist, _Expression);
 			auto min_pri = _FindMinPriority(list);
-			auto node = _CurNode(*min_pri);
 
+			auto node = _CurNode(*min_pri);
 			if (auto first = _Expression(SubList(list.begin(), min_pri)))
 				node->subs.emplace_back(std::move(first));
 			if (auto second = _Expression(SubList(min_pri + 1, list.end())))
 				node->subs.emplace_back(std::move(second));
 
-			_Statement(node);
+			_BinaryToUnary(node);
 			_CheckError(node);
 			return node;
 		}
 
-		static NodeList _ModifyList(SubList& list, auto&& callable) {
+		static NodeList _ProcessBracket(SubList& list, auto&& callable) {
 			NodeList main;
 			NodeList sub;
 			int level = 0;
@@ -123,7 +123,7 @@ namespace byfxxm {
 			return ret;
 		}
 
-		static void _Statement(std::unique_ptr<Abstree::Node>& node) {
+		static void _BinaryToUnary(std::unique_ptr<Abstree::Node>& node) {
 			if (auto binary = std::get_if<Binary>(&node->pred); binary && node->subs.size() == 1) {
 				if (std::holds_alternative<decltype(predicate::Minus)>(*binary))
 					node->pred = predicate::Neg;
@@ -185,7 +185,7 @@ namespace byfxxm {
 			return Abstree(expr(nodelist), _addr);
 		}
 
-		const Address& GetAdress() const {
+		const Address& GetAddr() const {
 			return _addr;
 		}
 

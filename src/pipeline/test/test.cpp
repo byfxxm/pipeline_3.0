@@ -87,6 +87,13 @@ void TestLexer() {
 		});
 }
 
+class GImpl : public byfxxm::Ginterface {
+public:
+	virtual bool G0(const byfxxm::Gparams&, const byfxxm::Address&) override {
+		return true;
+	}
+};
+
 void TestSyntax() {
 	std::string s =
 		R"(
@@ -97,13 +104,6 @@ void TestSyntax() {
 		#180 = 2
 		#3=#[2*#[#1+ #2]]/5
 )";
-
-	class GImpl : public byfxxm::Ginterface {
-	public:
-		virtual bool G0(const byfxxm::Gfunc&) override {
-			return true;
-		}
-	};
 
 	auto syntax = byfxxm::Syntax(byfxxm::Lexer(s));
 	while (1) {
@@ -126,13 +126,6 @@ void TestParser() {
 		#180 = 2
 		#3=#[2*#[#1+ #2]]/5
 )";
-
-	class GImpl : public byfxxm::Ginterface {
-	public:
-		virtual bool G0(const byfxxm::Gfunc&) override {
-			return true;
-		}
-	};
 
 	auto parser = byfxxm::Gparser(byfxxm::Syntax(byfxxm::Lexer(s)));
 	parser.Run(GImpl());

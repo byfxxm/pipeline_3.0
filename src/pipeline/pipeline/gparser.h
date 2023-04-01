@@ -23,6 +23,10 @@ namespace byfxxm {
 			}
 		}
 
+		const Address& GetAddr() const {
+			return _syntax.GetAddr();
+		}
+
 	private:
 		T _syntax;
 	};

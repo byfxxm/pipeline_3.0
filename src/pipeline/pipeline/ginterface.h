@@ -20,18 +20,11 @@ namespace byfxxm {
 		double value;
 	};
 
-	using Gparam = std::vector<Gtag>;
-
-	struct Gcmd {
-		Gtag cmd;
-		Gparam prams;
-	};
-
-	using Gfunc = std::function<bool(const Gparam&)>;
+	using Gparams = std::vector<Gtag>;
 
 	class Ginterface {
 	public:
 		virtual ~Ginterface() = default;
-		virtual bool G0(const Gfunc&) = 0;
+		virtual bool G0(const Gparams&, const Address&) = 0;
 	};
 }

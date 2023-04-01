@@ -18,7 +18,7 @@ namespace byfxxm {
 
 	struct TokenKindTuple {
 		size_t priority{ default_priority };
-		Predicate pred;
+		Predicate pred{ Value() };
 	};
 
 	inline std::unordered_map<Kind, TokenKindTuple> token_kind_tuples = {

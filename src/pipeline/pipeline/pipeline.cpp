@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "pipeline.h"
 #include "pipeline_imp.h"
-#include "g_parser.h"
+#include "gworker.h"
 using namespace byfxxm;
 
 void* pipeline_new() {
@@ -25,9 +25,9 @@ void pipeline_stop(void* pipeline) {
 }
 
 void* garser_new() {
-	return new GParser();
+	return new Gworker();
 }
 
 void garser_delete(void* gparser) {
-	delete static_cast<GParser*>(gparser);
+	delete static_cast<Gworker*>(gparser);
 }

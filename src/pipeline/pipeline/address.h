@@ -17,6 +17,14 @@ namespace byfxxm {
 			return _dict.at(key);
 		}
 
+		const _Value& operator[](const _Key& key) const {
+			return _dict.at(key);
+		}
+
+		bool Contains(const _Key& key) const {
+			return _dict.contains(key);
+		}
+
 		void Clear() {
 			_dict.clear();
 		}

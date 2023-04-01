@@ -3,6 +3,7 @@
 #include <variant>
 #include "token.h"
 #include "predicate.h"
+#include "ginterface.h"
 
 namespace byfxxm {
 	template <class... Ts>
@@ -47,7 +48,7 @@ namespace byfxxm {
 		Abstree(std::unique_ptr<Node>&& root, Address& addr, bool* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _cond(cond) {
 		}
 
-		Value Execute() {
+		Value Execute(const Ginterface&) {
 			return _Execute(_root);
 		}
 

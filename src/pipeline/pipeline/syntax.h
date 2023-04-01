@@ -185,6 +185,10 @@ namespace byfxxm {
 			return Abstree(expr(nodelist), _addr);
 		}
 
+		const Address& GetAdress() const {
+			return _addr;
+		}
+
 	private:
 		Lex _lex;
 		size_t _lineno{ 0 };

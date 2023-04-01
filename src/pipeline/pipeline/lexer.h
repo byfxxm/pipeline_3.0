@@ -49,8 +49,10 @@ namespace byfxxm {
 					auto ch = stream.get();
 					word.push_back(ch);
 
+					auto peek = [&]() {return stream.peek(); };
+					auto get = [&]() {return stream.get(); };
 					for (const auto& p : WordsList::words) {
-						if (std::optional<Token> tok; p->First(ch) && (tok = p->Rest(word, [&]() {return stream.peek(); }, [&]() {return stream.get(); })).has_value())
+						if (std::optional<Token> tok; p->First(ch) && (tok = p->Rest(word, peek, get)).has_value())
 							return tok.value();
 					}
 

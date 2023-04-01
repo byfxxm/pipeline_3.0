@@ -3,6 +3,7 @@
 #include "address.h"
 #include "abstree.h"
 #include "syntax.h"
+#include "ginterface.h"
 
 namespace byfxxm {
 	template <class T>
@@ -11,9 +12,15 @@ namespace byfxxm {
 	};
 
 	template <SyntaxConcept T>
-	class Parser {
+	class Gparser {
 	public:
-		Parser(T&& syn) : _syntax(std::move(syn)) {
+		Gparser(T&& syntax) : _syntax(std::move(syntax)) {
+		}
+
+		void Run(const Ginterface& pimpl) {
+			while (auto abs_tree = _syntax.Next()) {
+				abs_tree.value().Execute(pimpl);
+			}
 		}
 
 	private:
@@ -21,5 +28,5 @@ namespace byfxxm {
 	};
 
 	template <SyntaxConcept T>
-	Parser(T&&) -> Parser<std::remove_cvref_t<T>>;
+	Gparser(T&&) -> Gparser<std::remove_cvref_t<T>>;
 }

@@ -48,7 +48,7 @@
     <ClInclude Include="coro.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="parser.h">
+    <ClInclude Include="gparser.h">
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="lexer.h">
@@ -57,7 +57,7 @@
     <ClInclude Include="token.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="g_parser.h">
+    <ClInclude Include="gworker.h">
       <Filter>workers</Filter>
     </ClInclude>
     <ClInclude Include="syntax.h">
@@ -78,6 +78,9 @@
     <ClInclude Include="predicate.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="ginterface.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">
@@ -89,7 +92,7 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>default</Filter>
     </ClCompile>
-    <ClCompile Include="parser.cpp">
+    <ClCompile Include="gparser.cpp">
       <Filter>parser</Filter>
     </ClCompile>
   </ItemGroup>

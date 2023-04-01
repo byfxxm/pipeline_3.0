@@ -7,6 +7,7 @@
 #include "../pipeline/code.h"
 #include "../pipeline/lexer.h"
 #include "../pipeline/syntax.h"
+#include "../pipeline/gparser.h"
 
 #pragma comment(lib, "../x64/Debug/pipeline.lib")
 
@@ -97,15 +98,44 @@ void TestSyntax() {
 		#3=#[2*#[#1+ #2]]/5
 )";
 
+	class GImpl : public byfxxm::Ginterface {
+	public:
+		virtual bool G0(const byfxxm::Gfunc&) override {
+			return true;
+		}
+	};
+
 	auto syntax = byfxxm::Syntax(byfxxm::Lexer(s));
 	while (1) {
 		auto tree = syntax.Next();
 		if (!tree.has_value())
 			break;
-		tree.value().Execute();
+		tree.value().Execute(GImpl());
 	}
 
 	return;
+}
+
+void TestParser() {
+	std::string s =
+		R"(
+		#1 = -10
+		#2 = 20
+		#30 = 5
+		#10 =#1+#30*#2
+		#180 = 2
+		#3=#[2*#[#1+ #2]]/5
+)";
+
+	class GImpl : public byfxxm::Ginterface {
+	public:
+		virtual bool G0(const byfxxm::Gfunc&) override {
+			return true;
+		}
+	};
+
+	auto parser = byfxxm::Gparser(byfxxm::Syntax(byfxxm::Lexer(s)));
+	parser.Run(GImpl());
 }
 
 int main()
@@ -113,6 +143,7 @@ int main()
 	//TestPipeline();
 	TestLexer();
 	TestSyntax();
+	TestParser();
 	return 0;
 }
 

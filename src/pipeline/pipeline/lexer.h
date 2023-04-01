@@ -29,9 +29,6 @@ namespace byfxxm {
 		Lexer(const std::string& memory) : _stream(std::stringstream(memory)) {
 		}
 
-		//Lexer(T&& stream) noexcept : _stream(std::move(stream)) {
-		//}
-
 		void Reset(const std::filesystem::path& file) {
 			_stream = std::ifstream(file);
 		}

@@ -121,23 +121,6 @@ namespace byfxxm {
 				return Token{ Kind::NEWLINE, std::nullopt };
 			}
 		};
-
-		//class Blank : public Word {
-		//	virtual bool First(char ch) const override {
-		//		return IsSpace(ch);
-		//	}
-
-		//	virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
-		//		while (1) {
-		//			if (!IsSpace(peek()))
-		//				break;
-
-		//			get();
-		//		}
-
-		//		return Token{ Kind::BLANK, std::nullopt };
-		//	}
-		//};
 	}
 
 	template <class... _Words>

@@ -167,18 +167,18 @@ namespace byfxxm {
 	}
 
 	template <class... Ts>
-	inline consteval std::variant<std::remove_reference_t<Ts>...> declvariant(Ts&&...) noexcept {
+	inline consteval std::variant<std::remove_reference_t<Ts>...> ToVariant(Ts&&...) noexcept {
 		return {};
 	}
 
 	// 一元操作符
-	using Unary = decltype(declvariant(
+	using Unary = decltype(ToVariant(
 		predicate::Neg
 		, predicate::Pos
 	));
 
 	// 二元操作符
-	using Binary = decltype(declvariant(
+	using Binary = decltype(ToVariant(
 		predicate::Plus
 		, predicate::Minus
 		, predicate::Multi
@@ -186,11 +186,11 @@ namespace byfxxm {
 		, predicate::Assign
 	));
 
-	using Sharp = decltype(declvariant(
+	using Sharp = decltype(ToVariant(
 		predicate::Sharp
 	));
 
-	using Gcmd = decltype(declvariant(
+	using Gcmd = decltype(ToVariant(
 		predicate::Gcmd
 	));
 }

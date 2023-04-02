@@ -10,7 +10,7 @@ namespace byfxxm {
 		public:
 			virtual ~Word() = default;
 			virtual bool First(char) const = 0;
-			virtual std::optional<Token> Rest(std::string&, Peek, Get) const = 0;
+			virtual std::optional<token::Token> Rest(std::string&, Peek, Get) const = 0;
 		};
 
 		class Sharp : public Word {
@@ -18,8 +18,8 @@ namespace byfxxm {
 				return IsSharp(ch);
 			}
 
-			virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
-				return Token{ Kind::SHARP, std::nullopt };
+			virtual std::optional<token::Token> Rest(std::string& word, Peek peek, Get get) const override {
+				return token::Token{ token::Kind::SHARP, std::nullopt };
 			}
 		};
 
@@ -28,7 +28,7 @@ namespace byfxxm {
 				return isdigit(ch);
 			}
 
-			virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
+			virtual std::optional<token::Token> Rest(std::string& word, Peek peek, Get get) const override {
 				while (1) {
 					auto ch = peek();
 					if (!std::isdigit(ch))
@@ -36,7 +36,7 @@ namespace byfxxm {
 					word.push_back(get());
 				}
 
-				return Token{ Kind::CON, std::stod(word) };
+				return token::Token{ token::Kind::CON, std::stod(word) };
 			}
 		};
 
@@ -45,7 +45,7 @@ namespace byfxxm {
 				return IsKeyword(ch);
 			}
 
-			virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
+			virtual std::optional<token::Token> Rest(std::string& word, Peek peek, Get get) const override {
 				while (1) {
 					auto ch = peek();
 					if (!std::isalpha(ch))
@@ -56,7 +56,7 @@ namespace byfxxm {
 				if (!IsKeyword(word))
 					throw LexException();
 
-				return Token{ keywords.at(word), std::nullopt };
+				return token::Token{ token::keywords.at(word), std::nullopt };
 			}
 		};
 
@@ -65,8 +65,8 @@ namespace byfxxm {
 				return IsSymbol(ch);
 			}
 
-			virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
-				return Token{ symbols.at(word), std::nullopt };
+			virtual std::optional<token::Token> Rest(std::string& word, Peek peek, Get get) const override {
+				return token::Token{ token::symbols.at(word), std::nullopt };
 			}
 		};
 
@@ -75,7 +75,7 @@ namespace byfxxm {
 				return IsGcode(ch);
 			}
 
-			virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
+			virtual std::optional<token::Token> Rest(std::string& word, Peek peek, Get get) const override {
 				while (1) {
 					auto ch = peek();
 					if (!std::isdigit(ch) && !IsSharp(ch))
@@ -86,7 +86,7 @@ namespace byfxxm {
 				if (!IsGcode(word))
 					throw LexException();
 
-				return Token{ symbols.at(word), std::nullopt };
+				return token::Token{ token::symbols.at(word), std::nullopt };
 			}
 		};
 
@@ -95,7 +95,7 @@ namespace byfxxm {
 				return IsNewline(ch);
 			}
 
-			virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
+			virtual std::optional<token::Token> Rest(std::string& word, Peek peek, Get get) const override {
 				auto ch = peek();
 				switch (word[0]) {
 				case '\r':
@@ -108,7 +108,7 @@ namespace byfxxm {
 				}
 
 				assert(IsNewline(word));
-				return Token{ Kind::NEWLINE, std::nullopt };
+				return token::Token{ token::Kind::NEWLINE, std::nullopt };
 			}
 		};
 	}

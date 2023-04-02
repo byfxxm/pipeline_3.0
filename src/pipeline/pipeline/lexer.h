@@ -37,12 +37,12 @@ namespace byfxxm {
 			_stream = std::stringstream(memory);
 		}
 
-		Token Next() {
+		token::Token Next() {
 			return std::visit(
 				[](auto&& stream)
 				{
 					if (stream.eof())
-						return Token{ Kind::KEOF, std::nullopt };
+						return token::Token{ token::Kind::KEOF, std::nullopt };
 
 					std::string word;
 					_SkipSpace(stream);
@@ -52,7 +52,7 @@ namespace byfxxm {
 					auto peek = [&]() {return stream.peek(); };
 					auto get = [&]() {return stream.get(); };
 					for (const auto& p : WordsList::words) {
-						if (std::optional<Token> tok; p->First(ch) && (tok = p->Rest(word, peek, get)).has_value())
+						if (std::optional<token::Token> tok; p->First(ch) && (tok = p->Rest(word, peek, get)).has_value())
 							return tok.value();
 					}
 

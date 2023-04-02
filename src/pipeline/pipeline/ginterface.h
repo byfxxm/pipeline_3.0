@@ -4,19 +4,8 @@
 #include <unordered_map>
 
 namespace byfxxm {
-	enum class Gcode {
-		G,
-		M,
-		X,
-		Y,
-		Z,
-		A,
-		B,
-		C,
-	};
-
 	struct Gtag {
-		Gcode code;
+		token::Kind code;
 		double value;
 	};
 

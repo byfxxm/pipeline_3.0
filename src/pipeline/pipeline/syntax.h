@@ -14,17 +14,17 @@ namespace byfxxm {
 		Predicate pred{ Value() };
 	};
 
-	inline std::unordered_map<Kind, TokenKindTuple> token_kind_tuples = {
-		{Kind::ASSIGN, {1, predicate::Assign}},
-		{Kind::PLUS, {3, predicate::Plus}},
-		{Kind::MINUS, {3, predicate::Minus}},
-		{Kind::MUL, {4, predicate::Multi}},
-		{Kind::DIV, {4, predicate::Div}},
-		{Kind::SHARP, {5, predicate::Sharp}},
-		{Kind::CON, {}},
+	inline std::unordered_map<token::Kind, TokenKindTuple> token_kind_tuples = {
+		{token::Kind::ASSIGN, {1, predicate::Assign}},
+		{token::Kind::PLUS, {3, predicate::Plus}},
+		{token::Kind::MINUS, {3, predicate::Minus}},
+		{token::Kind::MUL, {4, predicate::Multi}},
+		{token::Kind::DIV, {4, predicate::Div}},
+		{token::Kind::SHARP, {5, predicate::Sharp}},
+		{token::Kind::CON, {}},
 	};
 
-	using SyntaxNode = std::variant<Token, Abstree::NodePtr>;
+	using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
 	using SyntaxNodeList = std::pmr::vector<SyntaxNode>;
 	using SubList = decltype(std::ranges::subrange(SyntaxNodeList().begin(), SyntaxNodeList().end()));
 
@@ -63,13 +63,13 @@ namespace byfxxm {
 					continue;
 				}
 
-				auto tok = std::get<Token>(node);
-				if (tok.kind == Kind::LB) {
+				auto tok = std::get<token::Token>(node);
+				if (tok.kind == token::Kind::LB) {
 					++level;
 					if (level == 1)
 						continue;
 				}
-				else if (tok.kind == Kind::RB) {
+				else if (tok.kind == token::Kind::RB) {
 					--level;
 					if (level == 0) {
 						main.push_back(callable(sub));
@@ -93,9 +93,9 @@ namespace byfxxm {
 				size_t lhs_pri = default_priority;
 				size_t rhs_pri = default_priority;
 
-				if (auto p = std::get_if<Token>(&lhs))
+				if (auto p = std::get_if<token::Token>(&lhs))
 					lhs_pri = token_kind_tuples.at(p->kind).priority;
-				if (auto p = std::get_if<Token>(&rhs))
+				if (auto p = std::get_if<token::Token>(&rhs))
 					rhs_pri = token_kind_tuples.at(p->kind).priority;
 
 				return lhs_pri < rhs_pri;
@@ -109,7 +109,7 @@ namespace byfxxm {
 				ret = std::move(*abs);
 			}
 			else {
-				auto tok = std::get<Token>(node);
+				auto tok = std::get<token::Token>(node);
 				ret->pred = tok.value.has_value() ? tok.value.value() : token_kind_tuples.at(tok.kind).pred;
 			}
 
@@ -167,10 +167,10 @@ namespace byfxxm {
 			while (1) {
 				auto tok = _lex.Next();
 
-				if (tok.kind == Kind::KEOF)
+				if (tok.kind == token::Kind::KEOF)
 					return std::nullopt;
 
-				if (tok.kind == Kind::NEWLINE) {
+				if (tok.kind == token::Kind::NEWLINE) {
 					++_lineno;
 					if (list.empty())
 						continue;

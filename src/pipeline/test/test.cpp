@@ -75,14 +75,14 @@ void TestLexer() {
 		#3=[#1+ #2]*30
 )";
 
-	std::vector<byfxxm::Token> res;
-	byfxxm::Token tok;
+	std::vector<byfxxm::token::Token> res;
+	byfxxm::token::Token tok;
 	byfxxm::Lexer lex(s);
-	while ((tok = lex.Next()).kind != byfxxm::Kind::KEOF) {
+	while ((tok = lex.Next()).kind != byfxxm::token::Kind::KEOF) {
 		res.emplace_back(std::move(tok));
 	}
 
-	std::for_each(res.begin(), res.end(), [](const byfxxm::Token& tok) {
+	std::for_each(res.begin(), res.end(), [](const byfxxm::token::Token& tok) {
 		std::cout << static_cast<int>(tok.kind) << std::endl;
 		});
 }

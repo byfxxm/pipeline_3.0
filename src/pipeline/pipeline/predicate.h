@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "token.h"
-#include "address.h"
+#include <variant>
+#include <string>
+#include "ginterface.h"
 
 #define IsSameType(lhs, rhs) (std::is_same_v<decltype(lhs), decltype(rhs)>)
 #define IsType(v, type) (std::is_same_v<std::remove_cvref_t<decltype(v)>, type>)
@@ -9,6 +10,8 @@
 #define IsDoublePtr(v) IsType(v, double*)
 
 namespace byfxxm {
+	using Value = std::variant<double, double*, std::string, Gtag>;
+
 	namespace predicate {
 		inline auto Plus = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -116,7 +119,7 @@ namespace byfxxm {
 
 		struct _GtagHash {
 			size_t operator()(const Gtag& tag) const {
-				return std::hash<Gcode>()(tag.code) ^ std::hash<double>()(tag.value);
+				return std::hash<token::Kind>()(tag.code) ^ std::hash<double>()(tag.value);
 			}
 		};
 
@@ -127,11 +130,11 @@ namespace byfxxm {
 		};
 
 		inline const std::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual> gtag_to_ginterface = {
-			{{Gcode::G, 0}, &Ginterface::G0},
-			{{Gcode::G, 1}, &Ginterface::G1},
-			{{Gcode::G, 2}, &Ginterface::G2},
-			{{Gcode::G, 3}, &Ginterface::G3},
-			{{Gcode::G, 4}, &Ginterface::G4},
+			{{token::Kind::G, 0}, &Ginterface::G0},
+			{{token::Kind::G, 1}, &Ginterface::G1},
+			{{token::Kind::G, 2}, &Ginterface::G2},
+			{{token::Kind::G, 3}, &Ginterface::G3},
+			{{token::Kind::G, 4}, &Ginterface::G4},
 		};
 
 		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
@@ -140,6 +143,9 @@ namespace byfxxm {
 
 			std::ranges::for_each(tags, [](auto&& ele) {
 				if (!std::holds_alternative<Gtag>(ele))
+					throw AddressException();
+
+				if (!IsGcode(std::get<Gtag>(ele).code))
 					throw AddressException();
 				});
 
@@ -159,4 +165,32 @@ namespace byfxxm {
 			return first;
 		};
 	}
+
+	template <class... Ts>
+	inline consteval std::variant<std::remove_reference_t<Ts>...> declvariant(Ts&&...) noexcept {
+		return {};
+	}
+
+	// 一元操作符
+	using Unary = decltype(declvariant(
+		predicate::Neg
+		, predicate::Pos
+	));
+
+	// 二元操作符
+	using Binary = decltype(declvariant(
+		predicate::Plus
+		, predicate::Minus
+		, predicate::Multi
+		, predicate::Div
+		, predicate::Assign
+	));
+
+	using Sharp = decltype(declvariant(
+		predicate::Sharp
+	));
+
+	using Gcmd = decltype(declvariant(
+		predicate::Gcmd
+	));
 }

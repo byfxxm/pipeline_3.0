@@ -7,34 +7,6 @@
 
 namespace byfxxm {
 	template <class... Ts>
-	inline consteval std::variant<std::remove_reference_t<Ts>...> declvariant(Ts&&...) noexcept {
-		return {};
-	}
-
-	// 一元操作符
-	using Unary = decltype(declvariant(
-		predicate::Neg
-		, predicate::Pos
-	));
-
-	// 二元操作符
-	using Binary = decltype(declvariant(
-		predicate::Plus
-		, predicate::Minus
-		, predicate::Multi
-		, predicate::Div
-		, predicate::Assign
-	));
-
-	using Sharp = decltype(declvariant(
-		predicate::Sharp
-	));
-
-	using Gcmd = decltype(declvariant(
-		predicate::Gcmd
-	));
-
-	template <class... Ts>
 	struct Overload : Ts...{using Ts::operator()...; };
 
 	// 定义谓词

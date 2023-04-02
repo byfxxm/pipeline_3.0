@@ -57,7 +57,7 @@ namespace byfxxm {
 					[&](const Gcmd& gcmd) {
 						return std::visit([&](auto&& func) {return func(v, pimpl, _addr); }, gcmd);
 					},
-					[&](auto&&)->Value { // default
+					[&](const auto&)->Value { // default
 						throw AddressException();
 					}
 				}, node->pred);

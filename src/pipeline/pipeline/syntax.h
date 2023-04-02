@@ -15,14 +15,20 @@ namespace byfxxm {
 	};
 
 	inline std::unordered_map<token::Kind, TokenKindTuple> token_kind_tuples = {
-		{token::Kind::ASSIGN, {1, predicate::Assign}},
-		{token::Kind::PLUS, {3, predicate::Plus}},
-		{token::Kind::MINUS, {3, predicate::Minus}},
-		{token::Kind::MUL, {4, predicate::Multi}},
-		{token::Kind::DIV, {4, predicate::Div}},
-		{token::Kind::SHARP, {5, predicate::Sharp}},
-		{token::Kind::NEG, {5, predicate::Neg}},
-		{token::Kind::POS, {5, predicate::Pos}},
+		{token::Kind::ASSIGN, {1, Binary{predicate::Assign}}},
+		{token::Kind::GT, {2, Binary{predicate::GT}}},
+		{token::Kind::GE, {2, Binary{predicate::GE}}},
+		{token::Kind::LT, {2, Binary{predicate::LT}}},
+		{token::Kind::LE, {2, Binary{predicate::LE}}},
+		{token::Kind::EQ, {2, Binary{predicate::Equal}}},
+		{token::Kind::NE, {2, Binary{predicate::NotEqual}}},
+		{token::Kind::PLUS, {3, Binary{predicate::Plus}}},
+		{token::Kind::MINUS, {3, Binary{predicate::Minus}}},
+		{token::Kind::MUL, {4, Binary{predicate::Multi}}},
+		{token::Kind::DIV, {4, Binary{predicate::Div}}},
+		{token::Kind::SHARP, {5, Sharp{predicate::Sharp}}},
+		{token::Kind::NEG, {5, Unary{predicate::Neg}}},
+		{token::Kind::POS, {5, Unary{predicate::Pos}}},
 		{token::Kind::CON, {}},
 	};
 

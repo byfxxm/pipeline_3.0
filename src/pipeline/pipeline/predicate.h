@@ -10,7 +10,7 @@
 #define IsDoublePtr(v) IsType(v, double*)
 
 namespace byfxxm {
-	using Value = std::variant<double, double*, std::string, Gtag>;
+	using Value = std::variant<double, double*, std::string, Gtag, bool>;
 
 	namespace predicate {
 		inline auto Plus = [](const Value& lhs, const Value& rhs) {
@@ -148,6 +148,96 @@ namespace byfxxm {
 
 			return first;
 		};
+
+		inline auto GT = [](const Value& lhs, const Value& rhs) {
+			return std::visit([](auto&& l, auto&& r)->Value {
+				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+					return Value{ *l > *r };
+				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+					return Value{ *l > r };
+				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+					return Value{ l > *r };
+				else if constexpr (IsDouble(l) && IsDouble(r))
+					return Value{ l > r };
+				else
+					throw SyntaxException();
+				}, lhs, rhs);
+		};
+
+		inline auto GE = [](const Value& lhs, const Value& rhs) {
+			return std::visit([](auto&& l, auto&& r)->Value {
+				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+					return Value{ *l >= *r };
+				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+					return Value{ *l >= r };
+				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+					return Value{ l >= *r };
+				else if constexpr (IsDouble(l) && IsDouble(r))
+					return Value{ l >= r };
+				else
+					throw SyntaxException();
+				}, lhs, rhs);
+		};
+
+		inline auto LT = [](const Value& lhs, const Value& rhs) {
+			return std::visit([](auto&& l, auto&& r)->Value {
+				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+					return Value{ *l < *r };
+				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+					return Value{ *l < r };
+				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+					return Value{ l < *r };
+				else if constexpr (IsDouble(l) && IsDouble(r))
+					return Value{ l < r };
+				else
+					throw SyntaxException();
+				}, lhs, rhs);
+		};
+
+		inline auto LE = [](const Value& lhs, const Value& rhs) {
+			return std::visit([](auto&& l, auto&& r)->Value {
+				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+					return Value{ *l <= *r };
+				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+					return Value{ *l <= r };
+				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+					return Value{ l <= *r };
+				else if constexpr (IsDouble(l) && IsDouble(r))
+					return Value{ l <= r };
+				else
+					throw SyntaxException();
+				}, lhs, rhs);
+		};
+
+		inline auto Equal = [](const Value& lhs, const Value& rhs) {
+			return std::visit([](auto&& l, auto&& r)->Value {
+				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+					return Value{ *l == *r };
+				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+					return Value{ *l == r };
+				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+					return Value{ l == *r };
+				else if constexpr (IsDouble(l) && IsDouble(r))
+					return Value{ l == r };
+				else
+					throw SyntaxException();
+				}, lhs, rhs);
+		};
+
+		inline auto NotEqual = [](const Value& lhs, const Value& rhs) {
+			return std::visit([](auto&& l, auto&& r)->Value {
+				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+					return Value{ *l != *r };
+				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+					return Value{ *l != r };
+				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+					return Value{ l != *r };
+				else if constexpr (IsDouble(l) && IsDouble(r))
+					return Value{ l != r };
+				else
+					throw SyntaxException();
+				}, lhs, rhs);
+		};
 	}
 
 	template <class... Ts>
@@ -168,6 +258,12 @@ namespace byfxxm {
 		, predicate::Multi
 		, predicate::Div
 		, predicate::Assign
+		, predicate::GT
+		, predicate::GE
+		, predicate::LT
+		, predicate::LE
+		, predicate::Equal
+		, predicate::NotEqual
 	));
 
 	using Sharp = decltype(ToVariant(

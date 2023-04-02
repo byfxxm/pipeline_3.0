@@ -30,16 +30,20 @@ namespace byfxxm {
 		}
 
 		void Reset(const std::filesystem::path& file) {
-			_stream = std::ifstream(file);
+			using std::swap;
+			auto copy = Lexer(file);
+			swap(*this, copy);
 		}
 
 		void Reset(const std::string& memory) {
-			_stream = std::stringstream(memory);
+			using std::swap;
+			auto copy = Lexer(memory);
+			swap(*this, copy);
 		}
 
 		token::Token Next() {
 			return std::visit(
-				[](auto&& stream)
+				[this](auto&& stream)
 				{
 					if (stream.eof())
 						return token::Token{ token::Kind::KEOF, std::nullopt };
@@ -52,8 +56,10 @@ namespace byfxxm {
 					auto peek = [&]() {return stream.peek(); };
 					auto get = [&]() {return stream.get(); };
 					for (const auto& p : WordsList::words) {
-						if (std::optional<token::Token> tok; p->First(ch) && (tok = p->Rest(word, peek, get)).has_value())
+						if (std::optional<token::Token> tok; p->First(ch) && (tok = p->Rest(word, { peek, get, _lasttok })).has_value()) {
+							_lasttok = tok;
 							return tok.value();
+						}
 					}
 
 					throw LexException();
@@ -62,5 +68,6 @@ namespace byfxxm {
 
 	private:
 		StreamType _stream;
+		std::optional<token::Token> _lasttok;
 	};
 }

@@ -21,6 +21,8 @@ namespace byfxxm {
 		{token::Kind::MUL, {4, predicate::Multi}},
 		{token::Kind::DIV, {4, predicate::Div}},
 		{token::Kind::SHARP, {5, predicate::Sharp}},
+		{token::Kind::NEG, {5, predicate::Neg}},
+		{token::Kind::POS, {5, predicate::Pos}},
 		{token::Kind::CON, {}},
 	};
 
@@ -48,7 +50,6 @@ namespace byfxxm {
 			if (auto second = _Expression(SubList(min_pri + 1, list.end())))
 				node->subs.emplace_back(std::move(second));
 
-			_BinaryToUnary(node);
 			_CheckError(node);
 			return node;
 		}
@@ -89,7 +90,7 @@ namespace byfxxm {
 		}
 
 		static SyntaxNodeList::iterator _FindMinPriority(SubList list) {
-			return std::ranges::min_element(list | std::views::reverse, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
+			return std::ranges::min_element(list, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
 				size_t lhs_pri = default_priority;
 				size_t rhs_pri = default_priority;
 
@@ -100,7 +101,7 @@ namespace byfxxm {
 
 				return lhs_pri < rhs_pri;
 				}
-			).base() - 1;
+			);
 		}
 
 		static Abstree::NodePtr _CurNode(SyntaxNode& node) {
@@ -114,15 +115,6 @@ namespace byfxxm {
 			}
 
 			return ret;
-		}
-
-		static void _BinaryToUnary(Abstree::NodePtr& node) {
-			if (auto binary = std::get_if<Binary>(&node->pred); binary && node->subs.size() == 1) {
-				if (std::holds_alternative<decltype(predicate::Minus)>(*binary))
-					node->pred = predicate::Neg;
-				else if (std::holds_alternative<decltype(predicate::Plus)>(*binary))
-					node->pred = predicate::Pos;
-			}
 		}
 
 		static void _CheckError(const Abstree::NodePtr& node) {

@@ -16,8 +16,8 @@ namespace byfxxm {
 			LB,             // [
 			RB,            // ]
 			//LP,				// {
-			//RP,				// }
-			//SEMI,			// ;
+			POS,				// +
+			NEG,				// -
 			PLUS,			// +
 			MINUS,			// -
 			MUL,			// *

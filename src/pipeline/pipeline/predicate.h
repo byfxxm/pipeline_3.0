@@ -92,6 +92,8 @@ namespace byfxxm {
 			return std::visit([](auto&& v)->Value {
 				if constexpr (IsDouble(v))
 					return Value{ -v };
+				else if constexpr (IsDoublePtr(v))
+					return Value{ -*v };
 				else
 					throw SyntaxException();
 				}, value);
@@ -101,6 +103,8 @@ namespace byfxxm {
 			return std::visit([](auto&& v)->Value {
 				if constexpr (IsDouble(v))
 					return Value{ v };
+				else if constexpr (IsDoublePtr(v))
+					return Value{ *v };
 				else
 					throw SyntaxException();
 				}, value);

@@ -173,4 +173,7 @@ namespace byfxxm {
 	using Gcmd = decltype(ToVariant(
 		predicate::Gcmd
 	));
+
+	// 定义谓词
+	using Predicate = std::variant<Value, Unary, Binary, Sharp, Gcmd>;
 }

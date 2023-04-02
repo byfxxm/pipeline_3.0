@@ -9,9 +9,6 @@ namespace byfxxm {
 	template <class... Ts>
 	struct Overload : Ts...{using Ts::operator()...; };
 
-	// 定义谓词
-	using Predicate = std::variant<Value, Unary, Binary, Sharp, Gcmd>;
-
 	class Abstree {
 	public:
 		struct Node;

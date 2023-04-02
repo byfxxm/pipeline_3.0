@@ -186,8 +186,12 @@ namespace byfxxm {
 		}
 
 	private:
-		Value _AbsnodeToValue(Abstree::NodePtr&& absnode) {
-			return Abstree(std::move(absnode), _addr)();
+		bool _Condition(Abstree::NodePtr&& absnode) {
+			auto res = Abstree(std::move(absnode), _addr)();
+			if (!std::holds_alternative<bool>(res))
+				throw SyntaxException();
+
+			return std::get<bool>(res);
 		}
 
 	private:

@@ -137,6 +137,7 @@ void TestParser() {
 		#10 =#1+#30*#2-3
 		#-174 = -2
 		#3=+#-[2*#[#1+ #2]]/5
+		#3 LT #2
 )";
 
 	auto parser = byfxxm::Gparser(s);

@@ -67,25 +67,22 @@ namespace byfxxm {
 			{"WHILE", Kind::WHILE},
 			{"DO", Kind::DO},
 			{"END", Kind::END},
+			{"GT", Kind::GT},
+			{"GE", Kind::GE},
+			{"LT", Kind::LT},
+			{"LE", Kind::LE},
+			{"EQ", Kind::EQ},
+			{"NE", Kind::NE},
 		};
 
 		inline const Mapping symbols = {
 			{ "[",			Kind::LB,			},
 			{ "]",			Kind::RB,			},
-			//{ "{",			Kind::LP,			},
-			//{ "}",			Kind::RP,			},
-			//{ ";",			Kind::SEMI,		},
 			{ "+",			Kind::PLUS,		},
 			{ "-",			Kind::MINUS	,	},
 			{ "*",			Kind::MUL	,		},
 			{ "/",			Kind::DIV,			},
 			{ "=",			Kind::ASSIGN,			},
-			{ "==",		Kind::EQ,			},
-			{ "!=",		Kind::NE,			},
-			{ "<",			Kind::LT,			},
-			{ "<=",		Kind::LE,			},
-			{ ">",			Kind::GT,			},
-			{ ">=",		Kind::GE,			},
 		};
 
 		inline const Mapping gcodes = {
@@ -98,7 +95,7 @@ namespace byfxxm {
 	}
 
 	inline bool _IsMapping(const token::Mapping& map, const std::string& word) {
-		return map.find(word) != map.end();
+		return map.contains(word);
 	}
 
 	inline bool _IsMapping(const token::Mapping& map, char ch) {

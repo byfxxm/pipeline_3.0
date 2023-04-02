@@ -20,8 +20,7 @@ namespace byfxxm {
 					abs_tree.value()();
 				}
 			}
-			catch (const ParseException& err) {
-				throw ParseException((std::to_string(_syntax.Line()) + " : " + err.what()).c_str());
+			catch (const ParseException&) {
 			}
 		}
 

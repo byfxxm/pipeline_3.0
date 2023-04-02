@@ -37,29 +37,29 @@ namespace byfxxm {
 
 	class Abstree {
 	public:
+		struct Node;
+		using NodePtr = std::unique_ptr<Node>;
+
 		struct Node {
 			Predicate pred;
-			std::vector<std::unique_ptr<Node>> subs;
+			std::vector<NodePtr> subs;
 		};
 
-		//Abstree(const Token&) {
-		//}
-
-		Abstree(std::unique_ptr<Node>&& root, Address& addr, bool* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _cond(cond) {
+		Abstree(NodePtr&& root, Address& addr, bool* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _cond(cond) {
 		}
 
-		Value Execute(const Ginterface&) {
-			return _Execute(_root);
+		Value operator()(const Ginterface* pimpl = nullptr) {
+			return _Execute(_root, pimpl);
 		}
 
 	private:
-		Value _Execute(std::unique_ptr<Node>& node) {
+		Value _Execute(NodePtr& node, const Ginterface* pimpl) {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 
 			std::vector<Value> v;
 			std::ranges::for_each(node->subs, [&](auto&& p) {
-				v.emplace_back(_Execute(p));
+				v.emplace_back(_Execute(p, pimpl));
 				});
 
 			return std::visit(
@@ -81,7 +81,7 @@ namespace byfxxm {
 		}
 
 	private:
-		std::unique_ptr<Node> _root;
+		NodePtr _root;
 		Address& _addr;
 		bool* _cond;
 	};

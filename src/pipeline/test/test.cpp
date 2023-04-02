@@ -110,7 +110,7 @@ void TestSyntax() {
 		auto tree = syntax.Next();
 		if (!tree.has_value())
 			break;
-		tree.value().Execute(GImpl());
+		tree.value()();
 	}
 
 	return;

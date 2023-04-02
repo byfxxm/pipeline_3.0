@@ -24,22 +24,22 @@ namespace byfxxm {
 		{Kind::CON, {}},
 	};
 
-	using SyntaxNode = std::variant<Token, std::unique_ptr<Abstree::Node>>;
-	using NodeList = std::pmr::vector<SyntaxNode>;
-	using SubList = decltype(std::ranges::subrange(NodeList().begin(), NodeList().end()));
+	using SyntaxNode = std::variant<Token, Abstree::NodePtr>;
+	using SyntaxNodeList = std::pmr::vector<SyntaxNode>;
+	using SubList = decltype(std::ranges::subrange(SyntaxNodeList().begin(), SyntaxNodeList().end()));
 
 	class Expresion {
 	public:
-		std::unique_ptr<Abstree::Node> operator()(SubList sublist) const {
+		Abstree::NodePtr operator()(SubList sublist) const {
 			return _Expression(sublist);
 		}
 
 	private:
-		static std::unique_ptr<Abstree::Node> _Expression(SubList sublist) {
+		static Abstree::NodePtr _Expression(SubList sublist) {
 			if (sublist.empty())
 				return {};
 
-			NodeList list = _ProcessBracket(sublist, _Expression);
+			SyntaxNodeList list = _ProcessBracket(sublist, _Expression);
 			auto min_pri = _FindMinPriority(list);
 
 			auto node = _CurNode(*min_pri);
@@ -53,12 +53,12 @@ namespace byfxxm {
 			return node;
 		}
 
-		static NodeList _ProcessBracket(SubList& list, auto&& callable) {
-			NodeList main;
-			NodeList sub;
+		static SyntaxNodeList _ProcessBracket(SubList& list, auto&& callable) {
+			SyntaxNodeList main;
+			SyntaxNodeList sub;
 			int level = 0;
 			for (auto& node : list) {
-				if (std::holds_alternative<std::unique_ptr<Abstree::Node>>(node)) {
+				if (std::holds_alternative<Abstree::NodePtr>(node)) {
 					main.push_back(std::move(node));
 					continue;
 				}
@@ -88,7 +88,7 @@ namespace byfxxm {
 			return main;
 		}
 
-		static NodeList::iterator _FindMinPriority(SubList list) {
+		static SyntaxNodeList::iterator _FindMinPriority(SubList list) {
 			return std::ranges::min_element(list | std::views::reverse, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
 				size_t lhs_pri = default_priority;
 				size_t rhs_pri = default_priority;
@@ -103,9 +103,9 @@ namespace byfxxm {
 			).base() - 1;
 		}
 
-		static std::unique_ptr<Abstree::Node> _CurNode(SyntaxNode& node) {
+		static Abstree::NodePtr _CurNode(SyntaxNode& node) {
 			auto ret = std::make_unique<Abstree::Node>();
-			if (auto abs = std::get_if<std::unique_ptr<Abstree::Node>>(&node)) {
+			if (auto abs = std::get_if<Abstree::NodePtr>(&node)) {
 				ret = std::move(*abs);
 			}
 			else {
@@ -116,7 +116,7 @@ namespace byfxxm {
 			return ret;
 		}
 
-		static void _BinaryToUnary(std::unique_ptr<Abstree::Node>& node) {
+		static void _BinaryToUnary(Abstree::NodePtr& node) {
 			if (auto binary = std::get_if<Binary>(&node->pred); binary && node->subs.size() == 1) {
 				if (std::holds_alternative<decltype(predicate::Minus)>(*binary))
 					node->pred = predicate::Neg;
@@ -125,7 +125,7 @@ namespace byfxxm {
 			}
 		}
 
-		static void _CheckError(const std::unique_ptr<Abstree::Node>& node) {
+		static void _CheckError(const Abstree::NodePtr& node) {
 			std::visit(
 				Overload
 				{
@@ -160,7 +160,7 @@ namespace byfxxm {
 		}
 
 		std::optional<Abstree> Next() {
-			NodeList nodelist;
+			SyntaxNodeList list;
 			while (1) {
 				auto tok = _lex.Next();
 
@@ -169,19 +169,24 @@ namespace byfxxm {
 
 				if (tok.kind == Kind::NEWLINE) {
 					++_lineno;
-					if (nodelist.empty())
+					if (list.empty())
 						continue;
 					break;
 				}
 
-				nodelist.emplace_back(std::move(tok));
+				list.emplace_back(std::move(tok));
 			}
 
-			return Abstree(expr(nodelist), _addr);
+			return Abstree(expr(list), _addr);
 		}
 
 		const Address& GetAddr() const {
 			return _addr;
+		}
+
+	private:
+		Value _AbsnodeToValue(Abstree::NodePtr&& absnode) {
+			return Abstree(std::move(absnode), _addr)();
 		}
 
 	private:

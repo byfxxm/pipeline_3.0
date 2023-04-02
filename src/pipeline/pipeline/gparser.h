@@ -16,7 +16,7 @@ namespace byfxxm {
 
 		void Run(const Ginterface& pimpl) {
 			while (auto abs_tree = _syntax.Next()) {
-				abs_tree.value().Execute(pimpl);
+				abs_tree.value()();
 			}
 		}
 

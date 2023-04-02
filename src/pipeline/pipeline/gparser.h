@@ -15,13 +15,18 @@ namespace byfxxm {
 		}
 
 		void Run(const Ginterface& pimpl) {
-			while (auto abs_tree = _syntax.Next()) {
-				abs_tree.value()();
+			try {
+				while (auto abs_tree = _syntax.Next()) {
+					abs_tree.value()();
+				}
+			}
+			catch (const ParseException& err) {
+				throw ParseException((std::to_string(_syntax.Line()) + " : " + err.what()).c_str());
 			}
 		}
 
-		const Address& GetAddr() const {
-			return _syntax.GetAddr();
+		const Address& Addr() const {
+			return _syntax.Addr();
 		}
 
 	private:

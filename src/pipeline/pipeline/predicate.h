@@ -26,7 +26,7 @@ namespace byfxxm {
 				else if constexpr (IsString(l) && IsString(r))
 					return Value{ l + r };
 				else
-					throw SyntaxException();
+					throw SyntaxException("plus error");
 				}, lhs, rhs);
 		};
 
@@ -41,7 +41,7 @@ namespace byfxxm {
 				else if constexpr (IsDouble(l) && IsDouble(r))
 					return Value{ l - r };
 				else
-					throw SyntaxException();
+					throw SyntaxException("minus error");
 				}, lhs, rhs);
 		};
 
@@ -56,7 +56,7 @@ namespace byfxxm {
 				else if constexpr (IsDouble(l) && IsDouble(r))
 					return Value{ l * r };
 				else
-					throw SyntaxException();
+					throw SyntaxException("multiple error");
 				}, lhs, rhs);
 		};
 
@@ -71,7 +71,7 @@ namespace byfxxm {
 				else if constexpr (IsDouble(l) && IsDouble(r))
 					return Value{ l / r };
 				else
-					throw SyntaxException();
+					throw SyntaxException("divide error");
 				}, lhs, rhs);
 		};
 
@@ -82,7 +82,7 @@ namespace byfxxm {
 				else if constexpr (IsDoublePtr(l) && IsDouble(r))
 					*l = r;
 				else
-					throw SyntaxException();
+					throw SyntaxException("assign error");
 
 				return Value{ l };
 				}, lhs, rhs);
@@ -95,7 +95,7 @@ namespace byfxxm {
 				else if constexpr (IsDoublePtr(v))
 					return Value{ -*v };
 				else
-					throw SyntaxException();
+					throw SyntaxException("negative error");
 				}, value);
 		};
 
@@ -106,7 +106,7 @@ namespace byfxxm {
 				else if constexpr (IsDoublePtr(v))
 					return Value{ *v };
 				else
-					throw SyntaxException();
+					throw SyntaxException("positive error");
 				}, value);
 		};
 
@@ -117,7 +117,7 @@ namespace byfxxm {
 				else if constexpr (IsDoublePtr(v))
 					return addr[*v].get();
 				else
-					throw SyntaxException();
+					throw SyntaxException("sharp error");
 				}, value);
 		};
 

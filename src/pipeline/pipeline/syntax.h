@@ -181,8 +181,12 @@ namespace byfxxm {
 			return Abstree(expr(list), _addr);
 		}
 
-		const Address& GetAddr() const {
+		const Address& Addr() const {
 			return _addr;
+		}
+
+		const size_t Line() const {
+			return _lineno;
 		}
 
 	private:

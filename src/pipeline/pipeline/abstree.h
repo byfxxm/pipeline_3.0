@@ -34,9 +34,9 @@ namespace byfxxm {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 
-			std::vector<Value> v;
+			std::vector<Value> params;
 			std::ranges::for_each(node->subs, [&](auto&& p) {
-				v.emplace_back(_Execute(p, pimpl));
+				params.emplace_back(_Execute(p, pimpl));
 				});
 
 			return std::visit(
@@ -46,16 +46,16 @@ namespace byfxxm {
 						return value;
 					},
 					[&](const Unary& unary) {
-						return std::visit([&](auto&& func) { return func(v[0]); }, unary);
+						return std::visit([&](auto&& func) { return func(params[0]); }, unary);
 					},
 					[&](const Binary& binary) {
-						return std::visit([&](auto&& func) { return func(v[0], v[1]); }, binary);
+						return std::visit([&](auto&& func) { return func(params[0], params[1]); }, binary);
 					},
 					[&](const Sharp& sharp) {
-						return std::visit([&](auto&& func) { return func(v[0], _addr); }, sharp);
+						return std::visit([&](auto&& func) { return func(params[0], _addr); }, sharp);
 					},
 					[&](const Gcmd& gcmd) {
-						return std::visit([&](auto&& func) {return func(v, pimpl, _addr); }, gcmd);
+						return std::visit([&](auto&& func) {return func(params, pimpl, _addr); }, gcmd);
 					},
 					[&](const auto&)->Value { // default
 						throw AddressException();

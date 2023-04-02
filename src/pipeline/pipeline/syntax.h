@@ -96,7 +96,7 @@ namespace byfxxm {
 		}
 
 		static SyntaxNodeList::iterator _FindMinPriority(SubList list) {
-			return std::ranges::min_element(list, [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
+			auto less = [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
 				size_t lhs_pri = default_priority;
 				size_t rhs_pri = default_priority;
 
@@ -106,8 +106,17 @@ namespace byfxxm {
 					rhs_pri = token_kind_tuples.at(p->kind).priority;
 
 				return lhs_pri < rhs_pri;
-				}
-			);
+			};
+
+			auto ret = std::ranges::min_element(list, less);
+			if (auto p = std::get_if<token::Token>(&*ret);
+				p && (p->kind == token::Kind::PLUS
+				|| p->kind == token::Kind::MINUS
+				|| p->kind == token::Kind::MUL
+				|| p->kind == token::Kind::DIV))
+				ret = std::ranges::min_element(list | std::views::reverse, less).base() - 1;
+
+			return ret;
 		}
 
 		static Abstree::NodePtr _CurNode(SyntaxNode& node) {

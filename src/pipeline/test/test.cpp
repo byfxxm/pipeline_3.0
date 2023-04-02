@@ -92,6 +92,18 @@ public:
 	virtual bool G0(const byfxxm::Gparams&, const byfxxm::Address&) override {
 		return true;
 	}
+	virtual bool G1(const byfxxm::Gparams&, const byfxxm::Address&) override {
+		return true;
+	}
+	virtual bool G2(const byfxxm::Gparams&, const byfxxm::Address&) override {
+		return true;
+	}
+	virtual bool G3(const byfxxm::Gparams&, const byfxxm::Address&) override {
+		return true;
+	}
+	virtual bool G4(const byfxxm::Gparams&, const byfxxm::Address&) override {
+		return true;
+	}
 };
 
 void TestSyntax() {

@@ -7,18 +7,18 @@
 
 namespace byfxxm {
 	template <class... Ts>
-	inline consteval std::variant<std::remove_reference_t<Ts>...> declval(Ts&&...) noexcept {
+	inline consteval std::variant<std::remove_reference_t<Ts>...> declvariant(Ts&&...) noexcept {
 		return {};
 	}
 
 	// 一元操作符
-	using Unary = decltype(declval(
+	using Unary = decltype(declvariant(
 		predicate::Neg
 		, predicate::Pos
 	));
 
 	// 二元操作符
-	using Binary = decltype(declval(
+	using Binary = decltype(declvariant(
 		predicate::Plus
 		, predicate::Minus
 		, predicate::Multi
@@ -26,14 +26,19 @@ namespace byfxxm {
 		, predicate::Assign
 	));
 
-	using Sharp = decltype(declval(
+	using Sharp = decltype(declvariant(
 		predicate::Sharp
+	));
+
+	using Gcmd = decltype(declvariant(
+		predicate::Gcmd
 	));
 
 	template <class... Ts>
 	struct Overload : Ts...{using Ts::operator()...; };
 
-	using Predicate = std::variant<Value, Unary, Binary, Sharp>;
+	// 定义谓词
+	using Predicate = std::variant<Value, Unary, Binary, Sharp, Gcmd>;
 
 	class Abstree {
 	public:
@@ -48,12 +53,12 @@ namespace byfxxm {
 		Abstree(NodePtr&& root, Address& addr, bool* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _cond(cond) {
 		}
 
-		Value operator()(const Ginterface* pimpl = nullptr) {
+		Value operator()(Ginterface* pimpl = nullptr) {
 			return _Execute(_root, pimpl);
 		}
 
 	private:
-		Value _Execute(NodePtr& node, const Ginterface* pimpl) {
+		Value _Execute(NodePtr& node,Ginterface* pimpl) {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 
@@ -76,6 +81,12 @@ namespace byfxxm {
 					},
 					[&](const Sharp& sharp) {
 						return std::visit([&](auto&& func) { return func(v[0], _addr); }, sharp);
+					},
+					[&](const Gcmd& gcmd) {
+						return std::visit([&](auto&& func) {return func(v, pimpl, _addr); }, gcmd);
+					},
+					[&](auto&&)->Value {
+						throw AddressException();
 					}
 				}, node->pred);
 		}

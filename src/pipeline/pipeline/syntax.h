@@ -144,6 +144,9 @@ namespace byfxxm {
 					[&](const Sharp& sharp) {
 						if (node->subs.size() != 1)
 							throw SyntaxException();
+					},
+					[&](auto&&) {
+						throw SyntaxException();
 					}
 				}, node->pred);
 		}

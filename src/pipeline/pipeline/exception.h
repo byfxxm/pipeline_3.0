@@ -13,4 +13,8 @@ namespace byfxxm{
 	class SyntaxException : public ParseException {
 
 	};
+
+	class AddressException : public ParseException {
+
+	};
 }

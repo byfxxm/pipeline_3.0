@@ -4,6 +4,7 @@
 #include <variant>
 #include <string>
 #include "exception.h"
+#include "ginterface.h"
 
 namespace byfxxm {
 	enum class Kind {
@@ -48,7 +49,7 @@ namespace byfxxm {
 		Z,
 	};
 
-	using Value = std::variant<double, double*, std::string>;
+	using Value = std::variant<double, double*, std::string, Gtag>;
 
 	// 种别码
 	struct Token {

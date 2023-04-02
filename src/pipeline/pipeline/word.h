@@ -66,16 +66,6 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<Token> Rest(std::string& word, Peek peek, Get get) const override {
-				//while (1) {
-				//	auto ch = peek();
-				//	if (!IsSymbol(ch))
-				//		break;
-				//	word.push_back(get());
-				//}
-
-				//if (!IsSymbol(word))
-				//	throw LexException();
-
 				return Token{ symbols.at(word), std::nullopt };
 			}
 		};

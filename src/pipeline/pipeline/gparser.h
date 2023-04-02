@@ -6,15 +6,12 @@
 #include "ginterface.h"
 
 namespace byfxxm {
-	template <class T>
-	concept SyntaxConcept = requires{
-		{ std::declval<T>().Next() }->std::same_as<std::optional<Abstree>>;
-	};
-
-	template <SyntaxConcept T>
 	class Gparser {
 	public:
-		Gparser(T&& syntax) : _syntax(std::move(syntax)) {
+		Gparser(const std::filesystem::path& file) : _syntax(file) {
+		}
+
+		Gparser(const std::string& memory) : _syntax(memory) {
 		}
 
 		void Run(const Ginterface& pimpl) {
@@ -28,9 +25,6 @@ namespace byfxxm {
 		}
 
 	private:
-		T _syntax;
+		Syntax _syntax;
 	};
-
-	template <SyntaxConcept T>
-	Gparser(T&&) -> Gparser<std::remove_cvref_t<T>>;
 }

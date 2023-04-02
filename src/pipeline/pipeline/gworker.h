@@ -10,6 +10,6 @@ namespace byfxxm {
 		}
 
 	private:
-		std::unique_ptr<Gparser<Syntax<Lexer>>> _parser;
+		std::unique_ptr<Gparser> _parser;
 	};
 }

@@ -105,7 +105,7 @@ void TestSyntax() {
 		#3=#[2*#[#1+ #2]]/5
 )";
 
-	auto syntax = byfxxm::Syntax(byfxxm::Lexer(s));
+	auto syntax = byfxxm::Syntax(s);
 	while (1) {
 		auto tree = syntax.Next();
 		if (!tree.has_value())
@@ -127,7 +127,7 @@ void TestParser() {
 		#3=#[2*#[#1+ #2]]/5
 )";
 
-	auto parser = byfxxm::Gparser(byfxxm::Syntax(byfxxm::Lexer(s)));
+	auto parser = byfxxm::Gparser(s);
 	parser.Run(GImpl());
 }
 

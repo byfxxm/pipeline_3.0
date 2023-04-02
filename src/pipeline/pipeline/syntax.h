@@ -7,13 +7,6 @@
 #include "address.h"
 
 namespace byfxxm {
-	template <class T>
-	concept LexerConcept = requires{
-		{ std::declval<T>().Next() }->std::same_as<Token>;
-		T(std::declval<const std::filesystem::path&>());
-		T(std::declval<const std::string&>());
-	};
-
 	inline constexpr size_t default_priority = -1;
 
 	struct TokenKindTuple {
@@ -158,10 +151,12 @@ namespace byfxxm {
 
 	inline constexpr Expresion expr;
 
-	template <LexerConcept Lex>
 	class Syntax {
 	public:
-		Syntax(Lex&& lex) noexcept : _lex(std::move(lex)) {
+		Syntax(const std::filesystem::path& file) : _lex(file) {
+		}
+
+		Syntax(const std::string& memory) : _lex(memory) {
 		}
 
 		std::optional<Abstree> Next() {
@@ -190,11 +185,8 @@ namespace byfxxm {
 		}
 
 	private:
-		Lex _lex;
+		Lexer _lex;
 		size_t _lineno{ 0 };
 		Address _addr;
 	};
-
-	template <LexerConcept T>
-	Syntax(T&&) -> Syntax<T>;
 }

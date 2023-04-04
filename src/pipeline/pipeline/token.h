@@ -4,6 +4,11 @@
 #include <variant>
 
 namespace byfxxm {
+	inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+	inline bool IsNaN(double v) {
+		return v != v;
+	}
+
 	namespace token {
 		enum class Kind {
 			CON,			// 常量
@@ -39,6 +44,7 @@ namespace byfxxm {
 			END,
 			NEWLINE,
 			//BLANK,
+			SEMI,
 
 			G,
 			M,
@@ -53,7 +59,7 @@ namespace byfxxm {
 		// 种别码
 		struct Token {
 			Kind kind;
-			std::optional<double> value;
+			double value{ nan };
 		};
 
 		using Mapping = std::unordered_map<std::string, token::Kind>;
@@ -76,13 +82,14 @@ namespace byfxxm {
 		};
 
 		inline const Mapping symbols = {
-			{ "[",			Kind::LB,			},
-			{ "]",			Kind::RB,			},
-			{ "+",			Kind::PLUS,		},
-			{ "-",			Kind::MINUS	,	},
-			{ "*",			Kind::MUL	,		},
-			{ "/",			Kind::DIV,			},
-			{ "=",			Kind::ASSIGN,			},
+			{"[", Kind::LB},
+			{"]", Kind::RB},
+			{"+", Kind::PLUS},
+			{"-", Kind::MINUS},
+			{"*", Kind::MUL},
+			{"/", Kind::DIV},
+			{"=", Kind::ASSIGN},
+			{";", Kind::SEMI},
 		};
 
 		inline const Mapping gcodes = {
@@ -142,6 +149,10 @@ namespace byfxxm {
 
 	inline bool IsSharp(char ch) {
 		return ch == '#';
+	}
+
+	inline bool IsSharp(const std::string word) {
+		return word == "#";
 	}
 
 	inline constexpr char newline[] = {

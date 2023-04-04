@@ -10,7 +10,7 @@
 #define IsDoublePtr(v) IsType(v, double*)
 
 namespace byfxxm {
-	using Value = std::variant<double, double*, std::string, Gtag, bool>;
+	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag>;
 
 	namespace predicate {
 		inline auto Plus = [](const Value& lhs, const Value& rhs) {
@@ -121,34 +121,6 @@ namespace byfxxm {
 				}, value);
 		};
 
-		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
-			if (tags.empty())
-				throw AddressException();
-
-			std::ranges::for_each(tags, [](auto&& ele) {
-				if (!std::holds_alternative<Gtag>(ele))
-					throw AddressException();
-
-				if (!IsGcode(std::get<Gtag>(ele).code))
-					throw AddressException();
-				});
-
-			auto& first = std::get<Gtag>(*tags.begin());
-			if (!gtag_to_ginterface.contains(first))
-				throw AddressException();
-
-			Gparams par;
-			std::for_each(tags.begin() + 1, tags.end(), [&](const Value& ele) {
-				par.push_back(std::get<Gtag>(ele));
-				});
-
-			auto& func = gtag_to_ginterface.at(first);
-			if (!(pimpl->*func)(par, addr))
-				throw AddressException();
-
-			return first;
-		};
-
 		inline auto GT = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
 				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
@@ -238,6 +210,49 @@ namespace byfxxm {
 					throw SyntaxException();
 				}, lhs, rhs);
 		};
+
+		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
+			if (tags.empty())
+				throw AddressException();
+
+			std::ranges::for_each(tags, [](auto&& ele) {
+				if (!std::holds_alternative<Gtag>(ele))
+					throw AddressException();
+
+				if (!IsGcode(std::get<Gtag>(ele).code))
+					throw AddressException();
+				});
+
+			auto& first = std::get<Gtag>(*tags.begin());
+			if (!gtag_to_ginterface.contains(first))
+				throw AddressException();
+
+			Gparams par;
+			std::for_each(tags.begin() + 1, tags.end(), [&](const Value& ele) {
+				par.push_back(std::get<Gtag>(ele));
+				});
+
+			if (!gtag_to_ginterface.contains(first))
+				throw AddressException();
+
+			auto& func = gtag_to_ginterface.at(first);
+			if (!(pimpl->*func)(par, addr))
+				throw AddressException();
+
+			return first;
+		};
+
+		template <token::Kind K>
+		inline auto Gcode = [](const Value& value) {
+			return std::visit([&](auto&& v)->Value {
+				if constexpr (IsDoublePtr(v))
+					return Gtag{ K, *v };
+				else if constexpr (IsDouble(v))
+					return Gtag{ K, v };
+				else
+					throw SyntaxException("gcode error");
+				}, value);
+		};
 	}
 
 	template <class... Ts>
@@ -249,6 +264,11 @@ namespace byfxxm {
 	using Unary = decltype(ToVariant(
 		predicate::Neg
 		, predicate::Pos
+		, predicate::Gcode<token::Kind::G>
+		, predicate::Gcode<token::Kind::M>
+		, predicate::Gcode<token::Kind::X>
+		, predicate::Gcode<token::Kind::Y>
+		, predicate::Gcode<token::Kind::Z>
 	));
 
 	// 二元操作符

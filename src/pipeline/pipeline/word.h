@@ -24,8 +24,9 @@ namespace byfxxm {
 				return IsSharp(ch);
 			}
 
-			virtual std::optional<token::Token> Rest(std::string& word, const Utils&) const override {
-				return token::Token{ token::Kind::SHARP, std::nullopt };
+			virtual std::optional<token::Token> Rest(std::string& word, const Utils& utils) const override {
+				assert(IsSharp(word));
+				return token::Token{ token::Kind::SHARP, nan };
 			}
 		};
 
@@ -60,9 +61,9 @@ namespace byfxxm {
 				}
 
 				if (!IsKeyword(word))
-					throw LexException();
+					return std::nullopt;
 
-				return token::Token{ token::keywords.at(word), std::nullopt };
+				return token::Token{ token::keywords.at(word), nan };
 			}
 		};
 
@@ -81,7 +82,7 @@ namespace byfxxm {
 				else if (sym == token::Kind::MINUS && utils.last.has_value() && utils.last.value().kind != token::Kind::CON && utils.last.value().kind != token::Kind::RB)
 					sym = token::Kind::NEG;
 
-				return token::Token{ sym, std::nullopt };
+				return token::Token{ sym, nan };
 			}
 		};
 
@@ -91,17 +92,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<token::Token> Rest(std::string& word, const Utils& utils) const override {
-				while (1) {
-					auto ch = utils.peek();
-					if (!std::isdigit(ch) && !IsSharp(ch))
-						break;
-					word.push_back(utils.get());
-				}
-
-				if (!IsGcode(word))
-					throw LexException();
-
-				return token::Token{ token::symbols.at(word), std::nullopt };
+				return token::Token{ token::gcodes.at(word), nan };
 			}
 		};
 
@@ -123,7 +114,7 @@ namespace byfxxm {
 				}
 
 				assert(IsNewline(word));
-				return token::Token{ token::Kind::NEWLINE, std::nullopt };
+				return token::Token{ token::Kind::NEWLINE, nan };
 			}
 		};
 	}

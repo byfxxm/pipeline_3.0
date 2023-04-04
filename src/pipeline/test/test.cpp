@@ -78,7 +78,7 @@ void TestLexer() {
 	std::vector<byfxxm::token::Token> res;
 	byfxxm::token::Token tok;
 	byfxxm::Lexer lex(s);
-	while ((tok = lex.Next()).kind != byfxxm::token::Kind::KEOF) {
+	while ((tok = lex.Get()).kind != byfxxm::token::Kind::KEOF) {
 		res.emplace_back(std::move(tok));
 	}
 
@@ -131,25 +131,41 @@ void TestSyntax() {
 void TestParser() {
 	std::string s =
 		R"(
+
+
 		#1 = -10
 		#2 = 20
 		#30 = 5
 		#10 =#1+#30*#2-3
-		#-174 = -2
-		#3=+#-[2*#[#1+ #2]]/5
+		#-174 = -2 ; #3=+#-[2*#[#1+ #2]]/5
 		#3 LT #2
+
+
 )";
 
 	auto parser = byfxxm::Gparser(s);
-	parser.Run(GImpl());
+	auto pimpl = GImpl();
+	parser.Run(pimpl);
+}
+
+void TestParser1() {
+	std::string s =
+		R"(
+		#2 = 1
+		#3=2
+		#20=0
+		G#2X#3Y#20
+)";
+	auto parser = byfxxm::Gparser(s);
+	auto pimpl = GImpl();
+	parser.Run(pimpl);
 }
 
 int main()
 {
 	//TestPipeline();
-	TestLexer();
-	TestSyntax();
 	TestParser();
+	TestParser1();
 	return 0;
 }
 

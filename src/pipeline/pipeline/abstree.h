@@ -27,7 +27,7 @@ namespace byfxxm {
 		}
 
 	private:
-		Value _Execute(NodePtr& node,Ginterface* pimpl) {
+		Value _Execute(NodePtr& node, Ginterface* pimpl) {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 

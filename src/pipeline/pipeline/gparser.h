@@ -14,14 +14,15 @@ namespace byfxxm {
 		Gparser(const std::string& memory) : _syntax(memory) {
 		}
 
-		void Run(const Ginterface& pimpl) {
-			try {
+		void Run(Ginterface& pimpl) {
+			//try {
 				while (auto abs_tree = _syntax.Next()) {
-					abs_tree.value()();
+					abs_tree.value()(&pimpl);
 				}
-			}
-			catch (const ParseException&) {
-			}
+			//}
+			//catch (const ParseException&) {
+			//	throw;
+			//}
 		}
 
 		const Address& Addr() const {

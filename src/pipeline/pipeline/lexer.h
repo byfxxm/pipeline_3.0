@@ -41,23 +41,37 @@ namespace byfxxm {
 			swap(*this, copy);
 		}
 
-		token::Token Next() {
+		token::Token Get() {
+			_lasttok = Peek();
+			_peektok.reset();
+			return _lasttok.value();
+		}
+
+		token::Token Peek() {
+			if (!_peektok.has_value())
+				_peektok = _Next();
+
+			return _peektok.value();
+		}
+
+	private:
+		token::Token _Next() {
 			return std::visit(
 				[this](auto&& stream)
 				{
-					if (stream.eof())
-						return token::Token{ token::Kind::KEOF, std::nullopt };
+					if (stream.eof())	
+						return token::Token{ token::Kind::KEOF, nan };
 
-					std::string word;
 					_SkipSpace(stream);
 					auto ch = stream.get();
+					std::string word;
 					word.push_back(ch);
 
 					auto peek = [&]() {return stream.peek(); };
 					auto get = [&]() {return stream.get(); };
 					for (const auto& p : WordsList::words) {
-						if (std::optional<token::Token> tok; p->First(ch) && (tok = p->Rest(word, { peek, get, _lasttok })).has_value()) {
-							_lasttok = tok;
+						std::optional<token::Token> tok;
+						if (p->First(ch) && (tok = p->Rest(word, { peek, get, _lasttok })).has_value()) {
 							return tok.value();
 						}
 					}
@@ -69,5 +83,6 @@ namespace byfxxm {
 	private:
 		StreamType _stream;
 		std::optional<token::Token> _lasttok;
+		std::optional<token::Token> _peektok;
 	};
 }

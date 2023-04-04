@@ -148,8 +148,10 @@
     <ClInclude Include="code.h" />
     <ClInclude Include="coro.h" />
     <ClInclude Include="exception.h" />
+    <ClInclude Include="production.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ginterface.h" />
+    <ClInclude Include="grammar.h" />
     <ClInclude Include="gworker.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="gparser.h" />

@@ -57,9 +57,8 @@ namespace byfxxm {
 	private:
 		token::Token _Next() {
 			return std::visit(
-				[this](auto&& stream)
-				{
-					if (stream.eof())	
+				[this](auto&& stream) {
+					if (stream.eof())
 						return token::Token{ token::Kind::KEOF, nan };
 
 					_SkipSpace(stream);

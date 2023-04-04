@@ -55,15 +55,6 @@ namespace byfxxm {
 		}
 
 	private:
-		bool _Condition(Abstree::NodePtr&& absnode) {
-			auto res = Abstree(std::move(absnode), _addr)();
-			if (!std::holds_alternative<bool>(res))
-				throw SyntaxException();
-
-			return std::get<bool>(res);
-		}
-
-	private:
 		Lexer _lex;
 		size_t _lineno{ 0 };
 		Address _addr;

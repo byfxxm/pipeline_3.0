@@ -23,7 +23,7 @@ namespace byfxxm{
 		std::string _error;
 	};
 
-	class AddressException : public ParseException {
+	class AbstreeException : public ParseException {
 	public:
 		using ParseException::ParseException;
 	};

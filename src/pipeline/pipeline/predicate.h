@@ -213,19 +213,19 @@ namespace byfxxm {
 
 		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
 			if (tags.empty())
-				throw AddressException();
+				throw AbstreeException();
 
 			std::ranges::for_each(tags, [](auto&& ele) {
 				if (!std::holds_alternative<Gtag>(ele))
-					throw AddressException();
+					throw AbstreeException();
 
 				if (!IsGcode(std::get<Gtag>(ele).code))
-					throw AddressException();
+					throw AbstreeException();
 				});
 
 			auto& first = std::get<Gtag>(*tags.begin());
 			if (!gtag_to_ginterface.contains(first))
-				throw AddressException();
+				throw AbstreeException();
 
 			Gparams par;
 			std::for_each(tags.begin() + 1, tags.end(), [&](const Value& ele) {
@@ -233,11 +233,11 @@ namespace byfxxm {
 				});
 
 			if (!gtag_to_ginterface.contains(first))
-				throw AddressException();
+				throw AbstreeException();
 
 			auto& func = gtag_to_ginterface.at(first);
 			if (!(pimpl->*func)(par, addr))
-				throw AddressException();
+				throw AbstreeException();
 
 			return first;
 		};

@@ -16,18 +16,15 @@ namespace byfxxm {
 			FOR,				// for
 			IF,					// IF
 			ELSE,			// ELSE
-			//SLP,				// (
-			//SRP,				// )
-			LB,             // [
-			RB,            // ]
-			//LP,				// {
+			LB,				// [
+			RB,				// ]
 			POS,				// +
 			NEG,				// -
 			PLUS,			// +
 			MINUS,			// -
 			MUL,			// *
 			DIV,				// /
-			ASSIGN,				// =
+			ASSIGN,		// =
 			EQ,				// ==
 			NE,				// !=
 			LT,				// <
@@ -42,9 +39,8 @@ namespace byfxxm {
 			THEN,
 			DO,
 			END,
-			NEWLINE,
-			//BLANK,
-			SEMI,
+			NEWLINE,		// \r | \n | \r\n
+			SEMI,			// ;
 
 			G,
 			M,

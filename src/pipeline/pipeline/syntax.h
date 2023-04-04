@@ -8,7 +8,6 @@
 #include "grammar.h"
 
 namespace byfxxm {
-
 	class Syntax {
 	public:
 		Syntax(const std::filesystem::path& file) : _lex(file) {

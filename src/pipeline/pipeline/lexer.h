@@ -13,7 +13,7 @@
 #include "word.h"
 
 namespace byfxxm {
-	inline void _SkipSpace(auto&& stream) {
+	inline void SkipSpaces(auto&& stream) {
 		while (IsSpace(stream.peek())) {
 			stream.get();
 		}
@@ -61,7 +61,7 @@ namespace byfxxm {
 					if (stream.eof())
 						return token::Token{ token::Kind::KEOF, nan };
 
-					_SkipSpace(stream);
+					SkipSpaces(stream);
 					auto ch = stream.get();
 					std::string word;
 					word.push_back(ch);

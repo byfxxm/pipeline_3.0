@@ -12,7 +12,7 @@ namespace byfxxm {
 
 		_Value& operator[](const _Key& key) {
 			if (_dict.find(key) == _dict.end())
-				_dict.insert(std::make_pair(key, std::make_unique<double>()));
+				_dict.insert(std::make_pair(key, std::make_unique<double>(nan)));
 
 			return _dict.at(key);
 		}

@@ -153,7 +153,7 @@ void TestParser1() {
 		R"(
 		#2 = 1
 		#3=2
-		#20=0
+		#20=#4
 		G#2X#3Y#20
 )";
 	auto parser = byfxxm::Gparser(s);

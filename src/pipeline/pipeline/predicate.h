@@ -181,7 +181,7 @@ namespace byfxxm {
 				}, lhs, rhs);
 		};
 
-		inline auto Equal = [](const Value& lhs, const Value& rhs) {
+		inline auto EQ = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
 				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
 					return Value{ *l == *r };
@@ -196,7 +196,7 @@ namespace byfxxm {
 				}, lhs, rhs);
 		};
 
-		inline auto NotEqual = [](const Value& lhs, const Value& rhs) {
+		inline auto NE = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
 				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
 					return Value{ *l != *r };
@@ -282,8 +282,8 @@ namespace byfxxm {
 		, predicate::GE
 		, predicate::LT
 		, predicate::LE
-		, predicate::Equal
-		, predicate::NotEqual
+		, predicate::EQ
+		, predicate::NE
 	));
 
 	using Sharp = decltype(ToVariant(

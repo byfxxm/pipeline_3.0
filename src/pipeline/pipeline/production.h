@@ -15,7 +15,7 @@ namespace byfxxm {
 		Predicate pred{ Value() };
 	};
 
-	inline std::unordered_map<token::Kind, TokenKindTuple> token_kind_tuples = {
+	inline const std::unordered_map<token::Kind, TokenKindTuple> token_kind_tuples = {
 		{token::Kind::ASSIGN, {1, Binary{predicate::Assign}}},
 		{token::Kind::GT, {2, Binary{predicate::GT}}},
 		{token::Kind::GE, {2, Binary{predicate::GE}}},

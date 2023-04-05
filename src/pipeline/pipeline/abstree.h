@@ -24,7 +24,7 @@ namespace byfxxm {
 
 		Value operator()(Ginterface* pimpl = nullptr) {
 			auto res = _Execute(_root, pimpl);
-			if (!_condition) {
+			if (_condition) {
 				if (!std::holds_alternative<bool>(res))
 					throw AbstreeException();
 

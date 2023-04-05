@@ -229,6 +229,10 @@ namespace byfxxm {
 
 			Gparams par;
 			std::for_each(tags.begin() + 1, tags.end(), [&](const Value& ele) {
+				auto& tag = std::get<Gtag>(ele);
+				if (IsNaN(tag.value))
+					return;
+
 				par.push_back(std::get<Gtag>(ele));
 				});
 

@@ -28,6 +28,11 @@ namespace byfxxm {
 		{token::Kind::MUL, {4, Binary{predicate::Multi}}},
 		{token::Kind::DIV, {4, Binary{predicate::Div}}},
 		{token::Kind::SHARP, {5, Sharp{predicate::Sharp}}},
+		{token::Kind::G, {5, Unary{predicate::Gcode<token::Kind::G>}}},
+		{token::Kind::M, {5, Unary{predicate::Gcode<token::Kind::M>}}},
+		{token::Kind::X, {5, Unary{predicate::Gcode<token::Kind::X>}}},
+		{token::Kind::Y, {5, Unary{predicate::Gcode<token::Kind::Y>}}},
+		{token::Kind::Z, {5, Unary{predicate::Gcode<token::Kind::Z>}}},
 		{token::Kind::NEG, {5, Unary{predicate::Neg}}},
 		{token::Kind::POS, {5, Unary{predicate::Pos}}},
 		{token::Kind::CON, {}},
@@ -177,7 +182,7 @@ namespace byfxxm {
 			root->pred = Gcmd{};
 			for (auto iter = list.begin(); iter != list.end();) {
 				auto node = std::make_unique<Abstree::Node>();
-				node->pred = TokToPred(std::get<token::Token>(*iter++));
+				node->pred = _TokToPred(std::get<token::Token>(*iter++));
 				node->subs.push_back(std::move(std::get<Abstree::NodePtr>(*iter++)));
 				root->subs.push_back(std::move(node));
 			}
@@ -186,29 +191,11 @@ namespace byfxxm {
 		}
 
 	private:
-		static Predicate TokToPred(const token::Token& tok) {
-			Predicate ret;
-			switch (tok.kind) {
-			case token::Kind::G:
-				ret = Unary(predicate::Gcode<token::Kind::G>);
-				break;
-			case token::Kind::M:
-				ret = Unary(predicate::Gcode<token::Kind::G>);
-				break;
-			case token::Kind::X:
-				ret = Unary(predicate::Gcode<token::Kind::G>);
-				break;
-			case token::Kind::Y:
-				ret = Unary(predicate::Gcode<token::Kind::G>);
-				break;
-			case token::Kind::Z:
-				ret = Unary(predicate::Gcode<token::Kind::G>);
-				break;
-			default:
+		static Predicate _TokToPred(const token::Token& tok) {
+			if (!token_kind_tuples.contains(tok.kind))
 				throw SyntaxException();
-			}
 
-			return ret;
+			return token_kind_tuples.at(tok.kind).pred;
 		}
 	};
 

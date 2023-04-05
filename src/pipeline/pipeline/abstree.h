@@ -19,16 +19,13 @@ namespace byfxxm {
 			std::vector<NodePtr> subs;
 		};
 
-		Abstree(NodePtr&& root, Address& addr, bool* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _condition(cond) {
+		Abstree(NodePtr&& root, Address& addr, Value* cond = nullptr) noexcept : _root(std::move(root)), _addr(addr), _condition(cond) {
 		}
 
 		Value operator()(Ginterface* pimpl = nullptr) {
 			auto res = _Execute(_root, pimpl);
 			if (_condition) {
-				if (!std::holds_alternative<bool>(res))
-					throw AbstreeException();
-
-				*_condition = std::get<bool>(res);
+				*_condition = res;
 			}
 
 			return res;
@@ -71,6 +68,6 @@ namespace byfxxm {
 	private:
 		NodePtr _root;
 		Address& _addr;
-		bool* _condition{ nullptr };
+		Value* _condition{ nullptr };
 	};
 }

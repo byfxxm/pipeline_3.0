@@ -28,13 +28,13 @@ namespace byfxxm {
 		{token::Kind::MUL, {4, Binary{predicate::Multi}}},
 		{token::Kind::DIV, {4, Binary{predicate::Div}}},
 		{token::Kind::SHARP, {5, Sharp{predicate::Sharp}}},
+		{token::Kind::NEG, {5, Unary{predicate::Neg}}},
+		{token::Kind::POS, {5, Unary{predicate::Pos}}},
 		{token::Kind::G, {5, Unary{predicate::Gcode<token::Kind::G>}}},
 		{token::Kind::M, {5, Unary{predicate::Gcode<token::Kind::M>}}},
 		{token::Kind::X, {5, Unary{predicate::Gcode<token::Kind::X>}}},
 		{token::Kind::Y, {5, Unary{predicate::Gcode<token::Kind::Y>}}},
 		{token::Kind::Z, {5, Unary{predicate::Gcode<token::Kind::Z>}}},
-		{token::Kind::NEG, {5, Unary{predicate::Neg}}},
-		{token::Kind::POS, {5, Unary{predicate::Pos}}},
 		{token::Kind::CON, {}},
 	};
 

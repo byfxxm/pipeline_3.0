@@ -50,6 +50,9 @@ namespace byfxxm {
 			A,
 			B,
 			C,
+			I,
+			J,
+			K,
 		};
 
 		// 种别码

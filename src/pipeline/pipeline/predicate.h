@@ -273,6 +273,12 @@ namespace byfxxm {
 		, predicate::Gcode<token::Kind::X>
 		, predicate::Gcode<token::Kind::Y>
 		, predicate::Gcode<token::Kind::Z>
+		, predicate::Gcode<token::Kind::A>
+		, predicate::Gcode<token::Kind::B>
+		, predicate::Gcode<token::Kind::C>
+		, predicate::Gcode<token::Kind::I>
+		, predicate::Gcode<token::Kind::J>
+		, predicate::Gcode<token::Kind::K>
 	));
 
 	// 二元操作符

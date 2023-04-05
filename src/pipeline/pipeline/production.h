@@ -35,6 +35,12 @@ namespace byfxxm {
 		{token::Kind::X, {5, Unary{predicate::Gcode<token::Kind::X>}}},
 		{token::Kind::Y, {5, Unary{predicate::Gcode<token::Kind::Y>}}},
 		{token::Kind::Z, {5, Unary{predicate::Gcode<token::Kind::Z>}}},
+		{token::Kind::A, {5, Unary{predicate::Gcode<token::Kind::A>}}},
+		{token::Kind::B, {5, Unary{predicate::Gcode<token::Kind::B>}}},
+		{token::Kind::C, {5, Unary{predicate::Gcode<token::Kind::C>}}},
+		{token::Kind::I, {5, Unary{predicate::Gcode<token::Kind::I>}}},
+		{token::Kind::J, {5, Unary{predicate::Gcode<token::Kind::J>}}},
+		{token::Kind::K, {5, Unary{predicate::Gcode<token::Kind::K>}}},
 		{token::Kind::CON, {}},
 	};
 

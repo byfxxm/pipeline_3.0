@@ -35,6 +35,7 @@ namespace byfxxm {
 			auto peek = [&]() {return _lex.Peek(); };
 			auto line = [&]() {return _lineno; };
 			auto chunk = [&](std::unique_ptr<chunk::Chunk>&& chunk_) {_remain_chunk = std::move(chunk_); };
+			auto returnval = [&]()->Value& {return _return; };
 
 			while (1) {
 				auto tok = get();
@@ -48,7 +49,7 @@ namespace byfxxm {
 				for (; iter != std::end(GrammarsList::grammars); ++iter) {
 					std::optional<SyntaxNodeList> sub;
 					if ((*iter)->First(tok)) {
-						if (!(sub = (*iter)->Rest(std::move(list), { get, peek, line, chunk })).has_value())
+						if (!(sub = (*iter)->Rest(std::move(list), { get, peek, line, chunk, returnval })).has_value())
 							break;
 						return Abstree(expr(std::move(sub.value())), _addr, &_return);
 					}

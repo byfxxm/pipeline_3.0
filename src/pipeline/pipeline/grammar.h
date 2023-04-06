@@ -18,12 +18,14 @@ namespace byfxxm {
 		using Peek = std::function<token::Token()>;
 		using Line = std::function<size_t()>;
 		using Chunk = std::function<void(std::unique_ptr<chunk::Chunk>&&)>;
+		using ReturnVal = std::function<Value&()>;
 
 		struct Utils {
 			Get get;
 			Peek peek;
 			Line line;
 			Chunk chunk;
+			ReturnVal returnval;
 		};
 
 		inline SyntaxNodeList GetLine(const Utils& utils, SyntaxNodeList list = SyntaxNodeList()) {
@@ -38,7 +40,7 @@ namespace byfxxm {
 			return list;
 		}
 
-		inline void SkipNewline(const Utils& utils) {
+		inline void SkipNewlines(const Utils& utils) {
 			while (1) {
 				auto tok = utils.peek();
 				if (tok.kind != token::Kind::NEWLINE)
@@ -130,7 +132,9 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
-#if 0
+				using If = chunk::IfElse::If;
+				using Else = chunk::IfElse::Else;
+
 				auto ReadCondition = [&utils]()->chunk::Segment {
 					SyntaxNodeList list;
 					while (1) {
@@ -144,37 +148,38 @@ namespace byfxxm {
 						list.push_back(tok);
 					}
 
-					return { std::move(list), utils.line(), true};
+					return { std::move(list), utils.line() };
 				};
 
 				auto ReadLine = [&utils]()->std::optional<chunk::Segment> {
+					SkipNewlines(utils);
 					auto tok = utils.peek();
 					if (tok.kind != token::Kind::SHARP && tok.kind != token::Kind::LB)
 						return std::nullopt;
 
-					return chunk::Segment(GetLine(utils), utils.line(), false);
-				};
-
-				auto ReadScope = [&](chunk::IfElse& ifelse) {
-					SkipNewline(utils);
-					ifelse._segs.push_back(ReadCondition());
-					SkipNewline(utils);
-					while (auto nodelist = ReadLine()) {
-						ifelse._segs.push_back(std::move(nodelist.value()));
-					}
+					return chunk::Segment(GetLine(utils), utils.line());
 				};
 
 				// read if
-				chunk::IfElse ifelse;
-				ReadScope(ifelse);
+				chunk::IfElse ifelse(utils.returnval());
+				ifelse._segs.push_back(If(ReadCondition()));
+				while (auto li = ReadLine()) {
+					SkipNewlines(utils);
+					ifelse._segs.back().scope.push_back(std::move(li.value()));
+				}
 
 				// read elseif
 				while (1) {
+					SkipNewlines(utils);
 					auto tok = utils.peek();
 					if (tok.kind != token::Kind::ELSEIF)
 						break;
 
-					ReadScope(ifelse);
+					ifelse._segs.push_back(If(ReadCondition()));
+					while (auto li = ReadLine()) {
+						SkipNewlines(utils);
+						ifelse._segs.back().scope.push_back(std::move(li.value()));
+					}
 				}
 
 				// read else
@@ -182,8 +187,11 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::ELSE)
 					throw SyntaxException();
 
-				SkipNewline(utils);
-				ifelse._segs.push_back(ReadLine().value());
+				SkipNewlines(utils);
+				while (auto li = ReadLine()) {
+					SkipNewlines(utils);
+					ifelse._else.scope.push_back(std::move(li.value()));
+				}
 
 				// endif
 				tok = utils.get();
@@ -196,8 +204,6 @@ namespace byfxxm {
 
 				utils.chunk(std::make_unique<chunk::IfElse>(std::move(ifelse)));
 				return std::move(ret.value());
-#endif
-				return {};
 			}
 		};
 	}

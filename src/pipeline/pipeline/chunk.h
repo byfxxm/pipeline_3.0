@@ -10,7 +10,6 @@ namespace byfxxm {
 		struct Segment {
 			SyntaxNodeList list;
 			size_t line{ 0 };
-			bool cond{ false };
 		};
 
 		class Chunk {
@@ -21,34 +20,58 @@ namespace byfxxm {
 
 		class IfElse : public Chunk {
 			virtual std::optional<SyntaxNodeList> Next() override {
-				if (_curseg == _segs.size()) {
-					if (_curseg == _else.segs.size())
+				auto scope = [&](std::vector<Segment>&& scope)->std::optional<SyntaxNodeList> {
+					if (_scopeindex == scope.size())
 						return std::nullopt;
 
-					return std::move(_else.segs[_curseg++].list);
+					return std::move(scope[_scopeindex++].list);
+				};
+
+				if (_iscond) {
+					if (_curseg == 0)
+						return std::move(_segs[_curseg++].cond.list);
+
+					if (_curseg > 0 && _curseg < _segs.size()) {
+						if (!std::holds_alternative<bool>(_cond))
+							throw SyntaxException();
+
+						auto cond = std::get<bool>(_cond);
+						if (cond) {
+							_iscond = false;
+							return scope(std::move(_segs[_curseg].scope));
+						}
+
+						return std::move(_segs[_curseg++].cond.list);
+					}
+
+					_iscond = false;
+					return scope(std::move(_segs[_curseg].scope));
 				}
 
-				return std::move(_segs[_curseg++].cond.list);
+				if (_curseg == _segs.size())
+					return scope(std::move(_else.scope));
+
+				return scope(std::move(_segs[_curseg].scope));
 			}
 
-			IfElse(Value* p) : _cond(p) {}
+			IfElse(const Value& cond) : _cond(cond) {}
 
 			struct If {
 				Segment cond;
-				std::vector<Segment> segs;
+				std::vector<Segment> scope;
 			};
 
 			struct Else {
-				std::vector<Segment> segs;
+				std::vector<Segment> scope;
 			};
 
 			friend class grammar::IfElse;
 			std::vector<If> _segs;
 			Else _else;
 			size_t _curseg{ 0 };
-			size_t _scopeindex{ 0 };
 			bool _iscond{ true };
-			Value* _cond{ nullptr };
+			const Value& _cond;
+			size_t _scopeindex{ 0 };
 		};
 	}
 }

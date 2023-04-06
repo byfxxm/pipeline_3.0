@@ -243,7 +243,7 @@ namespace byfxxm {
 			if (!(pimpl->*func)(par, addr))
 				throw AbstreeException();
 
-			return first;
+			return std::monostate{};
 		};
 
 		template <token::Kind K>

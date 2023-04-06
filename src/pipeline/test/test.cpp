@@ -154,7 +154,23 @@ void TestParser1() {
 		#2 = 1
 		#3=2
 		#20=#4
-		G#2X#3Y#20
+		G#2X-#3Y#20
+)";
+	auto parser = byfxxm::Gparser(s);
+	auto pimpl = GImpl();
+	parser.Run(pimpl);
+}
+
+void TestDebug() {
+	std::string s =
+		R"(
+		#1 = 1
+		#2 = 2
+		IF #1 LT #2 THEN
+			#3 = 3
+		ELSE
+			#4 = 4
+		ENDIF
 )";
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
@@ -166,6 +182,7 @@ int main()
 	//TestPipeline();
 	TestParser();
 	TestParser1();
+	TestDebug();
 	return 0;
 }
 

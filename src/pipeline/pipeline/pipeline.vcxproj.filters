@@ -87,6 +87,9 @@
     <ClInclude Include="grammar.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="chunk.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">

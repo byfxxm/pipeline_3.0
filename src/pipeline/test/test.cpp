@@ -168,6 +168,13 @@ void TestDebug() {
 		#2 = 2
 		IF #1 LT #2 THEN
 			#3 = 3
+			
+			IF #3 LT #3 THEN
+				#6 = 6
+			ELSE
+				#7=7
+			ENDIF
+			#5=5
 		ELSE
 			#4 = 4
 		ENDIF
@@ -180,8 +187,8 @@ void TestDebug() {
 int main()
 {
 	//TestPipeline();
-	TestParser();
-	TestParser1();
+	//TestParser();
+	//TestParser1();
 	TestDebug();
 	return 0;
 }

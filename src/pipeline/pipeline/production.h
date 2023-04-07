@@ -173,7 +173,7 @@ namespace byfxxm {
 					},
 					[&](const auto&) { // default
 						throw SyntaxException();
-					}
+					},
 				}, node->pred);
 		}
 	};

@@ -18,14 +18,14 @@ namespace byfxxm {
 		using Peek = std::function<token::Token()>;
 		using Line = std::function<size_t()>;
 		using Chunk = std::function<void(std::unique_ptr<chunk::Chunk>&&)>;
-		using ReturnVal = std::function<Value&()>;
+		using ReturenRef = std::function<Value&()>;
 
 		struct Utils {
 			Get get;
 			Peek peek;
 			Line line;
 			Chunk chunk;
-			ReturnVal returnval;
+			ReturenRef retref;
 		};
 
 		inline SyntaxNodeList GetLine(const Utils& utils, SyntaxNodeList list = SyntaxNodeList()) {
@@ -132,10 +132,20 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
+				auto ifelse = _NestRest(std::move(list), utils);
+				auto ret = ifelse.Next();
+				if (!ret.has_value())
+					throw SyntaxException();
+
+				utils.chunk(std::make_unique<chunk::IfElse>(std::move(ifelse)));
+				return std::move(ret.value());
+			}
+
+			static chunk::IfElse _NestRest(SyntaxNodeList&& list, const Utils& utils) {
 				using If = chunk::IfElse::If;
 				using Else = chunk::IfElse::Else;
 
-				auto ReadCondition = [&utils]()->chunk::Segment {
+				auto ReadCondition = [&utils]()->chunk::SegmentEx {
 					SyntaxNodeList list;
 					while (1) {
 						auto tok = utils.get();
@@ -151,22 +161,41 @@ namespace byfxxm {
 					return { std::move(list), utils.line() };
 				};
 
-				auto ReadLine = [&utils]()->std::optional<chunk::Segment> {
+				auto ReadLine = [&utils]()->std::optional<chunk::SegmentEx> {
 					SkipNewlines(utils);
 					auto tok = utils.peek();
 					if (tok.kind != token::Kind::SHARP && tok.kind != token::Kind::LB)
 						return std::nullopt;
 
-					return chunk::Segment(GetLine(utils), utils.line());
+					return chunk::SegmentEx(GetLine(utils), utils.line());
+				};
+
+				auto NestIf = [&utils]()->std::optional<chunk::IfElse> {
+					auto tok = utils.peek();
+					if (tok.kind != token::Kind::IF)
+						return {};
+
+					SyntaxNodeList list;
+					list.emplace_back(utils.get());
+					return _NestRest(std::move(list), utils);
+				};
+
+				auto ReadScope = [&](std::vector<chunk::SegmentEx>& scope) {
+					while (1) {
+						SkipNewlines(utils);
+						if (auto line = ReadLine())
+							scope.push_back(std::move(line.value()));
+						else if (auto nest = NestIf(); nest.has_value())
+							scope.push_back(chunk::SegmentEx(chunk::Segment(std::make_unique<chunk::IfElse>(std::move(nest.value()))), utils.line()));
+						else
+							break;
+					}
 				};
 
 				// read if
-				chunk::IfElse ifelse(utils.returnval());
+				chunk::IfElse ifelse(utils.retref());
 				ifelse._segs.push_back(If(ReadCondition()));
-				while (auto li = ReadLine()) {
-					SkipNewlines(utils);
-					ifelse._segs.back().scope.push_back(std::move(li.value()));
-				}
+				ReadScope(ifelse._segs.back().scope);
 
 				// read elseif
 				while (1) {
@@ -176,10 +205,7 @@ namespace byfxxm {
 						break;
 
 					ifelse._segs.push_back(If(ReadCondition()));
-					while (auto li = ReadLine()) {
-						SkipNewlines(utils);
-						ifelse._segs.back().scope.push_back(std::move(li.value()));
-					}
+					ReadScope(ifelse._segs.back().scope);
 				}
 
 				// read else
@@ -188,22 +214,14 @@ namespace byfxxm {
 					throw SyntaxException();
 
 				SkipNewlines(utils);
-				while (auto li = ReadLine()) {
-					SkipNewlines(utils);
-					ifelse._else.scope.push_back(std::move(li.value()));
-				}
+				ReadScope(ifelse._else.scope);
 
 				// endif
 				tok = utils.get();
 				if (tok.kind != token::Kind::ENDIF)
 					throw SyntaxException();
 
-				auto ret = ifelse.Next();
-				if (!ret.has_value())
-					throw SyntaxException();
-
-				utils.chunk(std::make_unique<chunk::IfElse>(std::move(ifelse)));
-				return std::move(ret.value());
+				return ifelse;
 			}
 		};
 	}

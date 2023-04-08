@@ -21,13 +21,13 @@ namespace byfxxm {
 			virtual std::optional<SyntaxNodeList> Next() = 0;
 		};
 
-		inline std::optional<SyntaxNodeList> SegVisitor(Segment&& seg) {
+		inline std::optional<SyntaxNodeList> SegVisitor(Segment seg) {
 			return std::visit(
 				Overload{
-					[&](SyntaxNodeList&& list)->std::optional<SyntaxNodeList> {
+					[&](SyntaxNodeList list)->std::optional<SyntaxNodeList> {
 						return list;
 					},
-					[&](std::unique_ptr<Chunk>&& chunk)->std::optional<SyntaxNodeList> {
+					[&](std::unique_ptr<Chunk> chunk)->std::optional<SyntaxNodeList> {
 						return chunk->Next();
 					},
 				}, std::move(seg));
@@ -35,7 +35,7 @@ namespace byfxxm {
 
 		class IfElse : public Chunk {
 			virtual std::optional<SyntaxNodeList> Next() override {
-				auto scope = [&](std::vector<SegmentEx>&& scope)->std::optional<SyntaxNodeList> {
+				auto scope = [&](std::vector<SegmentEx> scope)->std::optional<SyntaxNodeList> {
 					if (_scopeindex == scope.size())
 						return {};
 

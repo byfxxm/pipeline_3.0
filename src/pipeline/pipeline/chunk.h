@@ -21,13 +21,13 @@ namespace byfxxm {
 			virtual std::optional<SyntaxNodeList> Next() = 0;
 		};
 
-		inline std::optional<SyntaxNodeList> SegVisitor(Segment&& seg) {
+		inline std::optional<SyntaxNodeList> SegVisitor(Segment& seg) {
 			return std::visit(
 				Overload{
-					[&](SyntaxNodeList&& list)->std::optional<SyntaxNodeList> {
+					[&](SyntaxNodeList list)->std::optional<SyntaxNodeList> {
 						return list;
 					},
-					[&](std::unique_ptr<Chunk>&& chunk)->std::optional<SyntaxNodeList> {
+					[&](const std::unique_ptr<Chunk>& chunk)->std::optional<SyntaxNodeList> {
 						return chunk->Next();
 					},
 				}, std::move(seg));
@@ -35,7 +35,7 @@ namespace byfxxm {
 
 		class IfElse : public Chunk {
 			virtual std::optional<SyntaxNodeList> Next() override {
-				auto scope = [&](std::vector<SegmentEx>&& scope)->std::optional<SyntaxNodeList> {
+				auto scope = [&](std::vector<SegmentEx>& scope)->std::optional<SyntaxNodeList> {
 					if (_scopeindex == scope.size())
 						return {};
 
@@ -43,14 +43,14 @@ namespace byfxxm {
 					auto& seg = scope[index].segment;
 					std::optional<SyntaxNodeList> ret;
 					if (std::holds_alternative<SyntaxNodeList>(seg)) {
-						ret = SegVisitor(std::move(seg));
+						ret = SegVisitor(seg);
 						++_scopeindex;
 					}
 					else if (std::holds_alternative<std::unique_ptr<Chunk>>(seg)) {
-						ret = SegVisitor(std::move(seg));
+						ret = SegVisitor(seg);
 						if (!ret) {
 							++_scopeindex;
-							ret = SegVisitor(std::move(scope[_scopeindex++].segment));
+							ret = SegVisitor(scope[_scopeindex++].segment);
 						}
 					}
 
@@ -61,15 +61,15 @@ namespace byfxxm {
 					if (_curseg > 0 && std::get<bool>(_cond)) {
 						--_curseg;
 						_iscond = false;
-						return scope(std::move(_segs[_curseg].scope));
+						return scope(_segs[_curseg].scope);
 					}
 
 					if (_curseg == 0)
-						return SegVisitor(std::move(_segs[_curseg++].cond.segment));
+						return SegVisitor(_segs[_curseg++].cond.segment);
 
 					if (_curseg == _segs.size()) {
 						_iscond = false;
-						return scope(std::move(_else.scope));
+						return scope(_else.scope);
 					}
 
 					if (!std::holds_alternative<bool>(_cond))
@@ -78,19 +78,19 @@ namespace byfxxm {
 					auto cond = std::get<bool>(_cond);
 					if (cond) {
 						_iscond = false;
-						return scope(std::move(_segs[_curseg].scope));
+						return scope(_segs[_curseg].scope);
 					}
 
-					return SegVisitor(std::move(_segs[_curseg++].cond.segment));
+					return SegVisitor(_segs[_curseg++].cond.segment);
 				}
 
 				if (_curseg == _segs.size())
-					return scope(std::move(_else.scope));
+					return scope(_else.scope);
 
 				if (_scopeindex == _segs[_curseg].scope.size())
 					return {};
 
-				return scope(std::move(_segs[_curseg].scope));
+				return scope(_segs[_curseg].scope);
 			}
 
 			IfElse(const Value& cond) : _cond(cond) {}

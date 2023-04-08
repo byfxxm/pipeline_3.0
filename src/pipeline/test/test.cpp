@@ -169,7 +169,7 @@ void TestDebug() {
 		IF #1 LT #2 THEN
 			#3 = 3
 			
-			IF #3 LT #3 THEN
+			IF #2 LT #3 THEN
 				#6 = 6
 			ELSE
 				#7=7
@@ -187,8 +187,8 @@ void TestDebug() {
 int main()
 {
 	//TestPipeline();
-	//TestParser();
-	//TestParser1();
+	TestParser();
+	TestParser1();
 	TestDebug();
 	return 0;
 }

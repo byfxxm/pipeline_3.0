@@ -34,7 +34,7 @@ namespace byfxxm {
 			};
 			auto peek = [&]() {return _lex.Peek(); };
 			auto line = [&]() {return _lineno; };
-			auto chunk = [&](std::unique_ptr<chunk::Chunk>&& chunk_) {_remain_chunk = std::move(chunk_); };
+			auto chunk = [&](std::unique_ptr<chunk::Chunk> chunk_) {_remain_chunk = std::move(chunk_); };
 			auto retref = [&]()->Value& {return _return; };
 
 			while (1) {

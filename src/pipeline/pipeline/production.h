@@ -50,7 +50,7 @@ namespace byfxxm {
 
 	class Expresion {
 	public:
-		Abstree::NodePtr operator()(SyntaxNodeList&& list) const {
+		Abstree::NodePtr operator()(SyntaxNodeList list) const {
 			return _Expression(list);
 		}
 
@@ -180,7 +180,7 @@ namespace byfxxm {
 
 	class Gtree {
 	public:
-		Abstree::NodePtr operator()(SyntaxNodeList&& list) const {
+		Abstree::NodePtr operator()(SyntaxNodeList list) const {
 			if (list.empty() || list.size() % 2 != 0)
 				throw SyntaxException();
 

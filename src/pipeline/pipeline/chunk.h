@@ -24,13 +24,13 @@ namespace byfxxm {
 		inline std::optional<SyntaxNodeList> SegVisitor(Segment& seg) {
 			return std::visit(
 				Overload{
-					[&](SyntaxNodeList list)->std::optional<SyntaxNodeList> {
-						return list;
+					[&](SyntaxNodeList& list)->std::optional<SyntaxNodeList> {
+						return std::move(list);
 					},
 					[&](const std::unique_ptr<Chunk>& chunk)->std::optional<SyntaxNodeList> {
 						return chunk->Next();
 					},
-				}, std::move(seg));
+				}, seg);
 		};
 
 		class IfElse : public Chunk {

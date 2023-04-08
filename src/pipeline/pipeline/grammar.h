@@ -17,7 +17,7 @@ namespace byfxxm {
 		using Get = std::function<token::Token()>;
 		using Peek = std::function<token::Token()>;
 		using Line = std::function<size_t()>;
-		using Chunk = std::function<void(std::unique_ptr<chunk::Chunk>)>;
+		using Chunk = std::function<void(std::unique_ptr<chunk::Chunk>&&)>;
 		using ReturenRef = std::function<Value&()>;
 
 		struct Utils {
@@ -54,7 +54,7 @@ namespace byfxxm {
 		public:
 			virtual ~Grammar() = default;
 			virtual bool First(const token::Token&) const = 0;
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList, const Utils&) const = 0;
+			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&&, const Utils&) const = 0;
 		};
 
 		class Newseg : public Grammar {
@@ -62,7 +62,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList list, const Utils& utils) const override {
+			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
 				return std::nullopt;
 			}
 		};
@@ -72,7 +72,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList list, const Utils& utils) const override {
+			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
 				return GetLine(utils, std::move(list));
 			}
 		};
@@ -94,7 +94,7 @@ namespace byfxxm {
 				return _IsGcode(tok);
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList list, const Utils& utils) const override {
+			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
 				SyntaxNodeList gtag;
 				while (1) {
 					auto tok = utils.peek();
@@ -131,7 +131,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::IF;
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList list, const Utils& utils) const override {
+			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
 				auto ifelse = _NestRest(std::move(list), utils);
 				auto ret = ifelse.Next();
 				if (!ret.has_value())
@@ -141,7 +141,7 @@ namespace byfxxm {
 				return std::move(ret.value());
 			}
 
-			static chunk::IfElse _NestRest(SyntaxNodeList list, const Utils& utils) {
+			static chunk::IfElse _NestRest(SyntaxNodeList&& list, const Utils& utils) {
 				using If = chunk::IfElse::If;
 				using Else = chunk::IfElse::Else;
 

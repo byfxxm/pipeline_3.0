@@ -55,11 +55,11 @@ namespace byfxxm {
 		}
 
 	private:
-		static Abstree::NodePtr _Expression(SubList sublist) {
+		Abstree::NodePtr _Expression(SubList sublist) const {
 			if (sublist.empty())
 				return {};
 
-			SyntaxNodeList list = _ProcessBracket(sublist, _Expression);
+			SyntaxNodeList list = _ProcessBracket(sublist);
 			auto min_pri = _FindMinPriority(list);
 
 			auto node = _CurNode(*min_pri);
@@ -72,7 +72,7 @@ namespace byfxxm {
 			return node;
 		}
 
-		static SyntaxNodeList _ProcessBracket(SubList& list, auto&& callable) {
+		SyntaxNodeList _ProcessBracket(SubList& list) const {
 			SyntaxNodeList main;
 			SyntaxNodeList sub;
 			int level = 0;
@@ -91,7 +91,7 @@ namespace byfxxm {
 				else if (tok.kind == token::Kind::RB) {
 					--level;
 					if (level == 0) {
-						main.push_back(callable(sub));
+						main.push_back(_Expression(sub));
 						continue;
 					}
 				}
@@ -107,7 +107,7 @@ namespace byfxxm {
 			return main;
 		}
 
-		static SyntaxNodeList::iterator _FindMinPriority(SubList list) {
+		SyntaxNodeList::iterator _FindMinPriority(SubList list) const {
 			auto less = [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
 				size_t lhs_pri = default_priority;
 				size_t rhs_pri = default_priority;
@@ -131,7 +131,7 @@ namespace byfxxm {
 			return ret;
 		}
 
-		static Abstree::NodePtr _CurNode(SyntaxNode& node) {
+		Abstree::NodePtr _CurNode(SyntaxNode& node) const {
 			auto ret = ClonePtr(std::make_unique<Abstree::Node>());
 			if (auto abs = std::get_if<Abstree::NodePtr>(&node)) {
 				ret = std::move(*abs);
@@ -144,7 +144,7 @@ namespace byfxxm {
 			return ret;
 		}
 
-		static void _CheckError(const Abstree::NodePtr& node) {
+		void _CheckError(const Abstree::NodePtr& node) const {
 			std::visit(
 				Overload
 				{
@@ -197,7 +197,7 @@ namespace byfxxm {
 		}
 
 	private:
-		static Predicate _TokToPred(const token::Token& tok) {
+		Predicate _TokToPred(const token::Token& tok) const {
 			if (!token_kind_tuples.contains(tok.kind))
 				throw SyntaxException();
 

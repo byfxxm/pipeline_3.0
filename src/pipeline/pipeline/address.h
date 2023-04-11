@@ -3,12 +3,13 @@
 #include <string>
 #include <optional>
 #include "token.h"
+#include "clone_ptr.h"
 
 namespace byfxxm {
 	class Address {
 	public:
 		using _Key = double;
-		using _Value = std::unique_ptr<double>;
+		using _Value = ClonePtr<double>;
 
 		_Value& operator[](const _Key& key) {
 			if (_dict.find(key) == _dict.end())

@@ -132,7 +132,7 @@ namespace byfxxm {
 		}
 
 		static Abstree::NodePtr _CurNode(SyntaxNode& node) {
-			auto ret = std::make_unique<Abstree::Node>();
+			auto ret = ClonePtr(std::make_unique<Abstree::Node>());
 			if (auto abs = std::get_if<Abstree::NodePtr>(&node)) {
 				ret = std::move(*abs);
 			}

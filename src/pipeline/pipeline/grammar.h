@@ -3,6 +3,7 @@
 #include "abstree.h"
 #include "production.h"
 #include "chunk.h"
+#include "clone_ptr.h"
 
 namespace byfxxm {
 	inline bool NewSegment(const token::Token& tok) {
@@ -13,48 +14,48 @@ namespace byfxxm {
 		return tok.kind == token::Kind::KEOF;
 	}
 
+	using Get = std::function<token::Token()>;
+	using Peek = std::function<token::Token()>;
+	using Line = std::function<size_t()>;
+	using ReturenRef = std::function<Value& ()>;
+
+	struct Utils {
+		Get get;
+		Peek peek;
+		Line line;
+		ReturenRef retref;
+	};
+
+	inline SyntaxNodeList GetLine(const Utils& utils, SyntaxNodeList list = SyntaxNodeList()) {
+		while (1) {
+			auto tok = utils.get();
+			if (NewSegment(tok))
+				break;
+
+			list.push_back(tok);
+		}
+
+		return list;
+	}
+
+	inline void SkipNewlines(const Utils& utils) {
+		while (1) {
+			auto tok = utils.peek();
+			if (tok.kind != token::Kind::NEWLINE)
+				break;
+
+			utils.get();
+		}
+	}
+
+	inline std::optional<chunk::SegmentEx> GetSegment(const Utils&);
+
 	namespace grammar {
-		using Get = std::function<token::Token()>;
-		using Peek = std::function<token::Token()>;
-		using Line = std::function<size_t()>;
-		using Chunk = std::function<void(std::unique_ptr<chunk::Chunk>&&)>;
-		using ReturenRef = std::function<Value&()>;
-
-		struct Utils {
-			Get get;
-			Peek peek;
-			Line line;
-			Chunk chunk;
-			ReturenRef retref;
-		};
-
-		inline SyntaxNodeList GetLine(const Utils& utils, SyntaxNodeList list = SyntaxNodeList()) {
-			while (1) {
-				auto tok = utils.get();
-				if (NewSegment(tok))
-					break;
-
-				list.push_back(tok);
-			}
-
-			return list;
-		}
-
-		inline void SkipNewlines(const Utils& utils) {
-			while (1) {
-				auto tok = utils.peek();
-				if (tok.kind != token::Kind::NEWLINE)
-					break;
-
-				utils.get();
-			}
-		}
-
 		class Grammar {
 		public:
 			virtual ~Grammar() = default;
 			virtual bool First(const token::Token&) const = 0;
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&&, const Utils&) const = 0;
+			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&&, const Utils&) const = 0;
 		};
 
 		class Newseg : public Grammar {
@@ -62,7 +63,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
+			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
 				return std::nullopt;
 			}
 		};
@@ -72,8 +73,8 @@ namespace byfxxm {
 				return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
-				return GetLine(utils, std::move(list));
+			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
+				return chunk::SegmentEx(GetLine(utils, std::move(list)), utils.line());
 			}
 		};
 
@@ -94,7 +95,7 @@ namespace byfxxm {
 				return _IsGcode(tok);
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
+			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
 				SyntaxNodeList gtag;
 				while (1) {
 					auto tok = utils.peek();
@@ -122,7 +123,7 @@ namespace byfxxm {
 
 				SyntaxNodeList ret;
 				ret.emplace_back(gtree(std::move(list)));
-				return ret;
+				return chunk::SegmentEx(std::move(ret), utils.line());
 			}
 		};
 
@@ -131,17 +132,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::IF;
 			}
 
-			virtual std::optional<SyntaxNodeList> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
-				auto ifelse = _NestRest(std::move(list), utils);
-				auto ret = ifelse.Next();
-				if (!ret.has_value())
-					throw SyntaxException();
-
-				utils.chunk(std::make_unique<chunk::IfElse>(std::move(ifelse)));
-				return std::move(ret.value());
-			}
-
-			static chunk::IfElse _NestRest(SyntaxNodeList&& list, const Utils& utils) {
+			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
 				using If = chunk::IfElse::If;
 				using Else = chunk::IfElse::Else;
 
@@ -170,25 +161,21 @@ namespace byfxxm {
 					return chunk::SegmentEx(GetLine(utils), utils.line());
 				};
 
-				auto NestIf = [&utils]()->std::optional<chunk::IfElse> {
-					auto tok = utils.peek();
-					if (tok.kind != token::Kind::IF)
-						return {};
-
-					SyntaxNodeList list;
-					list.emplace_back(utils.get());
-					return _NestRest(std::move(list), utils);
-				};
-
 				auto ReadScope = [&](std::vector<chunk::SegmentEx>& scope) {
 					while (1) {
 						SkipNewlines(utils);
-						if (auto line = ReadLine())
-							scope.push_back(std::move(line.value()));
-						else if (auto nest = NestIf(); nest.has_value())
-							scope.push_back(chunk::SegmentEx(chunk::Segment(std::make_unique<chunk::IfElse>(std::move(nest.value()))), utils.line()));
-						else
+						auto tok = utils.peek();
+						if (tok.kind == token::Kind::ELSE
+							|| tok.kind == token::Kind::ELSEIF
+							|| tok.kind == token::Kind::ENDIF
+							)
 							break;
+
+						auto seg = GetSegment(utils);
+						if (!seg)
+							break;
+
+						scope.push_back(std::move(seg.value()));
 					}
 				};
 
@@ -221,7 +208,57 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::ENDIF)
 					throw SyntaxException();
 
-				return ifelse;
+				return chunk::SegmentEx(ClonePtr<chunk::Chunk>(std::make_unique<chunk::IfElse>(std::move(ifelse))), utils.line());
+			}
+		};
+
+		class While : public Grammar {
+			virtual bool First(const token::Token& tok) const override {
+				return tok.kind == token::Kind::WHILE;
+			}
+
+			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
+				auto ReadCondition = [&]()->chunk::SegmentEx {
+					SyntaxNodeList list;
+					while (1) {
+						auto tok = utils.get();
+						if (tok.kind == token::Kind::NEWLINE)
+							throw SyntaxException();
+
+						if (tok.kind == token::Kind::DO)
+							break;
+
+						list.push_back(tok);
+					}
+
+					return { std::move(list), utils.line() };
+				};
+
+				auto ReadScope = [&](std::vector<chunk::SegmentEx>& scope) {
+					while (1) {
+						SkipNewlines(utils);
+						auto tok = utils.peek();
+						if (tok.kind == token::Kind::END)
+							break;
+
+						auto seg = GetSegment(utils);
+						if (!seg)
+							break;
+
+						scope.push_back(std::move(seg.value()));
+					}
+				};
+
+				chunk::While wh(utils.retref());
+				wh._cond = ReadCondition();
+				ReadScope(wh._scope);
+
+				// end
+				auto tok = utils.get();
+				if (tok.kind != token::Kind::END)
+					throw SyntaxException();
+
+				return chunk::SegmentEx(ClonePtr<chunk::Chunk>(std::make_unique<chunk::While>(std::move(wh))), utils.line());
 			}
 		};
 	}
@@ -238,5 +275,6 @@ namespace byfxxm {
 		, grammar::Expr
 		, grammar::Ggram
 		, grammar::IfElse
+		, grammar::While
 	>;
 }

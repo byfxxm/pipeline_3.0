@@ -161,7 +161,7 @@ void TestParser1() {
 	parser.Run(pimpl);
 }
 
-void TestDebug() {
+void TestParser2() {
 	std::string s =
 		R"(
 		#1 = 1
@@ -184,12 +184,35 @@ void TestDebug() {
 	parser.Run(pimpl);
 }
 
+void TestParser3() {
+	std::string s =
+		R"(
+		#1 = 1
+		#2 = 20
+		IF #1 LT #2 THEN
+			#3 = 3
+			
+			WHILE #1 LT #2 DO
+				#1 = #1 +1
+				#3 = #3 + 1
+			END
+			#5=5
+		ELSE
+			#4 = 4
+		ENDIF
+)";
+	auto parser = byfxxm::Gparser(s);
+	auto pimpl = GImpl();
+	parser.Run(pimpl);
+}
+
 int main()
 {
 	//TestPipeline();
-	TestParser();
-	TestParser1();
-	TestDebug();
+	//TestParser();
+	//TestParser1();
+	//TestParser2();
+	TestParser3();
 	return 0;
 }
 

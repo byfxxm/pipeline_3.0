@@ -90,6 +90,9 @@
     <ClInclude Include="chunk.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="clone_ptr.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">

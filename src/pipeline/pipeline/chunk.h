@@ -1,14 +1,16 @@
 #pragma once
 #include "abstree.h"
+#include "clone_ptr.h"
 
 namespace byfxxm {
 	namespace grammar {
 		class IfElse;
+		class While;
 	}
 
 	namespace chunk {
 		class Chunk;
-		using Segment = std::variant<SyntaxNodeList, std::unique_ptr<Chunk>>;
+		using Segment = std::variant<SyntaxNodeList, ClonePtr<Chunk>>;
 
 		struct SegmentEx {
 			Segment segment;
@@ -18,82 +20,90 @@ namespace byfxxm {
 		class Chunk {
 		public:
 			virtual ~Chunk() = default;
-			virtual std::optional<SyntaxNodeList> Next() = 0;
+			virtual std::optional<SegmentEx> Next() = 0;
+			virtual std::unique_ptr<Chunk> Clone() const = 0;
 		};
 
-		inline std::optional<SyntaxNodeList> SegVisitor(Segment&& seg) {
-			return std::visit(
+		inline std::optional<SegmentEx> Unpack(SegmentEx&& seg) {
+			auto res = std::visit(
 				Overload{
 					[&](SyntaxNodeList&& list)->std::optional<SyntaxNodeList> {
 						return list;
 					},
-					[&](std::unique_ptr<Chunk>&& chunk)->std::optional<SyntaxNodeList> {
-						return chunk->Next();
+					[&](ClonePtr<Chunk>&& chunk)->std::optional<SyntaxNodeList> {
+						auto list = chunk->Next();
+						assert(list ? std::holds_alternative<SyntaxNodeList>(list.value().segment) : true);
+						return list.has_value() ? std::move(std::get<SyntaxNodeList>(list.value().segment)) : std::optional<SyntaxNodeList>();
 					},
-				}, std::move(seg));
+				}, std::move(seg.segment));
+
+			return res ? SegmentEx(std::move(res.value()), seg.line) : std::optional<SegmentEx>();
+		};
+
+		inline std::optional<SegmentEx> GetScope(std::vector<SegmentEx>&& scope, size_t& index) {
+			if (index == scope.size())
+				return {};
+
+			auto& seg = scope[index];
+			std::optional<SegmentEx> ret;
+			if (std::holds_alternative<SyntaxNodeList>(seg.segment)) {
+				ret = Unpack(std::move(seg));
+				++index;
+			}
+			else if (std::holds_alternative<ClonePtr<Chunk>>(seg.segment)) {
+				ret = Unpack(std::move(seg));
+				if (!ret) {
+					++index;
+					ret = Unpack(std::move(scope[index++]));
+				}
+			}
+
+			return ret;
 		};
 
 		class IfElse : public Chunk {
-			virtual std::optional<SyntaxNodeList> Next() override {
-				auto scope = [&](std::vector<SegmentEx>&& scope)->std::optional<SyntaxNodeList> {
-					if (_scopeindex == scope.size())
-						return {};
-
-					auto index = _scopeindex;
-					auto& seg = scope[index].segment;
-					std::optional<SyntaxNodeList> ret;
-					if (std::holds_alternative<SyntaxNodeList>(seg)) {
-						ret = SegVisitor(std::move(seg));
-						++_scopeindex;
-					}
-					else if (std::holds_alternative<std::unique_ptr<Chunk>>(seg)) {
-						ret = SegVisitor(std::move(seg));
-						if (!ret) {
-							++_scopeindex;
-							ret = SegVisitor(std::move(scope[_scopeindex++].segment));
-						}
-					}
-
-					return ret;
-				};
-
+			virtual std::optional<SegmentEx> Next() override {
 				if (_iscond) {
-					if (_curseg > 0 && std::get<bool>(_cond)) {
+					if (_curseg > 0 && std::get<bool>(_return)) {
 						--_curseg;
 						_iscond = false;
-						return scope(std::move(_segs[_curseg].scope));
+						return GetScope(std::move(_segs[_curseg].scope), _scopeindex);
 					}
 
 					if (_curseg == 0)
-						return SegVisitor(std::move(_segs[_curseg++].cond.segment));
+						return Unpack(std::move(_segs[_curseg++].cond));
 
 					if (_curseg == _segs.size()) {
 						_iscond = false;
-						return scope(std::move(_else.scope));
+						return GetScope(std::move(_else.scope), _scopeindex);
 					}
 
-					if (!std::holds_alternative<bool>(_cond))
+					if (!std::holds_alternative<bool>(_return))
 						throw SyntaxException();
 
-					auto cond = std::get<bool>(_cond);
+					auto cond = std::get<bool>(_return);
 					if (cond) {
 						_iscond = false;
-						return scope(std::move(_segs[_curseg].scope));
+						return GetScope(std::move(_segs[_curseg].scope), _scopeindex);
 					}
 
-					return SegVisitor(std::move(_segs[_curseg++].cond.segment));
+					return Unpack(std::move(_segs[_curseg++].cond));
 				}
 
 				if (_curseg == _segs.size())
-					return scope(std::move(_else.scope));
+					return GetScope(std::move(_else.scope), _scopeindex);
 
 				if (_scopeindex == _segs[_curseg].scope.size())
 					return {};
 
-				return scope(std::move(_segs[_curseg].scope));
+				return GetScope(std::move(_segs[_curseg].scope), _scopeindex);
 			}
 
-			IfElse(const Value& cond) : _cond(cond) {}
+			virtual std::unique_ptr<Chunk> Clone() const {
+				return std::make_unique<IfElse>(*this);
+			}
+
+			IfElse(const Value& cond) : _return(cond) {}
 
 			struct If {
 				SegmentEx cond;
@@ -104,13 +114,66 @@ namespace byfxxm {
 				std::vector<SegmentEx> scope;
 			};
 
-			friend class grammar::IfElse;
 			std::vector<If> _segs;
 			Else _else;
 			size_t _curseg{ 0 };
 			bool _iscond{ true };
-			const Value& _cond;
+			const Value& _return;
 			size_t _scopeindex{ 0 };
+			friend class grammar::IfElse;
+		};
+
+		class While : public Chunk {
+			virtual std::optional<SegmentEx> Next() override {
+				if (_iscond) {
+					_iscond = false;
+					_Store();
+					return std::move(_cond);
+				}
+
+				if (_scopeindex == _scope.size()) {
+					_scopeindex = 0;
+					_Restore();
+					return std::move(_cond);
+				}
+
+				if (_scopeindex == 0) {
+					if (!std::holds_alternative<bool>(_return))
+						throw SyntaxException();
+
+					auto cond = std::get<bool>(_return);
+					if (!cond)
+						return {};
+				}
+
+				_iscond = false;
+				return GetScope(std::move(_scope), _scopeindex);
+			}
+
+			virtual std::unique_ptr<Chunk> Clone() const {
+				return std::make_unique<While>(*this);
+			}
+
+			While(const Value& cond) : _return(cond) {}
+
+			void _Store() {
+				_scope_backup = _scope;
+				_cond_backup = _cond;
+			}
+
+			void _Restore() {
+				_scope = _scope_backup;
+				_cond = _cond_backup;
+			}
+
+			SegmentEx _cond;
+			SegmentEx _cond_backup;
+			std::vector<SegmentEx> _scope;
+			std::vector<SegmentEx> _scope_backup;
+			bool _iscond{ true };
+			const Value& _return;
+			size_t _scopeindex{ 0 };
+			friend class grammar::While;
 		};
 	}
 }

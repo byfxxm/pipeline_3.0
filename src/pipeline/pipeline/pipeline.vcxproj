@@ -163,6 +163,7 @@
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="syntax.h" />
     <ClInclude Include="token.h" />
+    <ClInclude Include="clone_ptr.h" />
     <ClInclude Include="word.h" />
     <ClInclude Include="worker.h" />
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include "token.h"
 #include "predicate.h"
 #include "ginterface.h"
+#include "clone_ptr.h"
 
 namespace byfxxm {
 	template <class... Ts>
@@ -12,7 +13,7 @@ namespace byfxxm {
 	class Abstree {
 	public:
 		struct Node;
-		using NodePtr = std::unique_ptr<Node>;
+		using NodePtr = ClonePtr<Node>;
 
 		struct Node {
 			Predicate pred;
@@ -20,6 +21,7 @@ namespace byfxxm {
 		};
 
 		Abstree(NodePtr&& root, Address& addr, Value* ret = nullptr) noexcept : _root(std::move(root)), _addr(addr), _return_val(ret) {
+			assert(_root);
 		}
 
 		Value operator()(Ginterface* pimpl = nullptr) {
@@ -32,7 +34,7 @@ namespace byfxxm {
 		}
 
 	private:
-		Value _Execute(NodePtr& node, Ginterface* pimpl) {
+		Value _Execute(const NodePtr& node, Ginterface* pimpl) {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 

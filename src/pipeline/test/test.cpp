@@ -189,10 +189,10 @@ void TestParser3() {
 		R"(
 		#1 = 1
 		#2 = 20
-		IF #1 LT #2 THEN
+		IF [#1 LT #2] THEN
 			#3 = 3
 			
-			WHILE #1 LT #2 DO
+			WHILE [#1 LT #2] DO
 				#1 = #1 +1
 				#3 = #3 + 1
 			END

@@ -31,7 +31,7 @@ namespace byfxxm {
 			auto& chunk = std::get<ClonePtr<Chunk>>(seg.segment);
 			auto list = chunk->Next();
 			assert(list ? std::holds_alternative<SyntaxNodeList>(list.value().segment) : true);
-			return list.has_value() ? std::move(list.value()) : std::optional<SegmentEx>();
+			return list ? std::move(list.value()) : std::optional<SegmentEx>();
 		};
 
 		inline std::optional<SegmentEx> GetScope(std::vector<SegmentEx>&& scope, size_t& index) {

@@ -15,14 +15,9 @@ namespace byfxxm {
 		}
 
 		void Run(Ginterface& pimpl) {
-			//try {
-				while (auto abs_tree = _syntax.Next()) {
-					abs_tree.value()(&pimpl);
-				}
-			//}
-			//catch (const ParseException&) {
-			//	throw;
-			//}
+			while (auto abs_tree = _syntax.Next()) {
+				abs_tree.value()(&pimpl);
+			}
 		}
 
 		const Address& Addr() const {

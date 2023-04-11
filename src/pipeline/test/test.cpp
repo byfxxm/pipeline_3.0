@@ -195,6 +195,7 @@ void TestParser3() {
 			WHILE [#1 LT #2] DO
 				#1 = #1 +1
 				#3 = #3 + 1
+				G1 X#3
 			END
 			#5=5
 		ELSE

@@ -25,19 +25,13 @@ namespace byfxxm {
 		};
 
 		inline std::optional<SegmentEx> Unpack(SegmentEx&& seg) {
-			auto res = std::visit(
-				Overload{
-					[&](SyntaxNodeList&& list)->std::optional<SyntaxNodeList> {
-						return list;
-					},
-					[&](ClonePtr<Chunk>&& chunk)->std::optional<SyntaxNodeList> {
-						auto list = chunk->Next();
-						assert(list ? std::holds_alternative<SyntaxNodeList>(list.value().segment) : true);
-						return list.has_value() ? std::move(std::get<SyntaxNodeList>(list.value().segment)) : std::optional<SyntaxNodeList>();
-					},
-				}, std::move(seg.segment));
+			if (std::holds_alternative<SyntaxNodeList>(seg.segment))
+				return seg;
 
-			return res ? SegmentEx(std::move(res.value()), seg.line) : std::optional<SegmentEx>();
+			auto& chunk = std::get<ClonePtr<Chunk>>(seg.segment);
+			auto list = chunk->Next();
+			assert(list ? std::holds_alternative<SyntaxNodeList>(list.value().segment) : true);
+			return list.has_value() ? std::move(list.value()) : std::optional<SegmentEx>();
 		};
 
 		inline std::optional<SegmentEx> GetScope(std::vector<SegmentEx>&& scope, size_t& index) {

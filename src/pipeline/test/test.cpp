@@ -210,9 +210,9 @@ void TestParser3() {
 int main()
 {
 	//TestPipeline();
-	//TestParser();
-	//TestParser1();
-	//TestParser2();
+	TestParser();
+	TestParser1();
+	TestParser2();
 	TestParser3();
 	return 0;
 }

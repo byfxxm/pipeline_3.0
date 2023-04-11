@@ -28,7 +28,7 @@ namespace byfxxm {
 
 		// copy and swap
 		ClonePtr& operator=(const ClonePtr& rhs) {
-			ClonePtr copy(rhs._pointer);
+			ClonePtr copy(rhs);
 			swap(*this, copy);
 			return *this;
 		}

@@ -15,8 +15,7 @@ namespace byfxxm {
 		ClonePtr(std::unique_ptr<D>&& rhs) : _pointer(std::move(rhs)) {
 		}
 
-		template <class D>
-		ClonePtr(const std::unique_ptr<D>& rhs) {
+		ClonePtr(const std::unique_ptr<T>& rhs) {
 			if constexpr (std::is_abstract_v<T>)
 				_pointer = rhs->Clone();
 			else

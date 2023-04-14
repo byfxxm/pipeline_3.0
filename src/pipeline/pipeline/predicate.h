@@ -8,9 +8,11 @@
 #define IsDouble(v) IsType(v, double)
 #define IsString(v) IsType(v, std::string)
 #define IsDoublePtr(v) IsType(v, double*)
+#define IsGroup(v) IsType(v, Group)
 
 namespace byfxxm {
-	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag>;
+	using Group = std::vector<double>;
+	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
 
 	namespace predicate {
 		inline auto Plus = [](const Value& lhs, const Value& rhs) {
@@ -257,6 +259,61 @@ namespace byfxxm {
 					throw SyntaxException("gcode error");
 				}, value);
 		};
+
+		inline auto Comma = [](Value& lhs, const Value& rhs) {
+			return std::visit([](auto&& l, auto&& r)->Value {
+				if constexpr (IsGroup(l) && IsDouble(r)) {
+					l.push_back(r);
+					return l;
+				}
+				else if constexpr (IsGroup(l) && IsDoublePtr(r)) {
+					l.push_back(*r);
+					return l;
+				}
+				else if constexpr (IsDouble(l) && IsDouble(r))
+					return Group{ l, r };
+				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+					return Group{ l, *r };
+				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+					return Group{ *l, r };
+				else if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+					return Group{ *l, *r };
+				else
+					throw SyntaxException("comma error");
+				}, lhs, rhs);
+		};
+
+		inline auto Max = [](Value& value)->Value {
+			return std::visit([](auto&& v)->Value {
+				if constexpr (IsGroup(v)) {
+					return *std::ranges::max_element(v, [](double lhs, double rhs) {
+						return lhs < rhs;
+						});
+				}
+				else if constexpr (IsDouble(v))
+					return v;
+				else if constexpr (IsDoublePtr(v))
+					return *v;
+				else
+					throw SyntaxException("max error");
+				}, value);
+		};
+
+		inline auto Min = [](Value& value) {
+			return std::visit([](auto&& v)->Value {
+				if constexpr (IsGroup(v)) {
+					return *std::ranges::min_element(v, [](double lhs, double rhs) {
+						return lhs < rhs;
+						});
+				}
+				else if constexpr (IsDouble(v))
+					return v;
+				else if constexpr (IsDoublePtr(v))
+					return *v;
+				else
+					throw SyntaxException("min error");
+				}, value);
+		};
 	}
 
 	template <class... Ts>
@@ -279,6 +336,8 @@ namespace byfxxm {
 		, predicate::Gcode<token::Kind::I>
 		, predicate::Gcode<token::Kind::J>
 		, predicate::Gcode<token::Kind::K>
+		, predicate::Max
+		, predicate::Min
 	));
 
 	// 二元操作符
@@ -294,6 +353,7 @@ namespace byfxxm {
 		, predicate::LE
 		, predicate::EQ
 		, predicate::NE
+		, predicate::Comma
 	));
 
 	using Sharp = decltype(ToVariant(

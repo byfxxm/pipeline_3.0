@@ -10,44 +10,6 @@
 #include "clone_ptr.h"
 
 namespace byfxxm {
-	inline std::optional<chunk::SegmentEx> GetSegment(const Utils& utils) {
-		while (1) {
-			auto tok = utils.peek();
-			if (EndOfFile(tok))
-				return {};
-
-			SyntaxNodeList list;
-			list.push_back(utils.get());
-
-			auto iter = std::begin(GrammarsList::grammars);
-			for (; iter != std::end(GrammarsList::grammars); ++iter) {
-				std::optional<chunk::SegmentEx> sub;
-				if ((*iter)->First(tok)) {
-					if (!(sub = (*iter)->Rest(std::move(list), utils)).has_value())
-						break;
-					return std::move(sub.value());
-				}
-			}
-
-			if (iter == std::end(GrammarsList::grammars))
-				throw SyntaxException();
-		}
-
-		throw SyntaxException();
-	}
-
-	inline std::optional<chunk::SegmentEx> GetFromChunk(ClonePtr<chunk::Chunk>& chunk) {
-		if (chunk) {
-			auto tree = chunk->Next();
-			if (tree.has_value())
-				return std::move(tree.value());
-			else
-				chunk.reset();
-		}
-
-		return {};
-	}
-
 	class Syntax {
 	public:
 		Syntax(const std::filesystem::path& file) : _lex(file) {
@@ -65,33 +27,26 @@ namespace byfxxm {
 			};
 			auto peek = [&]() {return _lex.Peek(); };
 			auto line = [&]() {return _lineno; };
-			auto retref = [&]()->Value& {return _return; };
+			auto retval = [&]()->Value {
+				if (!_return_val)
+					throw SyntaxException();
 
-			auto seg = GetFromChunk(_remain_chunk);
-			if (seg) {
-				_output_line = seg.value().line;
-				assert(std::holds_alternative<SyntaxNodeList>(seg.value().segment));
-				return _ToAbstree(std::move(std::get<SyntaxNodeList>(seg.value().segment)));
+				return _return_val.value();
+			};
+
+			auto stmt = GetStatement(_remain_chunk);
+			if (stmt) {
+				_output_line = stmt.value().line;
+				assert(std::holds_alternative<Segment>(stmt.value().statement));
+				return _ToAbstree(std::move(std::get<Segment>(stmt.value().statement)));
 			}
 
-			seg = GetSegment({ get, peek, line, retref });
-			if (!seg)
+			stmt = GetStatement({ get, peek, line, retval });
+			if (!stmt)
 				return {};
 
-			_output_line = seg.value().line;
-			return std::visit(
-				Overload{
-					[this](SyntaxNodeList&& list)->std::optional<Abstree> {
-						return _ToAbstree(std::move(list));
-					},
-					[this](ClonePtr<chunk::Chunk>&& chunk)->std::optional<Abstree> {
-						_remain_chunk = std::move(chunk);
-						auto seg = GetFromChunk(_remain_chunk);
-						assert(std::holds_alternative<SyntaxNodeList>(seg.value().segment));
-						return _ToAbstree(std::get<SyntaxNodeList>(std::move(seg.value().segment)));
-					},
-				}, std::move(seg.value().segment)
-			);
+			_output_line = stmt.value().line;
+			return _ToAbstree(std::move(stmt.value()));
 		}
 
 		const Address& Addr() const {
@@ -103,8 +58,24 @@ namespace byfxxm {
 		}
 
 	private:
-		Abstree _ToAbstree(SyntaxNodeList&& list) {
-			return Abstree(expr(std::move(list)), _addr, &_return);
+		Abstree _ToAbstree(Segment&& seg) {
+			_return_val = std::nullopt;
+			return Abstree(expr(std::move(seg)), _addr, _return_val);
+		}
+
+		Abstree _ToAbstree(Statement&& stmt) {
+			return std::visit(
+				Overload{
+					[this](Segment&& seg)->Abstree {
+						return _ToAbstree(std::move(seg));
+					},
+					[this](ClonePtr<chunk::Chunk>&& chunk)->Abstree {
+						_remain_chunk = std::move(chunk);
+						auto stmt = GetStatement(_remain_chunk);
+						assert(std::holds_alternative<Segment>(stmt.value().statement));
+						return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)));
+					},
+				}, std::move(stmt.statement));
 		}
 
 	private:
@@ -112,7 +83,7 @@ namespace byfxxm {
 		size_t _lineno{ 0 };
 		Address _addr;
 		ClonePtr<chunk::Chunk> _remain_chunk;
-		Value _return;
+		std::optional<Value> _return_val;
 		size_t _output_line{ 0 };
 	};
 }

@@ -207,6 +207,28 @@ void TestParser3() {
 	parser.Run(pimpl);
 }
 
+void TestParser4() {
+	std::string s =
+		R"(
+		#1 = 234.5
+		#2 = MAX[#MIN[1,2,3], 3.5, 2]
+		#3 = MIN[2]
+)";
+	auto parser = byfxxm::Gparser(s);
+	auto pimpl = GImpl();
+	parser.Run(pimpl);
+}
+
+void TestParser5() {
+	std::string s =
+		R"(
+		#10 =[ [1 + 2]] * [3 + 4]
+)";
+	auto parser = byfxxm::Gparser(s);
+	auto pimpl = GImpl();
+	parser.Run(pimpl);
+}
+
 int main()
 {
 	//TestPipeline();
@@ -214,6 +236,8 @@ int main()
 	TestParser1();
 	TestParser2();
 	TestParser3();
+	TestParser4();
+	TestParser5();
 	return 0;
 }
 

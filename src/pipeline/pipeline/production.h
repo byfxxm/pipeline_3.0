@@ -139,7 +139,10 @@ namespace byfxxm {
 			}
 			else {
 				auto& tok = std::get<token::Token>(node);
-				ret->pred = !IsNaN(tok.value) ? tok.value : token_traits.at(tok.kind).pred;
+				if (!tok.value)
+					ret->pred = token_traits.at(tok.kind).pred;
+				else
+					ret->pred = std::visit([](auto&& v)->Value {return v; }, std::move(tok.value.value()));
 			}
 
 			return ret;

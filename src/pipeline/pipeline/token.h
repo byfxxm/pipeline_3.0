@@ -44,6 +44,7 @@ namespace byfxxm {
 			COMMA,		// ,
 			MAX,			// MAX
 			MIN,				// MIN
+			STRING,		// "..."
 
 			G,
 			M,
@@ -61,7 +62,7 @@ namespace byfxxm {
 		// 种别码
 		struct Token {
 			Kind kind;
-			double value{ nan };
+			std::optional<std::variant<double, std::string>> value;
 		};
 
 		using Dictionary = std::unordered_map<std::string, token::Kind>;

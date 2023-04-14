@@ -26,7 +26,7 @@ namespace byfxxm {
 
 			virtual std::optional<token::Token> Rest(std::string& word, const Utils& utils) const override {
 				assert(IsSharp(word));
-				return token::Token{ token::Kind::SHARP, nan };
+				return token::Token{ token::Kind::SHARP, {} };
 			}
 		};
 
@@ -61,9 +61,9 @@ namespace byfxxm {
 				}
 
 				if (!IsKeyword(word))
-					return std::nullopt;
+					return {};
 
-				return token::Token{ token::keywords.at(word), nan };
+				return token::Token{ token::keywords.at(word), {} };
 			}
 		};
 
@@ -82,7 +82,7 @@ namespace byfxxm {
 				else if (sym == token::Kind::MINUS && utils.last.has_value() && utils.last.value().kind != token::Kind::CON && utils.last.value().kind != token::Kind::RB)
 					sym = token::Kind::NEG;
 
-				return token::Token{ sym, nan };
+				return token::Token{ sym, {} };
 			}
 		};
 
@@ -114,7 +114,7 @@ namespace byfxxm {
 				}
 
 				assert(IsNewline(word));
-				return token::Token{ token::Kind::NEWLINE, nan };
+				return token::Token{ token::Kind::NEWLINE, {} };
 			}
 		};
 	}

@@ -18,22 +18,20 @@ namespace byfxxm {
 				return _Mod(write_index_ + 1) == read_index_;
 			}
 
-			template <class T> requires std::same_as<Ty, std::decay_t<T>>
-			bool Write(T&& t) {
+			bool Write(Ty t) {
 				if (IsFull())
 					return false;
 
-				data_[write_index_] = t;
+				data_[write_index_] = std::move(t);
 				write_index_ = _Mod(write_index_ + 1);
 				return true;
 			}
 
-			template <class T> requires std::same_as<Ty, std::decay_t<T>>
-			bool Read(T&& t) {
+			bool Read(Ty& t) {
 				if (IsEmpty())
 					return false;
 
-				t = data_[read_index_];
+				t = std::move(data_[read_index_]);
 				read_index_ = _Mod(read_index_ + 1);
 				return true;
 			}
@@ -47,8 +45,8 @@ namespace byfxxm {
 			}
 
 		private:
-			std::atomic<size_t> read_index_{ 0 };
-			std::atomic<size_t> write_index_{ 0 };
+			volatile size_t read_index_{ 0 };
+			volatile size_t write_index_{ 0 };
 			Ty data_[Num];
 	};
 }

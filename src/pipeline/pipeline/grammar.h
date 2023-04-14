@@ -17,25 +17,24 @@ namespace byfxxm {
 	using Get = std::function<token::Token()>;
 	using Peek = std::function<token::Token()>;
 	using Line = std::function<size_t()>;
-	using ReturenRef = std::function<Value& ()>;
 
 	struct Utils {
 		Get get;
 		Peek peek;
 		Line line;
-		ReturenRef retref;
+		RValue return_val;
 	};
 
-	inline SyntaxNodeList GetLine(const Utils& utils, SyntaxNodeList list = SyntaxNodeList()) {
+	inline Segment GetLine(const Utils& utils, Segment seg = Segment()) {
 		while (1) {
 			auto tok = utils.get();
 			if (NewSegment(tok))
 				break;
 
-			list.push_back(tok);
+			seg.push_back(tok);
 		}
 
-		return list;
+		return seg;
 	}
 
 	inline void SkipNewlines(const Utils& utils) {
@@ -48,14 +47,14 @@ namespace byfxxm {
 		}
 	}
 
-	inline std::optional<chunk::SegmentEx> GetSegment(const Utils&);
+	inline std::optional<Statement> GetStatement(const Utils&);
 
 	namespace grammar {
 		class Grammar {
 		public:
 			virtual ~Grammar() = default;
 			virtual bool First(const token::Token&) const = 0;
-			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&&, const Utils&) const = 0;
+			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const = 0;
 		};
 
 		class Newseg : public Grammar {
@@ -63,7 +62,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 			}
 
-			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const override {
 				return std::nullopt;
 			}
 		};
@@ -73,8 +72,8 @@ namespace byfxxm {
 				return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
 			}
 
-			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
-				return chunk::SegmentEx(GetLine(utils, std::move(list)), utils.line());
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+				return Statement(GetLine(utils, std::move(seg)), utils.line());
 			}
 		};
 
@@ -95,13 +94,13 @@ namespace byfxxm {
 				return _IsGcode(tok);
 			}
 
-			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
-				SyntaxNodeList gtag;
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+				Segment gtag;
 				while (1) {
 					auto tok = utils.peek();
 					if (NewSegment(tok)) {
 						if (!gtag.empty())
-							list.push_back(expr(std::move(gtag)));
+							seg.push_back(expr(std::move(gtag)));
 						break;
 					}
 
@@ -112,18 +111,18 @@ namespace byfxxm {
 					}
 
 					if (gtag.empty()) {
-						list.push_back(tok);
+						seg.push_back(tok);
 						utils.get();
 					}
 					else {
-						list.push_back(expr(std::move(gtag)));
+						seg.push_back(expr(std::move(gtag)));
 						gtag.clear();
 					}
 				}
 
-				SyntaxNodeList ret;
-				ret.emplace_back(gtree(std::move(list)));
-				return chunk::SegmentEx(std::move(ret), utils.line());
+				Segment ret;
+				ret.emplace_back(gtree(std::move(seg)));
+				return Statement(std::move(ret), utils.line());
 			}
 		};
 
@@ -132,12 +131,12 @@ namespace byfxxm {
 				return tok.kind == token::Kind::IF;
 			}
 
-			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				using If = chunk::IfElse::If;
 				using Else = chunk::IfElse::Else;
 
-				auto ReadCondition = [&utils]()->chunk::SegmentEx {
-					SyntaxNodeList list;
+				auto ReadCondition = [&utils]()->Statement {
+					Segment seg;
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -146,22 +145,22 @@ namespace byfxxm {
 						if (tok.kind == token::Kind::THEN)
 							break;
 
-						list.push_back(tok);
+						seg.push_back(tok);
 					}
 
-					return { std::move(list), utils.line() };
+					return { std::move(seg), utils.line() };
 				};
 
-				auto ReadLine = [&utils]()->std::optional<chunk::SegmentEx> {
+				auto ReadLine = [&utils]()->std::optional<Statement> {
 					SkipNewlines(utils);
 					auto tok = utils.peek();
 					if (tok.kind != token::Kind::SHARP && tok.kind != token::Kind::LB)
 						return std::nullopt;
 
-					return chunk::SegmentEx(GetLine(utils), utils.line());
+					return Statement(GetLine(utils), utils.line());
 				};
 
-				auto ReadScope = [&](std::vector<chunk::SegmentEx>& scope) {
+				auto ReadScope = [&](std::vector<Statement>& scope) {
 					while (1) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
@@ -171,7 +170,7 @@ namespace byfxxm {
 							)
 							break;
 
-						auto seg = GetSegment(utils);
+						auto seg = GetStatement(utils);
 						if (!seg)
 							break;
 
@@ -180,9 +179,9 @@ namespace byfxxm {
 				};
 
 				// read if
-				chunk::IfElse ifelse(utils.retref());
-				ifelse._segs.push_back(If(ReadCondition()));
-				ReadScope(ifelse._segs.back().scope);
+				chunk::IfElse ifelse(utils.return_val);
+				ifelse._ifs.push_back(If(ReadCondition()));
+				ReadScope(ifelse._ifs.back().scope);
 
 				// read elseif
 				while (1) {
@@ -191,8 +190,8 @@ namespace byfxxm {
 					if (tok.kind != token::Kind::ELSEIF)
 						break;
 
-					ifelse._segs.push_back(If(ReadCondition()));
-					ReadScope(ifelse._segs.back().scope);
+					ifelse._ifs.push_back(If(ReadCondition()));
+					ReadScope(ifelse._ifs.back().scope);
 				}
 
 				// read else
@@ -208,7 +207,7 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::ENDIF)
 					throw SyntaxException();
 
-				return chunk::SegmentEx(ClonePtr<chunk::Chunk>(std::make_unique<chunk::IfElse>(std::move(ifelse))), utils.line());
+				return Statement(ClonePtr<chunk::Chunk>(std::make_unique<chunk::IfElse>(std::move(ifelse))), utils.line());
 			}
 		};
 
@@ -217,9 +216,9 @@ namespace byfxxm {
 				return tok.kind == token::Kind::WHILE;
 			}
 
-			virtual std::optional<chunk::SegmentEx> Rest(SyntaxNodeList&& list, const Utils& utils) const override {
-				auto ReadCondition = [&]()->chunk::SegmentEx {
-					SyntaxNodeList list;
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+				auto ReadCondition = [&]()->Statement {
+					Segment list;
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -234,14 +233,14 @@ namespace byfxxm {
 					return { std::move(list), utils.line() };
 				};
 
-				auto ReadScope = [&](std::vector<chunk::SegmentEx>& scope) {
+				auto ReadScope = [&](std::vector<Statement>& scope) {
 					while (1) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
 						if (tok.kind == token::Kind::END)
 							break;
 
-						auto seg = GetSegment(utils);
+						auto seg = GetStatement(utils);
 						if (!seg)
 							break;
 
@@ -249,7 +248,7 @@ namespace byfxxm {
 					}
 				};
 
-				chunk::While wh(utils.retref());
+				chunk::While wh(utils.return_val);
 				wh._cond = ReadCondition();
 				ReadScope(wh._scope);
 
@@ -258,7 +257,7 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::END)
 					throw SyntaxException();
 
-				return chunk::SegmentEx(ClonePtr<chunk::Chunk>(std::make_unique<chunk::While>(std::move(wh))), utils.line());
+				return Statement(ClonePtr<chunk::Chunk>(std::make_unique<chunk::While>(std::move(wh))), utils.line());
 			}
 		};
 	}
@@ -277,4 +276,30 @@ namespace byfxxm {
 		, grammar::IfElse
 		, grammar::While
 	>;
+
+	inline std::optional<Statement> GetStatement(const Utils& utils) {
+		while (1) {
+			auto tok = utils.peek();
+			if (EndOfFile(tok))
+				return {};
+
+			Segment list;
+			list.push_back(utils.get());
+
+			auto iter = std::begin(GrammarsList::grammars);
+			for (; iter != std::end(GrammarsList::grammars); ++iter) {
+				std::optional<Statement> sub;
+				if ((*iter)->First(tok)) {
+					if (!(sub = (*iter)->Rest(std::move(list), utils)).has_value())
+						break;
+					return std::move(sub.value());
+				}
+			}
+
+			if (iter == std::end(GrammarsList::grammars))
+				throw SyntaxException();
+		}
+
+		throw SyntaxException();
+	}
 }

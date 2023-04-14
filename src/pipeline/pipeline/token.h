@@ -34,13 +34,16 @@ namespace byfxxm {
 			KEOF,			// eof
 			SHARP,			// #
 			WHILE,			// WHILE
-			ELSEIF,
-			ENDIF,
-			THEN,
-			DO,
-			END,
+			ELSEIF,			// ELSEIF
+			ENDIF,			// ENDIF
+			THEN,			// THEN
+			DO,				// DO
+			END,				// END
 			NEWLINE,		// \r | \n | \r\n
 			SEMI,			// ;
+			COMMA,		// ,
+			MAX,			// MAX
+			MIN,				// MIN
 
 			G,
 			M,
@@ -61,9 +64,9 @@ namespace byfxxm {
 			double value{ nan };
 		};
 
-		using Mapping = std::unordered_map<std::string, token::Kind>;
+		using Dictionary = std::unordered_map<std::string, token::Kind>;
 
-		inline const Mapping keywords = {
+		inline const Dictionary keywords = {
 			{"IF", Kind::IF},
 			{"ELSEIF", Kind::ELSEIF},
 			{"ELSE", Kind::ELSE},
@@ -78,9 +81,11 @@ namespace byfxxm {
 			{"LE", Kind::LE},
 			{"EQ", Kind::EQ},
 			{"NE", Kind::NE},
+			{"MAX", Kind::MAX},
+			{"MIN", Kind::MIN},
 		};
 
-		inline const Mapping symbols = {
+		inline const Dictionary symbols = {
 			{"[", Kind::LB},
 			{"]", Kind::RB},
 			{"+", Kind::PLUS},
@@ -89,9 +94,10 @@ namespace byfxxm {
 			{"/", Kind::DIV},
 			{"=", Kind::ASSIGN},
 			{";", Kind::SEMI},
+			{",", Kind::COMMA},
 		};
 
-		inline const Mapping gcodes = {
+		inline const Dictionary gcodes = {
 			{"G", Kind::G},
 			{"M", Kind::M},
 			{"X", Kind::X},
@@ -100,12 +106,12 @@ namespace byfxxm {
 		};
 	}
 
-	inline bool _IsMapping(const token::Mapping& map, const std::string& word) {
-		return map.contains(word);
+	inline bool _IsMapping(const token::Dictionary& dict, const std::string& word) {
+		return dict.contains(word);
 	}
 
-	inline bool _IsMapping(const token::Mapping& map, char ch) {
-		return std::ranges::find_if(map, [&](auto& ele) { return ch == ele.first[0]; }) != map.end();
+	inline bool _IsMapping(const token::Dictionary& dict, char ch) {
+		return std::ranges::find_if(dict, [&](auto& ele) { return ch == ele.first[0]; }) != dict.end();
 	}
 
 	inline bool IsKeyword(char ch) {

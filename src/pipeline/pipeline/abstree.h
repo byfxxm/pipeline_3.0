@@ -1,12 +1,15 @@
 ﻿#pragma once
 #include <functional>
 #include <variant>
+#include <future>
 #include "token.h"
 #include "predicate.h"
 #include "ginterface.h"
 #include "clone_ptr.h"
 
 namespace byfxxm {
+	using RValue = std::function<Value()>;
+
 	template <class... Ts>
 	struct Overload : Ts...{using Ts::operator()...; };
 
@@ -20,17 +23,15 @@ namespace byfxxm {
 			std::vector<NodePtr> subs;
 		};
 
-		Abstree(NodePtr&& root, Address& addr, Value* ret = nullptr) noexcept : _root(std::move(root)), _addr(addr), _return_val(ret) {
+		Abstree(NodePtr&& root, Address& addr, std::optional<Value>& retval) noexcept : _root(std::move(root)), _addr(addr), _return_val(retval) {
 			assert(_root);
+			assert(!_return_val);
 		}
 
 		Value operator()(Ginterface* pimpl = nullptr) {
-			auto res = _Execute(_root, pimpl);
-			if (_return_val) {
-				*_return_val = res;
-			}
-
-			return res;
+			_return_val = _Execute(_root, pimpl);
+			assert(_return_val);
+			return _return_val.value();
 		}
 
 	private:
@@ -70,6 +71,6 @@ namespace byfxxm {
 	private:
 		NodePtr _root;
 		Address& _addr;
-		Value* _return_val{ nullptr };
+		std::optional<Value>& _return_val;
 	};
 }

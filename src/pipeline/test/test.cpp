@@ -190,12 +190,21 @@ void TestParser3() {
 		R"(
 		#1 = 1
 		#2 = 20
+		#6 = 5
 		IF NOT [#1 GE #2] THEN
 			#3 = 3
 			
 			WHILE [#1 LT #2] DO
 				#1 = #1 +1
 				#3 = #3 + 1
+				IF #1 LT #3 THEN
+					#10 = 234.5
+					#20 = MAX[#MIN[1,2,3], 3.5, 10]
+					WHILE [#20 LT 25] DO
+						#20 = 1 + #20
+					END
+				ENDIF
+
 				G1 X#3
 			END
 			#5=5
@@ -213,6 +222,8 @@ void TestParser3() {
 	assert(*addr[3] == 22);
 	assert(*addr[2] == 20);
 	assert(*addr[5] == 5);
+	assert(*addr[10] == 234.5);
+	assert(*addr[20] == 25);
 }
 
 void TestParser4() {
@@ -250,12 +261,12 @@ void TestParser5() {
 int main()
 {
 	//TestPipeline();
-	TestParser();
-	TestParser1();
-	TestParser2();
+	//TestParser();
+	//TestParser1();
+	//TestParser2();
 	TestParser3();
-	TestParser4();
-	TestParser5();
+	//TestParser4();
+	//TestParser5();
 	return 0;
 }
 

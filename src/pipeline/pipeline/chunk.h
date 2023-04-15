@@ -49,7 +49,7 @@ namespace byfxxm {
 				ret = Unpack(std::move(stmt));
 				if (!ret) {
 					++index;
-					ret = Unpack(std::move(scope[index++]));
+					ret = GetScope(scope, index);
 				}
 			}
 

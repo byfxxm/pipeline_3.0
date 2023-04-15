@@ -182,12 +182,12 @@ namespace byfxxm {
 				}
 
 				// read else
-				auto tok = utils.get();
-				if (tok.kind != token::Kind::ELSE)
-					throw SyntaxException();
-
-				SkipNewlines(utils);
-				read_scope(ifelse._else.scope);
+				auto tok = utils.peek();
+				if (tok.kind == token::Kind::ELSE) {
+					utils.get();
+					SkipNewlines(utils);
+					read_scope(ifelse._else.scope);
+				}
 
 				// endif
 				tok = utils.get();

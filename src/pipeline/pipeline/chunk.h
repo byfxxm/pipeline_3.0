@@ -30,9 +30,9 @@ namespace byfxxm {
 				return stmt;
 
 			auto& chunk = std::get<ClonePtr<Chunk>>(stmt.statement);
-			auto list = chunk->Next();
-			assert(list ? std::holds_alternative<Segment>(list.value().statement) : true);
-			return list ? std::move(list.value()) : std::optional<Statement>();
+			auto next = chunk->Next();
+			assert(next ? std::holds_alternative<Segment>(next.value().statement) : true);
+			return next ? std::move(next.value()) : std::optional<Statement>();
 		};
 
 		inline std::optional<Statement> GetScope(std::vector<Statement>&& scope, size_t& index) {

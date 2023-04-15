@@ -209,7 +209,7 @@ namespace byfxxm {
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				auto read_cond = [&]()->Statement {
-					Segment list;
+					Segment seg;
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -218,10 +218,10 @@ namespace byfxxm {
 						if (tok.kind == token::Kind::DO)
 							break;
 
-						list.push_back(tok);
+						seg.push_back(tok);
 					}
 
-					return { std::move(list), utils.line() };
+					return { std::move(seg), utils.line() };
 				};
 
 				auto read_scope = [&](std::vector<Statement>& scope) {
@@ -273,14 +273,14 @@ namespace byfxxm {
 				if (EndOfFile(tok))
 					return {};
 
-				Segment list;
-				list.push_back(utils.get());
+				Segment seg;
+				seg.push_back(utils.get());
 
 				auto iter = std::begin(GrammarsList::grammars);
 				for (; iter != std::end(GrammarsList::grammars); ++iter) {
 					std::optional<Statement> sub;
 					if ((*iter)->First(tok)) {
-						if (!(sub = (*iter)->Rest(std::move(list), utils)).has_value())
+						if (!(sub = (*iter)->Rest(std::move(seg), utils)).has_value())
 							break;
 						return std::move(sub.value());
 					}

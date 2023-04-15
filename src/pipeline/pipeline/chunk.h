@@ -59,10 +59,10 @@ namespace byfxxm {
 		class IfElse : public Chunk {
 			virtual std::optional<Statement> Next() override {
 				if (_iscond) {
-					if (_cur_stmt > 0 && std::get<bool>(_return())) {
+					if (_cur_stmt > 0 && std::get<bool>(_get_ret())) {
 						--_cur_stmt;
 						_iscond = false;
-						return GetScope(std::move(_ifs[_cur_stmt].scope), _scopeindex);
+						return GetScope(std::move(_ifs[_cur_stmt].scope), _scope_index);
 					}
 
 					if (_cur_stmt == 0)
@@ -70,35 +70,35 @@ namespace byfxxm {
 
 					if (_cur_stmt == _ifs.size()) {
 						_iscond = false;
-						return GetScope(std::move(_else.scope), _scopeindex);
+						return GetScope(std::move(_else.scope), _scope_index);
 					}
 
-					if (!std::holds_alternative<bool>(_return()))
+					if (!std::holds_alternative<bool>(_get_ret()))
 						throw SyntaxException();
 
-					auto cond = std::get<bool>(_return());
+					auto cond = std::get<bool>(_get_ret());
 					if (cond) {
 						_iscond = false;
-						return GetScope(std::move(_ifs[_cur_stmt].scope), _scopeindex);
+						return GetScope(std::move(_ifs[_cur_stmt].scope), _scope_index);
 					}
 
 					return Unpack(std::move(_ifs[_cur_stmt++].cond));
 				}
 
 				if (_cur_stmt == _ifs.size())
-					return GetScope(std::move(_else.scope), _scopeindex);
+					return GetScope(std::move(_else.scope), _scope_index);
 
-				if (_scopeindex == _ifs[_cur_stmt].scope.size())
+				if (_scope_index == _ifs[_cur_stmt].scope.size())
 					return {};
 
-				return GetScope(std::move(_ifs[_cur_stmt].scope), _scopeindex);
+				return GetScope(std::move(_ifs[_cur_stmt].scope), _scope_index);
 			}
 
 			virtual std::unique_ptr<Chunk> Clone() const {
 				return std::make_unique<IfElse>(*this);
 			}
 
-			IfElse(RetureValue retval) : _return(retval) {}
+			IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
 
 			struct If {
 				Statement cond;
@@ -113,8 +113,8 @@ namespace byfxxm {
 			Else _else;
 			size_t _cur_stmt{ 0 };
 			bool _iscond{ true };
-			RetureValue _return;
-			size_t _scopeindex{ 0 };
+			GetRetVal _get_ret;
+			size_t _scope_index{ 0 };
 			friend class grammar::IfElse;
 		};
 
@@ -126,30 +126,30 @@ namespace byfxxm {
 					return std::move(_cond);
 				}
 
-				if (_scopeindex == _scope.size()) {
-					_scopeindex = 0;
+				if (_scope_index == _scope.size()) {
+					_scope_index = 0;
 					_Restore();
 					return std::move(_cond);
 				}
 
-				if (_scopeindex == 0) {
-					if (!std::holds_alternative<bool>(_return()))
+				if (_scope_index == 0) {
+					if (!std::holds_alternative<bool>(_get_ret()))
 						throw SyntaxException();
 
-					auto cond = std::get<bool>(_return());
+					auto cond = std::get<bool>(_get_ret());
 					if (!cond)
 						return {};
 				}
 
 				_iscond = false;
-				return GetScope(std::move(_scope), _scopeindex);
+				return GetScope(std::move(_scope), _scope_index);
 			}
 
 			virtual std::unique_ptr<Chunk> Clone() const {
 				return std::make_unique<While>(*this);
 			}
 
-			While(RetureValue retval) : _return(retval) {}
+			While(GetRetVal get_ret) : _get_ret(get_ret) {}
 
 			void _Store() {
 				_scope_backup = _scope;
@@ -166,8 +166,8 @@ namespace byfxxm {
 			std::vector<Statement> _scope;
 			std::vector<Statement> _scope_backup;
 			bool _iscond{ true };
-			RetureValue _return;
-			size_t _scopeindex{ 0 };
+			GetRetVal _get_ret;
+			size_t _scope_index{ 0 };
 			friend class grammar::While;
 		};
 	}

@@ -203,5 +203,5 @@ namespace byfxxm {
 
 	using Group = std::vector<double>;
 	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
-	using RetureValue = std::function<Value()>;
+	using GetRetVal = std::function<Value()>;
 }

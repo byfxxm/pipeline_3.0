@@ -15,7 +15,7 @@ namespace byfxxm {
 			Get get;
 			Peek peek;
 			Line line;
-			RetureValue return_val;
+			GetRetVal return_val;
 		};
 
 		inline bool NewSegment(const token::Token& tok) {
@@ -26,7 +26,7 @@ namespace byfxxm {
 			return tok.kind == token::Kind::KEOF;
 		}
 
-		inline Segment GetLine(const Utils& utils, Segment seg = Segment()) {
+		inline Segment GetSegment(const Utils& utils, Segment seg = Segment()) {
 			while (1) {
 				auto tok = utils.get();
 				if (NewSegment(tok))
@@ -73,7 +73,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				return Statement(GetLine(utils, std::move(seg)), utils.line());
+				return Statement(GetSegment(utils, std::move(seg)), utils.line());
 			}
 		};
 
@@ -135,7 +135,7 @@ namespace byfxxm {
 				using If = chunk::IfElse::If;
 				using Else = chunk::IfElse::Else;
 
-				auto ReadCondition = [&utils]()->Statement {
+				auto read_cond = [&]()->Statement {
 					Segment seg;
 					while (1) {
 						auto tok = utils.get();
@@ -151,16 +151,7 @@ namespace byfxxm {
 					return { std::move(seg), utils.line() };
 				};
 
-				auto ReadLine = [&utils]()->std::optional<Statement> {
-					SkipNewlines(utils);
-					auto tok = utils.peek();
-					if (tok.kind != token::Kind::SHARP && tok.kind != token::Kind::LB)
-						return std::nullopt;
-
-					return Statement(GetLine(utils), utils.line());
-				};
-
-				auto ReadScope = [&](std::vector<Statement>& scope) {
+				auto read_scope = [&](std::vector<Statement>& scope) {
 					while (1) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
@@ -180,8 +171,8 @@ namespace byfxxm {
 
 				// read if
 				chunk::IfElse ifelse(utils.return_val);
-				ifelse._ifs.push_back(If(ReadCondition()));
-				ReadScope(ifelse._ifs.back().scope);
+				ifelse._ifs.push_back(If(read_cond()));
+				read_scope(ifelse._ifs.back().scope);
 
 				// read elseif
 				while (1) {
@@ -190,8 +181,8 @@ namespace byfxxm {
 					if (tok.kind != token::Kind::ELSEIF)
 						break;
 
-					ifelse._ifs.push_back(If(ReadCondition()));
-					ReadScope(ifelse._ifs.back().scope);
+					ifelse._ifs.push_back(If(read_cond()));
+					read_scope(ifelse._ifs.back().scope);
 				}
 
 				// read else
@@ -200,7 +191,7 @@ namespace byfxxm {
 					throw SyntaxException();
 
 				SkipNewlines(utils);
-				ReadScope(ifelse._else.scope);
+				read_scope(ifelse._else.scope);
 
 				// endif
 				tok = utils.get();
@@ -217,7 +208,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				auto ReadCondition = [&]()->Statement {
+				auto read_cond = [&]()->Statement {
 					Segment list;
 					while (1) {
 						auto tok = utils.get();
@@ -233,7 +224,7 @@ namespace byfxxm {
 					return { std::move(list), utils.line() };
 				};
 
-				auto ReadScope = [&](std::vector<Statement>& scope) {
+				auto read_scope = [&](std::vector<Statement>& scope) {
 					while (1) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
@@ -249,8 +240,8 @@ namespace byfxxm {
 				};
 
 				chunk::While wh(utils.return_val);
-				wh._cond = ReadCondition();
-				ReadScope(wh._scope);
+				wh._cond = read_cond();
+				read_scope(wh._scope);
 
 				// end
 				auto tok = utils.get();

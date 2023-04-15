@@ -14,17 +14,6 @@ namespace byfxxm {
 		return tok.kind == token::Kind::KEOF;
 	}
 
-	using Get = std::function<token::Token()>;
-	using Peek = std::function<token::Token()>;
-	using Line = std::function<size_t()>;
-
-	struct Utils {
-		Get get;
-		Peek peek;
-		Line line;
-		RValue return_val;
-	};
-
 	inline Segment GetLine(const Utils& utils, Segment seg = Segment()) {
 		while (1) {
 			auto tok = utils.get();

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <variant>
 #include <string>
+#include "token.h"
 #include "ginterface.h"
 #include "exception.h"
 
@@ -13,9 +14,6 @@
 #define IsBool(v) IsType(v, bool)
 
 namespace byfxxm {
-	using Group = std::vector<double>;
-	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
-
 	namespace predicate {
 		inline auto Plus = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {

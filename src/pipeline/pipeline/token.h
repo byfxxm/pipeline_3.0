@@ -194,4 +194,26 @@ namespace byfxxm {
 		{ t.peek() }->std::integral;
 		{ t.eof() }->std::same_as<bool>;
 	};
+
+	template <class... Ts>
+	struct Overload : Ts...{using Ts::operator()...; };
+
+	struct Gtag {
+		token::Kind code;
+		double value;
+	};
+
+	using Group = std::vector<double>;
+	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
+	using Get = std::function<token::Token()>;
+	using Peek = std::function<token::Token()>;
+	using Line = std::function<size_t()>;
+	using RetureValue = std::function<Value()>;
+
+	struct Utils {
+		Get get;
+		Peek peek;
+		Line line;
+		RetureValue return_val;
+	};
 }

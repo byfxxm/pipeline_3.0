@@ -9,11 +9,6 @@
 #include "clone_ptr.h"
 
 namespace byfxxm {
-	using RValue = std::function<Value()>;
-
-	template <class... Ts>
-	struct Overload : Ts...{using Ts::operator()...; };
-
 	class Abstree {
 	public:
 		struct Node;

@@ -4,11 +4,6 @@
 #include <unordered_map>
 
 namespace byfxxm {
-	struct Gtag {
-		token::Kind code;
-		double value;
-	};
-
 	using Gparams = std::vector<Gtag>;
 
 	class Address;

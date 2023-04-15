@@ -99,7 +99,7 @@ namespace byfxxm {
 				return std::make_unique<IfElse>(*this);
 			}
 
-			IfElse(RValue retval) : _return(retval) {}
+			IfElse(RetureValue retval) : _return(retval) {}
 
 			struct If {
 				Statement cond;
@@ -114,7 +114,7 @@ namespace byfxxm {
 			Else _else;
 			size_t _cur_stmt{ 0 };
 			bool _iscond{ true };
-			RValue _return;
+			RetureValue _return;
 			size_t _scopeindex{ 0 };
 			friend class grammar::IfElse;
 		};
@@ -150,7 +150,7 @@ namespace byfxxm {
 				return std::make_unique<While>(*this);
 			}
 
-			While(RValue retval) : _return(retval) {}
+			While(RetureValue retval) : _return(retval) {}
 
 			void _Store() {
 				_scope_backup = _scope;
@@ -167,7 +167,7 @@ namespace byfxxm {
 			std::vector<Statement> _scope;
 			std::vector<Statement> _scope_backup;
 			bool _iscond{ true };
-			RValue _return;
+			RetureValue _return;
 			size_t _scopeindex{ 0 };
 			friend class grammar::While;
 		};

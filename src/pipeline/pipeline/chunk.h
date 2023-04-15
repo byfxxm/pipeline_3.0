@@ -39,8 +39,8 @@ namespace byfxxm {
 			if (index == scope.size())
 				return {};
 
-			auto& stmt = scope[index];
 			std::optional<Statement> ret;
+			auto& stmt = scope[index];
 			if (std::holds_alternative<Segment>(stmt.statement)) {
 				ret = std::move(stmt);
 				++index;

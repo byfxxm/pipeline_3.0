@@ -26,18 +26,6 @@ namespace byfxxm {
 			return tok.kind == token::Kind::KEOF;
 		}
 
-		inline Segment GetSegment(const Utils& utils, Segment seg = Segment()) {
-			while (1) {
-				auto tok = utils.get();
-				if (NewSegment(tok))
-					break;
-
-				seg.push_back(tok);
-			}
-
-			return seg;
-		}
-
 		inline void SkipNewlines(const Utils& utils) {
 			while (1) {
 				auto tok = utils.peek();
@@ -57,13 +45,13 @@ namespace byfxxm {
 			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const = 0;
 		};
 
-		class Newseg : public Grammar {
+		class Blank : public Grammar {
 			virtual bool First(const token::Token& tok) const override {
 				return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 			}
 
 			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const override {
-				return std::nullopt;
+				return {};
 			}
 		};
 
@@ -73,7 +61,15 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				return Statement(GetSegment(utils, std::move(seg)), utils.line());
+				while (1) {
+					auto tok = utils.get();
+					if (NewSegment(tok))
+						break;
+
+					seg.push_back(tok);
+				}
+
+				return Statement(std::move(seg), utils.line());
 			}
 		};
 
@@ -260,7 +256,7 @@ namespace byfxxm {
 		};
 
 		using GrammarsList = _GrammarsList <
-			grammar::Newseg
+			grammar::Blank
 			, grammar::Expr
 			, grammar::Ggram
 			, grammar::IfElse

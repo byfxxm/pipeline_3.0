@@ -266,12 +266,12 @@ void TestParser5() {
 int main()
 {
 	//TestPipeline();
-	//TestParser();
-	//TestParser1();
-	//TestParser2();
+	TestParser();
+	TestParser1();
+	TestParser2();
 	TestParser3();
-	//TestParser4();
-	//TestParser5();
+	TestParser4();
+	TestParser5();
 	return 0;
 }
 

@@ -67,7 +67,4 @@ namespace byfxxm {
 		Address& _addr;
 		Value& _return_val;
 	};
-
-	using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
-	using Segment = std::pmr::vector<SyntaxNode>;
 }

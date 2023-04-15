@@ -47,6 +47,9 @@ namespace byfxxm {
 		{token::Kind::CON, {}},
 	};
 
+	using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
+	using Segment = std::pmr::vector<SyntaxNode>;
+
 	class Expression {
 	public:
 		Abstree::NodePtr operator()(Segment&& seg) const {

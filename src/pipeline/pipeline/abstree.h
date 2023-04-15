@@ -19,12 +19,13 @@ namespace byfxxm {
 			std::vector<NodePtr> subs;
 		};
 
-		Abstree(NodePtr&& root, Address& addr) noexcept : _root(std::move(root)), _addr(addr) {
+		Abstree(NodePtr&& root, Address& addr, Value& rval) noexcept : _root(std::move(root)), _addr(addr), _return_val(rval) {
 			assert(_root);
 		}
 
 		Value operator()(Ginterface* pimpl = nullptr) {
-			return _Execute(_root, pimpl);
+			_return_val = _Execute(_root, pimpl);
+			return _return_val;
 		}
 
 	private:
@@ -64,6 +65,7 @@ namespace byfxxm {
 	private:
 		NodePtr _root;
 		Address& _addr;
+		Value& _return_val;
 	};
 
 	using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;

@@ -12,9 +12,8 @@ namespace byfxxm {
 		Gparser(const std::filesystem::path& file) : _syntax(std::ifstream(file)) {}
 
 		void Run(Ginterface& pimpl) {
-			Value rval;
-			while (auto abs_tree = _syntax.Next(rval)) {
-				rval = abs_tree.value()(&pimpl);
+			while (auto abs_tree = _syntax.Next()) {
+				abs_tree.value()(&pimpl);
 			}
 		}
 

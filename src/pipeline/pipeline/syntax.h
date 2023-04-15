@@ -15,7 +15,7 @@ namespace byfxxm {
 	public:
 		Syntax(T&& stream) : _lex(std::move(stream)) {}
 
-		std::optional<Abstree> Next(const Value& rval) {
+		std::optional<Abstree> Next() {
 			auto get = [&]() {
 				auto tok = _lex.Get();
 				if (tok.kind == token::Kind::NEWLINE)
@@ -24,7 +24,7 @@ namespace byfxxm {
 			};
 			auto peek = [&]() {return _lex.Peek(); };
 			auto line = [&]() {return _lineno; };
-			auto get_rval = [&]()->Value {return rval; };
+			auto get_rval = [&]()->Value {return _return_val; };
 
 			auto stmt = GetStatement(_remain_chunk);
 			if (stmt) {
@@ -51,7 +51,7 @@ namespace byfxxm {
 
 	private:
 		Abstree _ToAbstree(Segment&& seg) {
-			return Abstree(expr(std::move(seg)), _addr);
+			return Abstree(expr(std::move(seg)), _addr, _return_val);
 		}
 
 		Abstree _ToAbstree(Statement&& stmt) {
@@ -75,6 +75,7 @@ namespace byfxxm {
 		Address _addr;
 		ClonePtr<chunk::Chunk> _remain_chunk;
 		size_t _output_line{ 0 };
+		Value _return_val;
 	};
 
 	template <class T>

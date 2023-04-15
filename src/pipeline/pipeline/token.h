@@ -106,6 +106,12 @@ namespace byfxxm {
 			{"X", Kind::X},
 			{"Y", Kind::Y},
 			{"Z", Kind::Z},
+			{"A", Kind::A},
+			{"B", Kind::B},
+			{"C", Kind::C},
+			{"I", Kind::I},
+			{"J", Kind::J},
+			{"K", Kind::K},
 		};
 	}
 
@@ -135,6 +141,10 @@ namespace byfxxm {
 
 	inline bool IsGcode(char ch) {
 		return _IsMapping(token::gcodes, ch);
+	}
+
+	inline bool IsGcode(token::Kind tok) {
+		return std::ranges::find_if(token::gcodes, [&](auto&& pair) {return pair.second == tok; }) != token::gcodes.end();
 	}
 
 	inline bool IsGcode(const std::string& word) {
@@ -174,18 +184,6 @@ namespace byfxxm {
 
 	inline bool IsNewline(char ch) {
 		return std::ranges::find(newline, ch) != std::end(newline);
-	}
-
-	inline bool IsGcode(token::Kind tok) {
-		return tok == token::Kind::G
-			|| tok == token::Kind::M
-			|| tok == token::Kind::X
-			|| tok == token::Kind::Y
-			|| tok == token::Kind::Z
-			|| tok == token::Kind::A
-			|| tok == token::Kind::B
-			|| tok == token::Kind::C
-			;
 	}
 
 	template <class T>

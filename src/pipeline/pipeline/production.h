@@ -150,6 +150,9 @@ namespace byfxxm {
 		}
 
 		void _CheckError(const Abstree::NodePtr& node) const {
+			if (!node)
+				throw SyntaxException();
+
 			std::visit(
 				Overload
 				{

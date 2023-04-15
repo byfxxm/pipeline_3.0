@@ -24,12 +24,7 @@ namespace byfxxm {
 			};
 			auto peek = [&]() {return _lex.Peek(); };
 			auto line = [&]() {return _lineno; };
-			auto retval = [&]()->Value {
-				if (!_return_val)
-					throw SyntaxException();
-
-				return _return_val.value();
-			};
+			auto retval = [&]()->Value {return _return_val; };
 
 			auto stmt = GetStatement(_remain_chunk);
 			if (stmt) {
@@ -56,7 +51,6 @@ namespace byfxxm {
 
 	private:
 		Abstree _ToAbstree(Segment&& seg) {
-			_return_val = std::nullopt;
 			return Abstree(expr(std::move(seg)), _addr, _return_val);
 		}
 
@@ -80,7 +74,7 @@ namespace byfxxm {
 		size_t _lineno{ 0 };
 		Address _addr;
 		ClonePtr<chunk::Chunk> _remain_chunk;
-		std::optional<Value> _return_val;
+		Value _return_val;
 		size_t _output_line{ 0 };
 	};
 

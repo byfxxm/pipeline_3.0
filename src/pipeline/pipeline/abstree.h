@@ -2,6 +2,7 @@
 #include <functional>
 #include <variant>
 #include <future>
+#include <cassert>
 #include "token.h"
 #include "predicate.h"
 #include "ginterface.h"

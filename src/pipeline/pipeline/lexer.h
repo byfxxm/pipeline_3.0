@@ -23,7 +23,6 @@ namespace byfxxm {
 	class Lexer {
 	public:
 		Lexer(T&& stream) : _stream(std::move(stream)) {}
-		Lexer(const std::string& str) : _stream(std::istringstream(str)) {}
 
 		void Reset(const std::filesystem::path& file) {
 			using std::swap;
@@ -80,6 +79,4 @@ namespace byfxxm {
 
 	template <class T>
 	Lexer(T) -> Lexer<T>;
-
-	Lexer(std::string)->Lexer<std::istringstream>;
 }

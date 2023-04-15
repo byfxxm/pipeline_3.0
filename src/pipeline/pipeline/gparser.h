@@ -12,6 +12,7 @@ namespace byfxxm {
 	public:
 		Gparser(T&& stream) : _syntax(std::move(stream)) {}
 		Gparser(const std::string& str) : _syntax(std::istringstream(str)) {}
+		Gparser(const std::filesystem::path& file) : _syntax(std::ifstream(file)) {}
 
 		void Run(Ginterface& pimpl) {
 			while (auto abs_tree = _syntax.Next()) {
@@ -64,4 +65,5 @@ namespace byfxxm {
 	Gparser(T) -> Gparser<T>;
 
 	Gparser(std::string)->Gparser<std::istringstream>;
+	Gparser(std::filesystem::path)->Gparser<std::ifstream>;
 }

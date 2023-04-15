@@ -14,7 +14,6 @@ namespace byfxxm {
 	class Syntax {
 	public:
 		Syntax(T&& stream) : _lex(std::move(stream)) {}
-		Syntax(const std::string& str) : _lex(std::istringstream(str)) {}
 
 		std::optional<Abstree> Next() {
 			auto get = [&]() {
@@ -87,6 +86,4 @@ namespace byfxxm {
 
 	template <class T>
 	Syntax(T) -> Syntax<T>;
-
-	Syntax(std::string)->Syntax<std::istringstream>;
 }

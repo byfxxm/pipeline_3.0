@@ -213,63 +213,6 @@ namespace byfxxm {
 				}, lhs, rhs);
 		};
 
-		using Gfunc = bool(Ginterface::*)(const Gparams&, const Address&);
-
-		struct _GtagHash {
-			size_t operator()(const Gtag& tag) const {
-				return std::hash<token::Kind>()(tag.code) ^ std::hash<double>()(tag.value);
-			}
-		};
-
-		struct _GtagEqual {
-			bool operator()(const Gtag& tag1, const Gtag& tag2) const {
-				return (tag1.code == tag2.code) && (tag1.value == tag2.value);
-			}
-		};
-
-		inline const std::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual> gtag_to_ginterface = {
-			{{token::Kind::G, 0}, &Ginterface::G0},
-			{{token::Kind::G, 1}, &Ginterface::G1},
-			{{token::Kind::G, 2}, &Ginterface::G2},
-			{{token::Kind::G, 3}, &Ginterface::G3},
-			{{token::Kind::G, 4}, &Ginterface::G4},
-		};
-
-		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
-			if (tags.empty())
-				throw AbstreeException();
-
-			std::ranges::for_each(tags, [](auto&& ele) {
-				if (!std::holds_alternative<Gtag>(ele))
-					throw AbstreeException();
-
-				if (!IsGcode(std::get<Gtag>(ele).code))
-					throw AbstreeException();
-				});
-
-			auto& first = std::get<Gtag>(*tags.begin());
-			if (!gtag_to_ginterface.contains(first))
-				throw AbstreeException();
-
-			Gparams par;
-			std::for_each(tags.begin() + 1, tags.end(), [&](const Value& ele) {
-				auto& tag = std::get<Gtag>(ele);
-				if (IsNaN(tag.value))
-					return;
-
-				par.push_back(std::get<Gtag>(ele));
-				});
-
-			if (!gtag_to_ginterface.contains(first))
-				throw AbstreeException();
-
-			auto& func = gtag_to_ginterface.at(first);
-			if (!(pimpl->*func)(par, addr))
-				throw AbstreeException();
-
-			return std::monostate{};
-		};
-
 		template <token::Kind K>
 		inline auto Gcode = [](const Value& value) {
 			return std::visit([&](auto&& v)->Value {
@@ -344,6 +287,63 @@ namespace byfxxm {
 				else
 					throw SyntaxException(R"("NOT" error)");
 				}, value);
+		};
+
+		using Gfunc = bool(Ginterface::*)(const Gparams&, const Address&);
+
+		struct _GtagHash {
+			size_t operator()(const Gtag& tag) const {
+				return std::hash<token::Kind>()(tag.code) ^ std::hash<double>()(tag.value);
+			}
+		};
+
+		struct _GtagEqual {
+			bool operator()(const Gtag& tag1, const Gtag& tag2) const {
+				return (tag1.code == tag2.code) && (tag1.value == tag2.value);
+			}
+		};
+
+		inline const std::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual> gtag_to_ginterface = {
+			{{token::Kind::G, 0}, &Ginterface::G0},
+			{{token::Kind::G, 1}, &Ginterface::G1},
+			{{token::Kind::G, 2}, &Ginterface::G2},
+			{{token::Kind::G, 3}, &Ginterface::G3},
+			{{token::Kind::G, 4}, &Ginterface::G4},
+		};
+
+		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
+			if (tags.empty())
+				throw AbstreeException();
+
+			std::ranges::for_each(tags, [](auto&& ele) {
+				if (!std::holds_alternative<Gtag>(ele))
+					throw AbstreeException();
+
+				if (!IsGcode(std::get<Gtag>(ele).code))
+					throw AbstreeException();
+				});
+
+			auto& first = std::get<Gtag>(*tags.begin());
+			if (!gtag_to_ginterface.contains(first))
+				throw AbstreeException();
+
+			Gparams par;
+			std::for_each(tags.begin() + 1, tags.end(), [&](const Value& ele) {
+				auto& tag = std::get<Gtag>(ele);
+				if (IsNaN(tag.value))
+					return;
+
+				par.push_back(std::get<Gtag>(ele));
+				});
+
+			if (!gtag_to_ginterface.contains(first))
+				throw AbstreeException();
+
+			auto& func = gtag_to_ginterface.at(first);
+			if (!(pimpl->*func)(par, addr))
+				throw AbstreeException();
+
+			return std::monostate{};
 		};
 	}
 

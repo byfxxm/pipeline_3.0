@@ -31,6 +31,7 @@ namespace byfxxm {
 		{token::Kind::SHARP, {5, Sharp{predicate::Sharp}}},
 		{token::Kind::NEG, {5, Unary{predicate::Neg}}},
 		{token::Kind::POS, {5, Unary{predicate::Pos}}},
+		{token::Kind::NOT, {5, Unary{predicate::Not}}},
 		{token::Kind::MAX, {5, Unary{predicate::Max}}},
 		{token::Kind::MIN, {5, Unary{predicate::Min}}},
 		{token::Kind::G, {5, Unary{predicate::Gcode<token::Kind::G>}}},

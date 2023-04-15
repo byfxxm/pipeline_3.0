@@ -2,6 +2,7 @@
 #include <variant>
 #include <string>
 #include "ginterface.h"
+#include "exception.h"
 
 #define IsSameType(lhs, rhs) (std::is_same_v<decltype(lhs), decltype(rhs)>)
 #define IsType(v, type) (std::is_same_v<std::remove_cvref_t<decltype(v)>, type>)
@@ -9,6 +10,7 @@
 #define IsString(v) IsType(v, std::string)
 #define IsDoublePtr(v) IsType(v, double*)
 #define IsGroup(v) IsType(v, Group)
+#define IsBool(v) IsType(v, bool)
 
 namespace byfxxm {
 	using Group = std::vector<double>;
@@ -314,6 +316,15 @@ namespace byfxxm {
 					throw SyntaxException("min error");
 				}, value);
 		};
+
+		inline auto Not = [](const Value& value) {
+			return std::visit([](auto&& v)->Value {
+				if constexpr (IsBool(v))
+					return Value{ !v };
+				else
+					throw SyntaxException(R"("NOT" error)");
+				}, value);
+		};
 	}
 
 	template <class... Ts>
@@ -338,6 +349,7 @@ namespace byfxxm {
 		, predicate::Gcode<token::Kind::K>
 		, predicate::Max
 		, predicate::Min
+		, predicate::Not
 	));
 
 	// 二元操作符

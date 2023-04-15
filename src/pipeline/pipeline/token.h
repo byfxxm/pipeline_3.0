@@ -31,7 +31,7 @@ namespace byfxxm {
 			LE,				// <=
 			GT,				// >
 			GE,				// >=
-			KEOF,			// eof
+			KEOF,			// EOF
 			SHARP,			// #
 			WHILE,			// WHILE
 			ELSEIF,			// ELSEIF
@@ -45,6 +45,7 @@ namespace byfxxm {
 			MAX,			// MAX
 			MIN,				// MIN
 			STRING,		// "..."
+			NOT,			// NOT
 
 			G,
 			M,
@@ -84,6 +85,7 @@ namespace byfxxm {
 			{"NE", Kind::NE},
 			{"MAX", Kind::MAX},
 			{"MIN", Kind::MIN},
+			{"NOT", Kind::NOT},
 		};
 
 		inline const Dictionary symbols = {

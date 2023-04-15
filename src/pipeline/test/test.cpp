@@ -190,7 +190,6 @@ void TestParser3() {
 		R"(
 		#1 = 1
 		#2 = 20
-		#6 = 5
 		IF NOT [#1 GE #2] THEN
 			#3 = 3
 			
@@ -203,6 +202,9 @@ void TestParser3() {
 					WHILE [#20 LT 25] DO
 						#20 = 1 + #20
 					END
+					IF #20 EQ 25 THEN
+						#[#20 ]= 100
+					ENDIF
 				ENDIF
 
 				G1 X#3
@@ -224,6 +226,7 @@ void TestParser3() {
 	assert(*addr[5] == 5);
 	assert(*addr[10] == 234.5);
 	assert(*addr[20] == 25);
+	assert(*addr[25] == 100);
 }
 
 void TestParser4() {

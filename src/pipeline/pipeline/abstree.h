@@ -45,13 +45,13 @@ namespace byfxxm {
 						return value;
 					},
 					[&](const Unary& unary) {
-						return std::visit([&](auto&& func) { return func(params[0]); }, unary);
+						return std::visit([&](auto&& func) {return func(params[0]); }, unary);
 					},
 					[&](const Binary& binary) {
-						return std::visit([&](auto&& func) { return func(params[0], params[1]); }, binary);
+						return std::visit([&](auto&& func) {return func(params[0], params[1]); }, binary);
 					},
 					[&](const Sharp& sharp) {
-						return std::visit([&](auto&& func) { return func(params[0], _addr); }, sharp);
+						return std::visit([&](auto&& func) {return func(params[0], _addr); }, sharp);
 					},
 					[&](const Gcmd& gcmd) {
 						return std::visit([&](auto&& func) {return func(params, pimpl, _addr); }, gcmd);

@@ -41,7 +41,7 @@ namespace byfxxm {
 			return std::visit(
 				Overload
 				{
-					[&](const Value& value) {
+					[](const Value& value) {
 						return value;
 					},
 					[&](const Unary& unary) {
@@ -56,7 +56,7 @@ namespace byfxxm {
 					[&](const Gcmd& gcmd) {
 						return std::visit([&](auto&& func) {return func(params, pimpl, _addr); }, gcmd);
 					},
-					[&](const auto&)->Value { // default
+					[](const auto&)->Value { // default
 						throw AbstreeException();
 					},
 				}, node->pred);

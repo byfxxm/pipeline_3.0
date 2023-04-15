@@ -175,7 +175,7 @@ namespace byfxxm {
 						if (node->subs.size() == 0)
 							throw SyntaxException();
 					},
-					[&](const auto&) { // default
+					[](const auto&) { // default
 						throw SyntaxException();
 					},
 				}, node->pred);

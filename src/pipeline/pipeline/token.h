@@ -187,4 +187,11 @@ namespace byfxxm {
 			|| tok == token::Kind::C
 			;
 	}
+
+	template <class T>
+	concept StreamConcept = requires(T t) {
+		{ t.get() }->std::integral;
+		{ t.peek() }->std::integral;
+		{ t.eof() }->std::same_as<bool>;
+	};
 }

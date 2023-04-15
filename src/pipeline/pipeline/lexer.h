@@ -19,15 +19,11 @@ namespace byfxxm {
 		}
 	}
 
+	template <StreamConcept T>
 	class Lexer {
 	public:
-		using StreamType = std::variant<std::ifstream, std::stringstream>;
-
-		Lexer(const std::filesystem::path& file) : _stream(std::ifstream(file)) {
-		}
-
-		Lexer(const std::string& memory) : _stream(std::stringstream(memory)) {
-		}
+		Lexer(T&& stream) : _stream(std::move(stream)) {}
+		Lexer(const std::string& str) : _stream(std::istringstream(str)) {}
 
 		void Reset(const std::filesystem::path& file) {
 			using std::swap;
@@ -56,32 +52,34 @@ namespace byfxxm {
 
 	private:
 		token::Token _Next() {
-			return std::visit(
-				[this](auto&& stream) {
-					if (stream.eof())
-						return token::Token{ token::Kind::KEOF, nan };
+			if (_stream.eof())
+				return token::Token{ token::Kind::KEOF, nan };
 
-					SkipSpaces(stream);
-					auto ch = stream.get();
-					std::string word;
-					word.push_back(ch);
+			SkipSpaces(_stream);
+			auto ch = _stream.get();
+			std::string word;
+			word.push_back(ch);
 
-					auto peek = [&]() {return stream.peek(); };
-					auto get = [&]() {return stream.get(); };
-					for (const auto& p : WordsList::words) {
-						std::optional<token::Token> tok;
-						if (p->First(ch) && (tok = p->Rest(word, { peek, get, _lasttok })).has_value()) {
-							return tok.value();
-						}
-					}
+			auto peek = [&]() {return _stream.peek(); };
+			auto get = [&]() {return _stream.get(); };
+			for (const auto& p : WordsList::words) {
+				std::optional<token::Token> tok;
+				if (p->First(ch) && (tok = p->Rest(word, { peek, get, _lasttok })).has_value()) {
+					return tok.value();
+				}
+			}
 
-					throw LexException();
-				}, _stream);
+			throw LexException();
 		}
 
 	private:
-		StreamType _stream;
+		T _stream;
 		std::optional<token::Token> _lasttok;
 		std::optional<token::Token> _peektok;
 	};
+
+	template <class T>
+	Lexer(T) -> Lexer<T>;
+
+	Lexer(std::string)->Lexer<std::istringstream>;
 }

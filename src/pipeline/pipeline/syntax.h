@@ -10,13 +10,11 @@
 #include "clone_ptr.h"
 
 namespace byfxxm {
+	template <StreamConcept T>
 	class Syntax {
 	public:
-		Syntax(const std::filesystem::path& file) : _lex(file) {
-		}
-
-		Syntax(const std::string& memory) : _lex(memory) {
-		}
+		Syntax(T&& stream) : _lex(std::move(stream)) {}
+		Syntax(const std::string& str) : _lex(std::istringstream(str)) {}
 
 		std::optional<Abstree> Next() {
 			auto get = [&]() {
@@ -79,11 +77,16 @@ namespace byfxxm {
 		}
 
 	private:
-		Lexer _lex;
+		Lexer<T> _lex;
 		size_t _lineno{ 0 };
 		Address _addr;
 		ClonePtr<chunk::Chunk> _remain_chunk;
 		std::optional<Value> _return_val;
 		size_t _output_line{ 0 };
 	};
+
+	template <class T>
+	Syntax(T) -> Syntax<T>;
+
+	Syntax(std::string)->Syntax<std::istringstream>;
 }

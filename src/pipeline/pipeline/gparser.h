@@ -7,13 +7,11 @@
 #include "ring_buffer.h"
 
 namespace byfxxm {
+	template <StreamConcept T>
 	class Gparser {
 	public:
-		Gparser(const std::filesystem::path& file) : _syntax(file) {
-		}
-
-		Gparser(const std::string& memory) : _syntax(memory) {
-		}
+		Gparser(T&& stream) : _syntax(std::move(stream)) {}
+		Gparser(const std::string& str) : _syntax(std::istringstream(str)) {}
 
 		void Run(Ginterface& pimpl) {
 			while (auto abs_tree = _syntax.Next()) {
@@ -59,6 +57,11 @@ namespace byfxxm {
 		}
 
 	private:
-		Syntax _syntax;
+		Syntax<T> _syntax;
 	};
+
+	template <class T>
+	Gparser(T) -> Gparser<T>;
+
+	Gparser(std::string)->Gparser<std::istringstream>;
 }

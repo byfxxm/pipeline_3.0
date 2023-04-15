@@ -77,7 +77,7 @@ void TestLexer() {
 
 	std::vector<byfxxm::token::Token> res;
 	byfxxm::token::Token tok;
-	byfxxm::Lexer lex(s);
+	auto lex = byfxxm::Lexer(std::stringstream(s));
 	while ((tok = lex.Get()).kind != byfxxm::token::Kind::KEOF) {
 		res.emplace_back(std::move(tok));
 	}
@@ -224,6 +224,7 @@ void TestParser5() {
 		R"(
 		#10 =[ [1 + 2]] * [3 + 4]
 )";
+
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
 	parser.Run(pimpl);

@@ -10,6 +10,6 @@ namespace byfxxm {
 		}
 
 	private:
-		std::unique_ptr<Gparser> _parser;
+		std::variant<std::monostate, Gparser<std::fstream>, Gparser<std::stringstream>> _parser;
 	};
 }

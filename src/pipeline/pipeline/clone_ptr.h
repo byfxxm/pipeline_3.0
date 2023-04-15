@@ -12,8 +12,7 @@ namespace byfxxm {
 		ClonePtr& operator=(ClonePtr&&) noexcept = default;
 
 		template <class D>
-		ClonePtr(std::unique_ptr<D>&& rhs) : _pointer(std::move(rhs)) {
-		}
+		ClonePtr(std::unique_ptr<D>&& rhs) : _pointer(std::move(rhs)) {}
 
 		ClonePtr(const std::unique_ptr<T>& rhs) {
 			if constexpr (std::is_abstract_v<T>)
@@ -22,8 +21,7 @@ namespace byfxxm {
 				_pointer = std::make_unique<T>(*rhs);
 		}
 
-		ClonePtr(const ClonePtr& rhs) : ClonePtr(rhs._pointer) {
-		}
+		ClonePtr(const ClonePtr& rhs) : ClonePtr(rhs._pointer) {}
 
 		// copy and swap
 		ClonePtr& operator=(const ClonePtr& rhs) {

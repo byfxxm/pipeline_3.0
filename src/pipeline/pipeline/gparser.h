@@ -1,10 +1,7 @@
 ﻿#pragma once
-#include "lexer.h"
-#include "address.h"
-#include "abstree.h"
+#include "token.h"
 #include "syntax.h"
 #include "ginterface.h"
-#include "ring_buffer.h"
 
 namespace byfxxm {
 	template <StreamConcept T>

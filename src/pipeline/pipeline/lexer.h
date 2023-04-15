@@ -62,7 +62,7 @@ namespace byfxxm {
 
 			auto peek = [&]() {return _stream.peek(); };
 			auto get = [&]() {return _stream.get(); };
-			for (const auto& p : WordsList::words) {
+			for (const auto& p : word::WordsList::words) {
 				std::optional<token::Token> tok;
 				if (p->First(ch) && (tok = p->Rest(word, { peek, get, _lasttok })).has_value()) {
 					return tok.value();

@@ -6,39 +6,50 @@
 #include "clone_ptr.h"
 
 namespace byfxxm {
-	inline bool NewSegment(const token::Token& tok) {
-		return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
-	}
-
-	inline bool EndOfFile(const token::Token& tok) {
-		return tok.kind == token::Kind::KEOF;
-	}
-
-	inline Segment GetLine(const Utils& utils, Segment seg = Segment()) {
-		while (1) {
-			auto tok = utils.get();
-			if (NewSegment(tok))
-				break;
-
-			seg.push_back(tok);
-		}
-
-		return seg;
-	}
-
-	inline void SkipNewlines(const Utils& utils) {
-		while (1) {
-			auto tok = utils.peek();
-			if (tok.kind != token::Kind::NEWLINE)
-				break;
-
-			utils.get();
-		}
-	}
-
-	inline std::optional<Statement> GetStatement(const Utils&);
-
 	namespace grammar {
+		using Get = std::function<token::Token()>;
+		using Peek = std::function<token::Token()>;
+		using Line = std::function<size_t()>;
+
+		struct Utils {
+			Get get;
+			Peek peek;
+			Line line;
+			RetureValue return_val;
+		};
+
+		inline bool NewSegment(const token::Token& tok) {
+			return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
+		}
+
+		inline bool EndOfFile(const token::Token& tok) {
+			return tok.kind == token::Kind::KEOF;
+		}
+
+		inline Segment GetLine(const Utils& utils, Segment seg = Segment()) {
+			while (1) {
+				auto tok = utils.get();
+				if (NewSegment(tok))
+					break;
+
+				seg.push_back(tok);
+			}
+
+			return seg;
+		}
+
+		inline void SkipNewlines(const Utils& utils) {
+			while (1) {
+				auto tok = utils.peek();
+				if (tok.kind != token::Kind::NEWLINE)
+					break;
+
+				utils.get();
+			}
+		}
+
+		inline std::optional<Statement> GetStatement(const Utils&);
+
 		class Grammar {
 		public:
 			virtual ~Grammar() = default;
@@ -249,46 +260,46 @@ namespace byfxxm {
 				return Statement(ClonePtr<chunk::Chunk>(std::make_unique<chunk::While>(std::move(wh))), utils.line());
 			}
 		};
-	}
 
-	template <class... _Gram>
-	struct _GrammarsList {
-		static inline std::unique_ptr<grammar::Grammar> grammars[]{
-			std::make_unique<_Gram>()...
+		template <class... _Gram>
+		struct _GrammarsList {
+			static inline std::unique_ptr<grammar::Grammar> grammars[]{
+				std::make_unique<_Gram>()...
+			};
 		};
-	};
 
-	using GrammarsList = _GrammarsList <
-		grammar::Newseg
-		, grammar::Expr
-		, grammar::Ggram
-		, grammar::IfElse
-		, grammar::While
-	>;
+		using GrammarsList = _GrammarsList <
+			grammar::Newseg
+			, grammar::Expr
+			, grammar::Ggram
+			, grammar::IfElse
+			, grammar::While
+		>;
 
-	inline std::optional<Statement> GetStatement(const Utils& utils) {
-		while (1) {
-			auto tok = utils.peek();
-			if (EndOfFile(tok))
-				return {};
+		inline std::optional<Statement> GetStatement(const Utils& utils) {
+			while (1) {
+				auto tok = utils.peek();
+				if (EndOfFile(tok))
+					return {};
 
-			Segment list;
-			list.push_back(utils.get());
+				Segment list;
+				list.push_back(utils.get());
 
-			auto iter = std::begin(GrammarsList::grammars);
-			for (; iter != std::end(GrammarsList::grammars); ++iter) {
-				std::optional<Statement> sub;
-				if ((*iter)->First(tok)) {
-					if (!(sub = (*iter)->Rest(std::move(list), utils)).has_value())
-						break;
-					return std::move(sub.value());
+				auto iter = std::begin(GrammarsList::grammars);
+				for (; iter != std::end(GrammarsList::grammars); ++iter) {
+					std::optional<Statement> sub;
+					if ((*iter)->First(tok)) {
+						if (!(sub = (*iter)->Rest(std::move(list), utils)).has_value())
+							break;
+						return std::move(sub.value());
+					}
 				}
+
+				if (iter == std::end(GrammarsList::grammars))
+					throw SyntaxException();
 			}
 
-			if (iter == std::end(GrammarsList::grammars))
-				throw SyntaxException();
+			throw SyntaxException();
 		}
-
-		throw SyntaxException();
 	}
 }

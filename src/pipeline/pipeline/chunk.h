@@ -1,7 +1,6 @@
 #pragma once
 #include "abstree.h"
 #include "clone_ptr.h"
-#include "grammar.h"
 
 namespace byfxxm {
 	namespace grammar {

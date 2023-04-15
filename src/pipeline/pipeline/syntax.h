@@ -39,7 +39,7 @@ namespace byfxxm {
 				return _ToAbstree(std::move(std::get<Segment>(stmt.value().statement)));
 			}
 
-			stmt = GetStatement({ get, peek, line, retval });
+			stmt = GetStatement(grammar::Utils{ get, peek, line, retval });
 			if (!stmt)
 				return {};
 

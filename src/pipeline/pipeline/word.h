@@ -117,21 +117,21 @@ namespace byfxxm {
 				return token::Token{ token::Kind::NEWLINE, {} };
 			}
 		};
-	}
 
-	template <class... _Words>
-	struct _WordsList {
-		static inline const std::unique_ptr<word::Word> words[]{
-			std::make_unique<_Words>()...
+		template <class... _Words>
+		struct _WordsList {
+			static inline const std::unique_ptr<word::Word> words[]{
+				std::make_unique<_Words>()...
+			};
 		};
-	};
 
-	using WordsList = _WordsList<
-		word::Sharp
-		, word::Constant
-		, word::Key
-		, word::Symbol
-		, word::Gcode
-		, word::Newline
-	>;
+		using WordsList = _WordsList<
+			word::Sharp
+			, word::Constant
+			, word::Key
+			, word::Symbol
+			, word::Gcode
+			, word::Newline
+		>;
+	}
 }

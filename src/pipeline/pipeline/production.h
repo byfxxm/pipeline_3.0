@@ -2,7 +2,6 @@
 #include <vector>
 #include <ranges>
 #include <variant>
-
 #include "token.h"
 #include "predicate.h"
 #include "abstree.h"
@@ -47,9 +46,6 @@ namespace byfxxm {
 		{token::Kind::K, {5, Unary{predicate::Gcode<token::Kind::K>}}},
 		{token::Kind::CON, {}},
 	};
-
-	using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
-	using Segment = std::pmr::vector<SyntaxNode>;
 
 	class Expression {
 	public:

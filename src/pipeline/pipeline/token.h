@@ -205,15 +205,5 @@ namespace byfxxm {
 
 	using Group = std::vector<double>;
 	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
-	using Get = std::function<token::Token()>;
-	using Peek = std::function<token::Token()>;
-	using Line = std::function<size_t()>;
 	using RetureValue = std::function<Value()>;
-
-	struct Utils {
-		Get get;
-		Peek peek;
-		Line line;
-		RetureValue return_val;
-	};
 }

@@ -17,6 +17,8 @@ namespace byfxxm {
 		size_t line{ 0 };
 	};
 
+	using Scope = std::vector<Statement>;
+
 	namespace chunk {
 		class Chunk {
 		public:
@@ -25,7 +27,7 @@ namespace byfxxm {
 			virtual std::optional<Statement> Next() = 0;
 		};
 
-		inline std::optional<Statement> GetStatement(std::vector<Statement>& scope, size_t& index) {
+		inline std::optional<Statement> GetStatement(Scope& scope, size_t& index) {
 			if (index == scope.size())
 				return {};
 
@@ -50,11 +52,11 @@ namespace byfxxm {
 		class IfElse : public Chunk {
 			struct If {
 				Statement cond;
-				std::vector<Statement> scope;
+				Scope scope;
 			};
 
 			struct Else {
-				std::vector<Statement> scope;
+				Scope scope;
 			};
 
 			IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
@@ -154,8 +156,8 @@ namespace byfxxm {
 
 			Statement _cond;
 			Statement _cond_backup;
-			std::vector<Statement> _scope;
-			std::vector<Statement> _scope_backup;
+			Scope _scope;
+			Scope _scope_backup;
 			bool _iscond{ true };
 			GetRetVal _get_ret;
 			size_t _scope_index{ 0 };

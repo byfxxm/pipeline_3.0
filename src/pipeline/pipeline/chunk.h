@@ -21,8 +21,8 @@ namespace byfxxm {
 		class Chunk {
 		public:
 			virtual ~Chunk() = default;
-			virtual std::optional<Statement> Next() = 0;
 			virtual std::unique_ptr<Chunk> Clone() const = 0;
+			virtual std::optional<Statement> Next() = 0;
 		};
 
 		inline std::optional<Statement> Unpack(Statement&& stmt) {
@@ -35,14 +35,14 @@ namespace byfxxm {
 			return next ? std::move(next.value()) : std::optional<Statement>();
 		};
 
-		inline std::optional<Statement> GetScope(std::vector<Statement>&& scope, size_t& index) {
+		inline std::optional<Statement> GetScope(std::vector<Statement>& scope, size_t& index) {
 			if (index == scope.size())
 				return {};
 
 			auto& stmt = scope[index];
 			std::optional<Statement> ret;
 			if (std::holds_alternative<Segment>(stmt.statement)) {
-				ret = Unpack(std::move(stmt));
+				ret = std::move(stmt);
 				++index;
 			}
 			else if (std::holds_alternative<ClonePtr<Chunk>>(stmt.statement)) {
@@ -57,49 +57,6 @@ namespace byfxxm {
 		};
 
 		class IfElse : public Chunk {
-			virtual std::optional<Statement> Next() override {
-				if (_iscond) {
-					if (_cur_stmt > 0 && std::get<bool>(_get_ret())) {
-						--_cur_stmt;
-						_iscond = false;
-						return GetScope(std::move(_ifs[_cur_stmt].scope), _scope_index);
-					}
-
-					if (_cur_stmt == 0)
-						return Unpack(std::move(_ifs[_cur_stmt++].cond));
-
-					if (_cur_stmt == _ifs.size()) {
-						_iscond = false;
-						return GetScope(std::move(_else.scope), _scope_index);
-					}
-
-					if (!std::holds_alternative<bool>(_get_ret()))
-						throw SyntaxException();
-
-					auto cond = std::get<bool>(_get_ret());
-					if (cond) {
-						_iscond = false;
-						return GetScope(std::move(_ifs[_cur_stmt].scope), _scope_index);
-					}
-
-					return Unpack(std::move(_ifs[_cur_stmt++].cond));
-				}
-
-				if (_cur_stmt == _ifs.size())
-					return GetScope(std::move(_else.scope), _scope_index);
-
-				if (_scope_index == _ifs[_cur_stmt].scope.size())
-					return {};
-
-				return GetScope(std::move(_ifs[_cur_stmt].scope), _scope_index);
-			}
-
-			virtual std::unique_ptr<Chunk> Clone() const {
-				return std::make_unique<IfElse>(*this);
-			}
-
-			IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
-
 			struct If {
 				Statement cond;
 				std::vector<Statement> scope;
@@ -108,6 +65,49 @@ namespace byfxxm {
 			struct Else {
 				std::vector<Statement> scope;
 			};
+
+			IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
+
+			virtual std::unique_ptr<Chunk> Clone() const {
+				return std::make_unique<IfElse>(*this);
+			}
+
+			virtual std::optional<Statement> Next() override {
+				if (_iscond) {
+					if (_cur_stmt > 0 && std::get<bool>(_get_ret())) {
+						--_cur_stmt;
+						_iscond = false;
+						return GetScope(_ifs[_cur_stmt].scope, _scope_index);
+					}
+
+					if (_cur_stmt == 0)
+						return Unpack(std::move(_ifs[_cur_stmt++].cond));
+
+					if (_cur_stmt == _ifs.size()) {
+						_iscond = false;
+						return GetScope(_else.scope, _scope_index);
+					}
+
+					if (!std::holds_alternative<bool>(_get_ret()))
+						throw SyntaxException();
+
+					auto cond = std::get<bool>(_get_ret());
+					if (cond) {
+						_iscond = false;
+						return GetScope(_ifs[_cur_stmt].scope, _scope_index);
+					}
+
+					return Unpack(std::move(_ifs[_cur_stmt++].cond));
+				}
+
+				if (_cur_stmt == _ifs.size())
+					return GetScope(_else.scope, _scope_index);
+
+				if (_scope_index == _ifs[_cur_stmt].scope.size())
+					return {};
+
+				return GetScope(_ifs[_cur_stmt].scope, _scope_index);
+			}
 
 			std::vector<If> _ifs;
 			Else _else;
@@ -119,6 +119,12 @@ namespace byfxxm {
 		};
 
 		class While : public Chunk {
+			While(GetRetVal get_ret) : _get_ret(get_ret) {}
+
+			virtual std::unique_ptr<Chunk> Clone() const {
+				return std::make_unique<While>(*this);
+			}
+
 			virtual std::optional<Statement> Next() override {
 				if (_iscond) {
 					_iscond = false;
@@ -142,14 +148,8 @@ namespace byfxxm {
 				}
 
 				_iscond = false;
-				return GetScope(std::move(_scope), _scope_index);
+				return GetScope(_scope, _scope_index);
 			}
-
-			virtual std::unique_ptr<Chunk> Clone() const {
-				return std::make_unique<While>(*this);
-			}
-
-			While(GetRetVal get_ret) : _get_ret(get_ret) {}
 
 			void _Store() {
 				_scope_backup = _scope;

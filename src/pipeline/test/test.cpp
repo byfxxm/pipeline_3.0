@@ -106,28 +106,6 @@ public:
 	}
 };
 
-void TestSyntax() {
-	std::string s =
-		R"(
-		#1 = -10
-		#2 = 20
-		#30 = 5
-		#10 =#1+#30*#2
-		#180 = 2
-		#3=#[2*#[#1+ #2]]/5
-)";
-
-	auto syntax = byfxxm::Syntax(s);
-	while (1) {
-		auto tree = syntax.Next();
-		if (!tree.has_value())
-			break;
-		tree.value()();
-	}
-
-	return;
-}
-
 void TestParser() {
 	std::string s =
 		R"(
@@ -146,6 +124,14 @@ void TestParser() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
 	parser.Run(pimpl);
+
+	auto& addr = parser.Addr();
+	assert(*addr[1] == -10);
+	assert(*addr[2] == 20);
+	assert(*addr[30] == 5);
+	assert(*addr[10] == 87);
+	assert(*addr[-174] == -2);
+	assert(*addr[3] == -0.4);
 }
 
 void TestParser1() {
@@ -156,9 +142,16 @@ void TestParser1() {
 		#20=#4
 		G#2X-#3Y#20
 )";
+
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
 	parser.Run(pimpl);
+
+	auto& addr = parser.Addr();
+	assert(byfxxm::IsNaN(*addr[4]));
+	assert(*addr[3] == 2);
+	assert(*addr[2] == 1);
+	assert(byfxxm::IsNaN(*addr[20]));
 }
 
 void TestParser2() {
@@ -179,9 +172,17 @@ void TestParser2() {
 			#4 = 4
 		ENDIF
 )";
+
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
 	parser.Run(pimpl);
+
+	auto& addr = parser.Addr();
+	assert(*addr[1] == 1);
+	assert(*addr[6] == 6);
+	assert(*addr[3] == 3);
+	assert(*addr[2] == 2);
+	assert(*addr[5] == 5);
 }
 
 void TestParser3() {
@@ -202,9 +203,16 @@ void TestParser3() {
 			#4 = 4
 		ENDIF
 )";
+
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
 	parser.Run(pimpl);
+
+	auto& addr = parser.Addr();
+	assert(*addr[1] == 20);
+	assert(*addr[3] == 22);
+	assert(*addr[2] == 20);
+	assert(*addr[5] == 5);
 }
 
 void TestParser4() {
@@ -214,9 +222,15 @@ void TestParser4() {
 		#2 = MAX[#MIN[1,2,3], 3.5, 2]
 		#3 = MIN[2]
 )";
+
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
 	parser.Run(pimpl);
+
+	auto& addr = parser.Addr();
+	assert(*addr[1] == 234.5);
+	assert(*addr[3] == 2);
+	assert(*addr[2] == 234.5);
 }
 
 void TestParser5() {
@@ -228,6 +242,9 @@ void TestParser5() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
 	parser.Run(pimpl);
+
+	auto& addr = parser.Addr();
+	assert(*addr[10] == 21);
 }
 
 int main()

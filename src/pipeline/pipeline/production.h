@@ -102,9 +102,9 @@ namespace byfxxm {
 				}
 
 				if (level > 0)
-					sub.push_back(tok);
+					sub.push_back(std::move(tok));
 				else if (level == 0)
-					main.push_back(tok);
+					main.push_back(std::move(tok));
 				else
 					throw SyntaxException();
 			}

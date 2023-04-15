@@ -66,7 +66,7 @@ namespace byfxxm {
 					if (NewSegment(tok))
 						break;
 
-					seg.push_back(tok);
+					seg.push_back(std::move(tok));
 				}
 
 				return Statement(std::move(seg), utils.line());
@@ -101,13 +101,13 @@ namespace byfxxm {
 					}
 
 					if (!_IsGcode(tok)) {
-						gtag.push_back(tok);
+						gtag.push_back(std::move(tok));
 						utils.get();
 						continue;
 					}
 
 					if (gtag.empty()) {
-						seg.push_back(tok);
+						seg.push_back(std::move(tok));
 						utils.get();
 					}
 					else {
@@ -141,7 +141,7 @@ namespace byfxxm {
 						if (tok.kind == token::Kind::THEN)
 							break;
 
-						seg.push_back(tok);
+						seg.push_back(std::move(tok));
 					}
 
 					return { std::move(seg), utils.line() };
@@ -214,7 +214,7 @@ namespace byfxxm {
 						if (tok.kind == token::Kind::DO)
 							break;
 
-						seg.push_back(tok);
+						seg.push_back(std::move(tok));
 					}
 
 					return { std::move(seg), utils.line() };

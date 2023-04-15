@@ -25,17 +25,7 @@ namespace byfxxm {
 			virtual std::optional<Statement> Next() = 0;
 		};
 
-		inline std::optional<Statement> Unpack(Statement&& stmt) {
-			if (std::holds_alternative<Segment>(stmt.statement))
-				return stmt;
-
-			auto& chunk = std::get<ClonePtr<Chunk>>(stmt.statement);
-			auto next = chunk->Next();
-			assert(next ? std::holds_alternative<Segment>(next.value().statement) : true);
-			return next ? std::move(next.value()) : std::optional<Statement>();
-		};
-
-		inline std::optional<Statement> GetScope(std::vector<Statement>& scope, size_t& index) {
+		inline std::optional<Statement> GetStatement(std::vector<Statement>& scope, size_t& index) {
 			if (index == scope.size())
 				return {};
 
@@ -46,10 +36,11 @@ namespace byfxxm {
 				++index;
 			}
 			else if (std::holds_alternative<ClonePtr<Chunk>>(stmt.statement)) {
-				ret = Unpack(std::move(stmt));
+				auto& chunk = std::get<ClonePtr<Chunk>>(stmt.statement);
+				auto next = chunk->Next();
+				ret = next ? std::move(next.value()) : std::optional<Statement>();
 				if (!ret) {
-					++index;
-					ret = GetScope(scope, index);
+					ret = GetStatement(scope, ++index);
 				}
 			}
 
@@ -77,15 +68,15 @@ namespace byfxxm {
 					if (_cur_stmt > 0 && std::get<bool>(_get_ret())) {
 						--_cur_stmt;
 						_iscond = false;
-						return GetScope(_ifs[_cur_stmt].scope, _scope_index);
+						return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
 					}
 
 					if (_cur_stmt == 0)
-						return Unpack(std::move(_ifs[_cur_stmt++].cond));
+						return std::move(_ifs[_cur_stmt++].cond);
 
 					if (_cur_stmt == _ifs.size()) {
 						_iscond = false;
-						return GetScope(_else.scope, _scope_index);
+						return GetStatement(_else.scope, _scope_index);
 					}
 
 					if (!std::holds_alternative<bool>(_get_ret()))
@@ -94,19 +85,19 @@ namespace byfxxm {
 					auto cond = std::get<bool>(_get_ret());
 					if (cond) {
 						_iscond = false;
-						return GetScope(_ifs[_cur_stmt].scope, _scope_index);
+						return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
 					}
 
-					return Unpack(std::move(_ifs[_cur_stmt++].cond));
+					return std::move(_ifs[_cur_stmt++].cond);
 				}
 
 				if (_cur_stmt == _ifs.size())
-					return GetScope(_else.scope, _scope_index);
+					return GetStatement(_else.scope, _scope_index);
 
 				if (_scope_index == _ifs[_cur_stmt].scope.size())
 					return {};
 
-				return GetScope(_ifs[_cur_stmt].scope, _scope_index);
+				return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
 			}
 
 			std::vector<If> _ifs;
@@ -148,7 +139,7 @@ namespace byfxxm {
 				}
 
 				_iscond = false;
-				return GetScope(_scope, _scope_index);
+				return GetStatement(_scope, _scope_index);
 			}
 
 			void _Store() {

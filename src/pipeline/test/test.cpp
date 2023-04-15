@@ -140,7 +140,7 @@ void TestParser1() {
 		#2 = 1
 		#3=2
 		#20=#4
-		G#2X-#3Y#20
+		G#2X-#3Y#20Z10
 )";
 
 	auto parser = byfxxm::Gparser(s);
@@ -263,6 +263,32 @@ void TestParser5() {
 	assert(*addr[10] == 21);
 }
 
+void TestParser6() {
+	std::string s =
+		R"(
+		IF 1 LT 2 THEN
+		IF 1 LT 2 THEN
+		IF 1 LT 2 THEN
+		IF 1 LT 2 THEN
+		IF 1 LT 2 THEN
+		#1=1
+		#2=2
+		ENDIF
+		ENDIF
+		ENDIF
+		ENDIF
+		ENDIF
+)";
+
+	auto parser = byfxxm::Gparser(s);
+	auto pimpl = GImpl();
+	parser.Run(pimpl);
+
+	auto& addr = parser.Addr();
+	assert(*addr[1] == 1);
+	assert(*addr[2] == 2);
+}
+
 int main()
 {
 	//TestPipeline();
@@ -272,6 +298,7 @@ int main()
 	TestParser3();
 	TestParser4();
 	TestParser5();
+	TestParser6();
 	return 0;
 }
 

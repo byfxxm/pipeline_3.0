@@ -202,8 +202,9 @@ void TestParser3() {
 					WHILE [#20 LT 25] DO
 						#20 = 1 + #20
 					END
+					#100 = 100
 					IF #20 EQ 25 THEN
-						#[#20 ]= 100
+						#[#20 ]= #100
 					ENDIF
 				ENDIF
 
@@ -227,6 +228,7 @@ void TestParser3() {
 	assert(*addr[10] == 234.5);
 	assert(*addr[20] == 25);
 	assert(*addr[25] == 100);
+	assert(*addr[100] == 100);
 }
 
 void TestParser4() {

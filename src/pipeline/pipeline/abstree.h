@@ -24,18 +24,18 @@ namespace byfxxm {
 		}
 
 		Value Execute() {
-			_return_val = _Execute(_root, _pimpl);
+			_return_val = _Execute(_root);
 			return _return_val;
 		}
 
 	private:
-		Value _Execute(const NodePtr& node, Ginterface* pimpl) {
+		Value _Execute(const NodePtr& node) {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 
 			std::vector<Value> params;
 			std::ranges::for_each(node->subs, [&](auto&& p) {
-				params.emplace_back(_Execute(p, pimpl));
+				params.emplace_back(_Execute(p));
 				});
 
 			return std::visit(
@@ -54,7 +54,7 @@ namespace byfxxm {
 						return std::visit([&](auto&& func) {return func(params[0], _addr); }, sharp);
 					},
 					[&](const Gcmd& gcmd) {
-						return std::visit([&](auto&& func) {return func(params, pimpl, _addr); }, gcmd);
+						return std::visit([&](auto&& func) {return func(params, _pimpl, _addr); }, gcmd);
 					},
 					[](const auto&)->Value { // default
 						throw AbstreeException();

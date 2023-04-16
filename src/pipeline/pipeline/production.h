@@ -48,39 +48,39 @@ namespace byfxxm {
 	};
 
 	using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
-	using Segment = std::pmr::vector<SyntaxNode>;
+	using ProgSeg = std::pmr::vector<SyntaxNode>;
 
 	class Expression {
 	public:
-		Abstree::NodePtr operator()(Segment&& seg) const {
+		Abstree::NodePtr operator()(ProgSeg&& seg) const {
 			return _Expression(seg);
 		}
 
 	private:
-		using SegmentList = decltype(std::ranges::subrange(Segment().begin(), Segment().end()));
+		using ProgSegRng = decltype(std::ranges::subrange(ProgSeg().begin(), ProgSeg().end()));
 
-		Abstree::NodePtr _Expression(SegmentList seglist) const {
-			if (seglist.empty())
+		Abstree::NodePtr _Expression(ProgSegRng seg_rng) const {
+			if (seg_rng.empty())
 				return {};
 
-			Segment seg = _ProcessBracket(seglist);
+			ProgSeg seg = _ProcessBracket(seg_rng);
 			auto min_pri = _FindMinPriority(seg);
 
 			auto node = _CurNode(*min_pri);
-			if (auto first = _Expression(SegmentList(seg.begin(), min_pri)))
+			if (auto first = _Expression(ProgSegRng(seg.begin(), min_pri)))
 				node->subs.emplace_back(std::move(first));
-			if (auto second = _Expression(SegmentList(min_pri + 1, seg.end())))
+			if (auto second = _Expression(ProgSegRng(min_pri + 1, seg.end())))
 				node->subs.emplace_back(std::move(second));
 
 			_CheckError(node);
 			return node;
 		}
 
-		Segment _ProcessBracket(SegmentList seglist) const {
-			Segment main;
-			Segment sub;
+		ProgSeg _ProcessBracket(ProgSegRng seg_rng) const {
+			ProgSeg main;
+			ProgSeg sub;
 			int level = 0;
-			for (auto& node : seglist) {
+			for (auto& node : seg_rng) {
 				if (std::holds_alternative<Abstree::NodePtr>(node)) {
 					main.push_back(std::move(node));
 					continue;
@@ -112,7 +112,7 @@ namespace byfxxm {
 			return main;
 		}
 
-		Segment::iterator _FindMinPriority(SegmentList seglist) const {
+		ProgSeg::iterator _FindMinPriority(ProgSegRng seg_rng) const {
 			auto less = [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
 				size_t lhs_pri = TokenTraits::default_priority;
 				size_t rhs_pri = TokenTraits::default_priority;
@@ -125,9 +125,9 @@ namespace byfxxm {
 				return lhs_pri < rhs_pri;
 			};
 
-			auto ret = std::ranges::min_element(seglist, less);
+			auto ret = std::ranges::min_element(seg_rng, less);
 			if (auto p = std::get_if<token::Token>(&*ret); p && (token_traits.at(p->kind).left_to_right))
-				ret = std::ranges::min_element(seglist | std::views::reverse, less).base() - 1;
+				ret = std::ranges::min_element(seg_rng | std::views::reverse, less).base() - 1;
 
 			return ret;
 		}
@@ -187,7 +187,7 @@ namespace byfxxm {
 
 	class Gtree {
 	public:
-		Abstree::NodePtr operator()(Segment&& seg) const {
+		Abstree::NodePtr operator()(ProgSeg&& seg) const {
 			if (seg.empty() || seg.size() % 2 != 0)
 				throw SyntaxException();
 

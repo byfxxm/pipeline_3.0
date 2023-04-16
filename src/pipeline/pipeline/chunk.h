@@ -13,7 +13,7 @@ namespace byfxxm {
 	}
 
 	struct Statement {
-		std::variant<Segment, ClonePtr<chunk::Chunk>> statement;
+		std::variant<ProgSeg, ClonePtr<chunk::Chunk>> statement;
 		size_t line{ 0 };
 	};
 
@@ -33,7 +33,7 @@ namespace byfxxm {
 
 			std::optional<Statement> ret;
 			auto& stmt = scope[index];
-			if (std::holds_alternative<Segment>(stmt.statement)) {
+			if (std::holds_alternative<ProgSeg>(stmt.statement)) {
 				ret = std::move(stmt);
 				++index;
 			}

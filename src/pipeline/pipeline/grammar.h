@@ -42,7 +42,7 @@ namespace byfxxm {
 		public:
 			virtual ~Grammar() = default;
 			virtual bool First(const token::Token&) const = 0;
-			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const = 0;
+			virtual std::optional<Statement> Rest(ProgSeg&&, const Utils&) const = 0;
 		};
 
 		class Blank : public Grammar {
@@ -50,7 +50,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const override {
+			virtual std::optional<Statement> Rest(ProgSeg&&, const Utils&) const override {
 				return {};
 			}
 		};
@@ -60,7 +60,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
 				while (1) {
 					auto tok = utils.get();
 					if (NewSegment(tok))
@@ -90,8 +90,8 @@ namespace byfxxm {
 				return _IsGcode(tok);
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				Segment gtag;
+			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
+				ProgSeg gtag;
 				while (1) {
 					auto tok = utils.peek();
 					if (NewSegment(tok)) {
@@ -116,7 +116,7 @@ namespace byfxxm {
 					}
 				}
 
-				Segment ret;
+				ProgSeg ret;
 				ret.emplace_back(gtree(std::move(seg)));
 				return Statement(std::move(ret), utils.line());
 			}
@@ -127,12 +127,12 @@ namespace byfxxm {
 				return tok.kind == token::Kind::IF;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
 				using If = chunk::IfElse::If;
 				using Else = chunk::IfElse::Else;
 
 				auto read_cond = [&]()->Statement {
-					Segment seg;
+					ProgSeg seg;
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -203,9 +203,9 @@ namespace byfxxm {
 				return tok.kind == token::Kind::WHILE;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
 				auto read_cond = [&]()->Statement {
-					Segment seg;
+					ProgSeg seg;
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -269,7 +269,7 @@ namespace byfxxm {
 				if (EndOfFile(tok))
 					return {};
 
-				Segment seg;
+				ProgSeg seg;
 				seg.push_back(utils.get());
 
 				auto iter = std::begin(GrammarsList::grammars);

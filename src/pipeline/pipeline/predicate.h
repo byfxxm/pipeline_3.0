@@ -311,7 +311,7 @@ namespace byfxxm {
 			{{token::Kind::G, 4}, &Ginterface::G4},
 		};
 
-		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
+		inline auto Gcmd = [](const std::vector<Value>& tags, Address& addr, Ginterface* pimpl)->Value {
 			if (!pimpl)
 				return {};
 

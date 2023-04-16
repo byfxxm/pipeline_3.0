@@ -145,7 +145,7 @@
   <ItemGroup>
     <ClInclude Include="abstree.h" />
     <ClInclude Include="address.h" />
-    <ClInclude Include="chunk.h" />
+    <ClInclude Include="block.h" />
     <ClInclude Include="code.h" />
     <ClInclude Include="coro.h" />
     <ClInclude Include="exception.h" />

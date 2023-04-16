@@ -2,7 +2,7 @@
 #include "token.h"
 #include "abstree.h"
 #include "production.h"
-#include "chunk.h"
+#include "block.h"
 #include "clone_ptr.h"
 
 namespace byfxxm {
@@ -42,7 +42,7 @@ namespace byfxxm {
 		public:
 			virtual ~Grammar() = default;
 			virtual bool First(const token::Token&) const = 0;
-			virtual std::optional<Statement> Rest(ProgSeg&&, const Utils&) const = 0;
+			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const = 0;
 		};
 
 		class Blank : public Grammar {
@@ -50,7 +50,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 			}
 
-			virtual std::optional<Statement> Rest(ProgSeg&&, const Utils&) const override {
+			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const override {
 				return {};
 			}
 		};
@@ -60,7 +60,7 @@ namespace byfxxm {
 				return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
 			}
 
-			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				while (1) {
 					auto tok = utils.get();
 					if (NewSegment(tok))
@@ -90,8 +90,8 @@ namespace byfxxm {
 				return _IsGcode(tok);
 			}
 
-			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
-				ProgSeg gtag;
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+				Segment gtag;
 				while (1) {
 					auto tok = utils.peek();
 					if (NewSegment(tok)) {
@@ -116,7 +116,7 @@ namespace byfxxm {
 					}
 				}
 
-				ProgSeg ret;
+				Segment ret;
 				ret.emplace_back(gtree(std::move(seg)));
 				return Statement(std::move(ret), utils.line());
 			}
@@ -127,12 +127,12 @@ namespace byfxxm {
 				return tok.kind == token::Kind::IF;
 			}
 
-			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
-				using If = chunk::IfElse::If;
-				using Else = chunk::IfElse::Else;
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+				using If = block::IfElse::If;
+				using Else = block::IfElse::Else;
 
 				auto read_cond = [&]()->Statement {
-					ProgSeg seg;
+					Segment seg;
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -166,7 +166,7 @@ namespace byfxxm {
 				};
 
 				// read if
-				chunk::IfElse ifelse(utils.return_val);
+				block::IfElse ifelse(utils.return_val);
 				ifelse._ifs.push_back(If(read_cond()));
 				read_scope(ifelse._ifs.back().scope);
 
@@ -194,7 +194,7 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::ENDIF)
 					throw SyntaxException();
 
-				return Statement(ClonePtr<chunk::Chunk>(std::make_unique<chunk::IfElse>(std::move(ifelse))), utils.line());
+				return Statement(ClonePtr<block::Block>(std::make_unique<block::IfElse>(std::move(ifelse))), utils.line());
 			}
 		};
 
@@ -203,9 +203,9 @@ namespace byfxxm {
 				return tok.kind == token::Kind::WHILE;
 			}
 
-			virtual std::optional<Statement> Rest(ProgSeg&& seg, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				auto read_cond = [&]()->Statement {
-					ProgSeg seg;
+					Segment seg;
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -235,7 +235,7 @@ namespace byfxxm {
 					}
 				};
 
-				chunk::While wh(utils.return_val);
+				block::While wh(utils.return_val);
 				wh._cond = read_cond();
 				read_scope(wh._scope);
 
@@ -244,7 +244,7 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::END)
 					throw SyntaxException();
 
-				return Statement(ClonePtr<chunk::Chunk>(std::make_unique<chunk::While>(std::move(wh))), utils.line());
+				return Statement(ClonePtr<block::Block>(std::make_unique<block::While>(std::move(wh))), utils.line());
 			}
 		};
 
@@ -269,7 +269,7 @@ namespace byfxxm {
 				if (EndOfFile(tok))
 					return {};
 
-				ProgSeg seg;
+				Segment seg;
 				seg.push_back(utils.get());
 
 				auto iter = std::begin(GrammarsList::grammars);

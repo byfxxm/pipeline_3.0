@@ -6,7 +6,7 @@
 #include "production.h"
 #include "address.h"
 #include "grammar.h"
-#include "chunk.h"
+#include "block.h"
 #include "clone_ptr.h"
 
 namespace byfxxm {
@@ -26,11 +26,11 @@ namespace byfxxm {
 			auto line = [&]() {return _lineno; };
 			auto get_rval = [&]()->Value {return _return_val; };
 
-			auto stmt = GetStatement(_remain_chunk);
+			auto stmt = GetStatement(_remain_block);
 			if (stmt) {
 				_output_line = stmt.value().line;
-				assert(std::holds_alternative<ProgSeg>(stmt.value().statement));
-				return _ToAbstree(std::move(std::get<ProgSeg>(stmt.value().statement)));
+				assert(std::holds_alternative<Segment>(stmt.value().statement));
+				return _ToAbstree(std::move(std::get<Segment>(stmt.value().statement)));
 			}
 
 			stmt = GetStatement(grammar::Utils{ get, peek, line, get_rval });
@@ -50,21 +50,21 @@ namespace byfxxm {
 		}
 
 	private:
-		Abstree _ToAbstree(ProgSeg&& seg) {
+		Abstree _ToAbstree(Segment&& seg) {
 			return Abstree(expr(std::move(seg)), _addr, _return_val);
 		}
 
 		Abstree _ToAbstree(Statement&& stmt) {
 			return std::visit(
 				Overload{
-					[this](ProgSeg&& seg)->Abstree {
+					[this](Segment&& seg)->Abstree {
 						return _ToAbstree(std::move(seg));
 					},
-					[this](ClonePtr<chunk::Chunk>&& chunk)->Abstree {
-						_remain_chunk = std::move(chunk);
-						auto stmt = GetStatement(_remain_chunk);
-						assert(std::holds_alternative<ProgSeg>(stmt.value().statement));
-						return _ToAbstree(std::get<ProgSeg>(std::move(stmt.value().statement)));
+					[this](ClonePtr<block::Block>&& chunk)->Abstree {
+						_remain_block = std::move(chunk);
+						auto stmt = GetStatement(_remain_block);
+						assert(std::holds_alternative<Segment>(stmt.value().statement));
+						return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)));
 					},
 				}, std::move(stmt.statement));
 		}
@@ -73,7 +73,7 @@ namespace byfxxm {
 		Lexer<T> _lex;
 		size_t _lineno{ 0 };
 		Address _addr;
-		ClonePtr<chunk::Chunk> _remain_chunk;
+		ClonePtr<block::Block> _remain_block;
 		size_t _output_line{ 0 };
 		Value _return_val;
 	};

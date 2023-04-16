@@ -87,7 +87,7 @@
     <ClInclude Include="grammar.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="chunk.h">
+    <ClInclude Include="block.h">
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="clone_ptr.h">

@@ -13,7 +13,7 @@ namespace byfxxm {
 	template <StreamConcept T>
 	class Syntax {
 	public:
-		Syntax(T&& stream, Ginterface* pimpl = nullptr) : _lex(std::move(stream)), _pimpl(pimpl) {}
+		Syntax(T&& stream) : _lex(std::move(stream)) {}
 
 		std::optional<Abstree> Next() {
 			auto get = [&]() {
@@ -39,6 +39,10 @@ namespace byfxxm {
 
 			_output_line = stmt.value().line;
 			return _ToAbstree(std::move(stmt.value()));
+		}
+
+		void SetGpimpl(Ginterface* pimpl) {
+			_pimpl = pimpl;
 		}
 
 		const Address& Addr() const {

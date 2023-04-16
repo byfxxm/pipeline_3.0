@@ -9,7 +9,11 @@
 #include "../pipeline/syntax.h"
 #include "../pipeline/gparser.h"
 
+#ifdef _WIN64
 #pragma comment(lib, "../x64/Debug/pipeline.lib")
+#else
+#pragma comment(lib, "../Debug/pipeline.lib")
+#endif
 
 struct TestCode : byfxxm::Code {
 	TestCode(size_t n) : _n(n) {}

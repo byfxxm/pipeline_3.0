@@ -147,7 +147,7 @@ namespace byfxxm {
 					return { std::move(seg), utils.line() };
 				};
 
-				auto read_scope = [&](std::vector<Statement>& scope) {
+				auto read_scope = [&](Scope& scope) {
 					while (1) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
@@ -157,11 +157,11 @@ namespace byfxxm {
 							)
 							break;
 
-						auto seg = GetStatement(utils);
-						if (!seg)
+						auto stmt = GetStatement(utils);
+						if (!stmt)
 							break;
 
-						scope.push_back(std::move(seg.value()));
+						scope.push_back(std::move(stmt.value()));
 					}
 				};
 
@@ -220,18 +220,18 @@ namespace byfxxm {
 					return { std::move(seg), utils.line() };
 				};
 
-				auto read_scope = [&](std::vector<Statement>& scope) {
+				auto read_scope = [&](Scope& scope) {
 					while (1) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
 						if (tok.kind == token::Kind::END)
 							break;
 
-						auto seg = GetStatement(utils);
-						if (!seg)
+						auto stmt = GetStatement(utils);
+						if (!stmt)
 							break;
 
-						scope.push_back(std::move(seg.value()));
+						scope.push_back(std::move(stmt.value()));
 					}
 				};
 

@@ -7,13 +7,13 @@ namespace byfxxm {
 	template <StreamConcept T>
 	class Gparser {
 	public:
-		Gparser(T&& stream) : _syntax(std::move(stream)) {}
-		Gparser(const std::string& str) : _syntax(std::istringstream(str)) {}
-		Gparser(const std::filesystem::path& file) : _syntax(std::ifstream(file)) {}
+		Gparser(T&& stream, Ginterface* pimpl = nullptr) : _syntax(std::move(stream), pimpl) {}
+		Gparser(const std::string& str, Ginterface* pimpl = nullptr) : _syntax(std::istringstream(str), pimpl) {}
+		Gparser(const std::filesystem::path& file, Ginterface* pimpl = nullptr) : _syntax(std::ifstream(file), pimpl) {}
 
-		void Run(Ginterface& pimpl) {
+		void Run() {
 			while (auto abs_tree = _syntax.Next()) {
-				abs_tree.value()(&pimpl);
+				abs_tree.value()();
 			}
 		}
 
@@ -26,8 +26,8 @@ namespace byfxxm {
 	};
 
 	template <class T>
-	Gparser(T) -> Gparser<T>;
+	Gparser(T, Ginterface*) -> Gparser<T>;
 
-	Gparser(std::string)->Gparser<std::istringstream>;
-	Gparser(std::filesystem::path)->Gparser<std::ifstream>;
+	Gparser(std::string, Ginterface*)->Gparser<std::istringstream>;
+	Gparser(std::filesystem::path, Ginterface*)->Gparser<std::ifstream>;
 }

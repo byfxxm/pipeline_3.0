@@ -312,6 +312,9 @@ namespace byfxxm {
 		};
 
 		inline auto Gcmd = [](const std::vector<Value>& tags, Ginterface* pimpl, Address& addr)->Value {
+			if (!pimpl)
+				return {};
+
 			if (tags.empty())
 				throw AbstreeException();
 

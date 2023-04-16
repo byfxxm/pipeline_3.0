@@ -121,9 +121,9 @@ void TestParser() {
 
 )";
 
-	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
-	parser.Run(pimpl);
+	auto parser = byfxxm::Gparser(s, &pimpl);
+	parser.Run();
 
 	auto& addr = parser.Addr();
 	assert(*addr[1] == -10);
@@ -143,9 +143,9 @@ void TestParser1() {
 		G#2X-#3Y#20Z10
 )";
 
-	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
-	parser.Run(pimpl);
+	auto parser = byfxxm::Gparser(s, &pimpl);
+	parser.Run();
 
 	auto& addr = parser.Addr();
 	assert(byfxxm::IsNaN(*addr[4]));
@@ -173,9 +173,9 @@ void TestParser2() {
 		ENDIF
 )";
 
-	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
-	parser.Run(pimpl);
+	auto parser = byfxxm::Gparser(s, &pimpl);
+	parser.Run();
 
 	auto& addr = parser.Addr();
 	assert(*addr[1] == 1);
@@ -216,9 +216,9 @@ void TestParser3() {
 		ENDIF
 )";
 
-	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
-	parser.Run(pimpl);
+	auto parser = byfxxm::Gparser(s, &pimpl);
+	parser.Run();
 
 	auto& addr = parser.Addr();
 	assert(*addr[1] == 20);
@@ -239,9 +239,9 @@ void TestParser4() {
 		#3 = MIN[2]
 )";
 
-	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
-	parser.Run(pimpl);
+	auto parser = byfxxm::Gparser(s, &pimpl);
+	parser.Run();
 
 	auto& addr = parser.Addr();
 	assert(*addr[1] == 234.5);
@@ -255,9 +255,9 @@ void TestParser5() {
 		#10 =[ [1 + 2]] * [3 + 4]
 )";
 
-	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
-	parser.Run(pimpl);
+	auto parser = byfxxm::Gparser(s, &pimpl);
+	parser.Run();
 
 	auto& addr = parser.Addr();
 	assert(*addr[10] == 21);
@@ -280,9 +280,9 @@ void TestParser6() {
 		ENDIF
 )";
 
-	auto parser = byfxxm::Gparser(s);
 	auto pimpl = GImpl();
-	parser.Run(pimpl);
+	auto parser = byfxxm::Gparser(s, &pimpl);
+	parser.Run();
 
 	auto& addr = parser.Addr();
 	assert(*addr[1] == 1);

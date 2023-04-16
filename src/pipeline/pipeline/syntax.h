@@ -13,7 +13,7 @@ namespace byfxxm {
 	template <StreamConcept T>
 	class Syntax {
 	public:
-		Syntax(T&& stream) : _lex(std::move(stream)) {}
+		Syntax(T&& stream, Ginterface* pimpl = nullptr) : _lex(std::move(stream)), _pimpl(pimpl) {}
 
 		std::optional<Abstree> Next() {
 			auto get = [&]() {
@@ -51,7 +51,7 @@ namespace byfxxm {
 
 	private:
 		Abstree _ToAbstree(Segment&& seg) {
-			return Abstree(expr(std::move(seg)), _addr, _return_val);
+			return Abstree(expr(std::move(seg)), _addr, _return_val, _pimpl);
 		}
 
 		Abstree _ToAbstree(Statement&& stmt) {
@@ -76,6 +76,7 @@ namespace byfxxm {
 		ClonePtr<block::Block> _remain_block;
 		size_t _output_line{ 0 };
 		Value _return_val;
+		Ginterface* _pimpl{ nullptr };
 	};
 
 	template <class T>

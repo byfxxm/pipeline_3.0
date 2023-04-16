@@ -143,8 +143,12 @@ namespace byfxxm {
 		return _IsMapping(token::gcodes, ch);
 	}
 
-	inline bool IsGcode(token::Kind tok) {
-		return std::ranges::find_if(token::gcodes, [&](auto&& pair) {return pair.second == tok; }) != token::gcodes.end();
+	inline bool IsGcode(token::Kind kind) {
+		return std::ranges::find_if(token::gcodes, [&](auto&& pair) {return pair.second == kind; }) != token::gcodes.end();
+	}
+
+	inline bool IsGcode(token::Token tok) {
+		return IsGcode(tok.kind);
 	}
 
 	inline bool IsGcode(const std::string& word) {

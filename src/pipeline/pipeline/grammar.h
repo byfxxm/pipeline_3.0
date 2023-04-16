@@ -74,20 +74,8 @@ namespace byfxxm {
 		};
 
 		class Ggram : public Grammar {
-			static constexpr token::Kind gcodes[] {
-				token::Kind::G,
-				token::Kind::M,
-				token::Kind::X,
-				token::Kind::Y,
-				token::Kind::Z,
-			};
-
-			static bool _IsGcode(const token::Token& tok) {
-				return std::ranges::find(gcodes, tok.kind) != std::end(gcodes);
-			}
-
 			virtual bool First(const token::Token& tok) const override {
-				return _IsGcode(tok);
+				return IsGcode(tok);
 			}
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
@@ -100,7 +88,7 @@ namespace byfxxm {
 						break;
 					}
 
-					if (!_IsGcode(tok)) {
+					if (!IsGcode(tok)) {
 						gtag.push_back(std::move(tok));
 						utils.get();
 						continue;

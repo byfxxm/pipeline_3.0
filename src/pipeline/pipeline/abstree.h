@@ -23,7 +23,7 @@ namespace byfxxm {
 			assert(_root);
 		}
 
-		Value operator()() {
+		Value Execute() {
 			_return_val = _Execute(_root, _pimpl);
 			return _return_val;
 		}

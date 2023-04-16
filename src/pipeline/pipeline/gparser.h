@@ -13,7 +13,7 @@ namespace byfxxm {
 
 		void Run() {
 			while (auto abs_tree = _syntax.Next()) {
-				abs_tree.value()();
+				abs_tree.value().Execute();
 			}
 		}
 

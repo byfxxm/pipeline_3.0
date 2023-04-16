@@ -77,8 +77,8 @@ namespace byfxxm {
 		Lexer<T> _lex;
 		size_t _lineno{ 0 };
 		size_t _output_line{ 0 };
-		Address _addr;
 		Value _return_val;
+		Address _addr;
 		Ginterface* _pimpl{ nullptr };
 		ClonePtr<block::Block> _remain_block;
 	};

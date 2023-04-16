@@ -57,9 +57,9 @@ namespace byfxxm {
 		}
 
 	private:
-		using SegmentRange = decltype(std::ranges::subrange(Segment().begin(), Segment().end()));
+		using SegSubRng = decltype(std::ranges::subrange(Segment().begin(), Segment().end()));
 
-		Abstree::NodePtr _Expression(SegmentRange range) const {
+		Abstree::NodePtr _Expression(SegSubRng range) const {
 			if (range.empty())
 				return {};
 
@@ -67,16 +67,16 @@ namespace byfxxm {
 			auto min_pri = _FindMinPriority(seg);
 
 			auto node = _CurNode(*min_pri);
-			if (auto first = _Expression(SegmentRange(seg.begin(), min_pri)))
+			if (auto first = _Expression(SegSubRng(seg.begin(), min_pri)))
 				node->subs.emplace_back(std::move(first));
-			if (auto second = _Expression(SegmentRange(min_pri + 1, seg.end())))
+			if (auto second = _Expression(SegSubRng(min_pri + 1, seg.end())))
 				node->subs.emplace_back(std::move(second));
 
 			_CheckError(node);
 			return node;
 		}
 
-		Segment _ProcessBracket(SegmentRange range) const {
+		Segment _ProcessBracket(SegSubRng range) const {
 			Segment main;
 			Segment sub;
 			int level = 0;
@@ -112,7 +112,7 @@ namespace byfxxm {
 			return main;
 		}
 
-		Segment::iterator _FindMinPriority(SegmentRange range) const {
+		Segment::iterator _FindMinPriority(SegSubRng range) const {
 			auto less = [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
 				size_t lhs_pri = TokenTraits::default_priority;
 				size_t rhs_pri = TokenTraits::default_priority;

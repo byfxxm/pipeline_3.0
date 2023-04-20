@@ -10,7 +10,7 @@ namespace byfxxm {
 	struct Deleter {
 		constexpr Deleter() noexcept = default;
 
-		template <class T2>
+		template <std::derived_from<T> T2>
 		Deleter(const Deleter<T2>&) noexcept : _size(sizeof(T2)) {}
 
 		void operator()(T* p) const noexcept {

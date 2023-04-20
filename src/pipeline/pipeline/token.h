@@ -58,6 +58,10 @@ namespace byfxxm {
 			I,
 			J,
 			K,
+			N,
+			F,
+			S,
+			O,
 		};
 
 		// 种别码
@@ -66,7 +70,7 @@ namespace byfxxm {
 			std::optional<std::variant<double, std::string>> value;
 		};
 
-		using Dictionary = std::unordered_map<std::string, token::Kind>;
+		using Dictionary = std::pmr::unordered_map<std::string, token::Kind>;
 
 		inline const Dictionary keywords = {
 			{"IF", Kind::IF},
@@ -112,6 +116,10 @@ namespace byfxxm {
 			{"I", Kind::I},
 			{"J", Kind::J},
 			{"K", Kind::K},
+			{"N", Kind::N},
+			{"F", Kind::F},
+			{"S", Kind::S},
+			{"O", Kind::O},
 		};
 	}
 
@@ -205,7 +213,7 @@ namespace byfxxm {
 		double value;
 	};
 
-	using Group = std::vector<double>;
+	using Group = std::pmr::vector<double>;
 	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
 	using GetRetVal = std::function<Value()>;
 }

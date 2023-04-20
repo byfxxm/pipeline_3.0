@@ -4,6 +4,7 @@
 #include "token.h"
 #include "ginterface.h"
 #include "exception.h"
+#include "memory.h"
 
 #define IsSameType(lhs, rhs) (std::is_same_v<decltype(lhs), decltype(rhs)>)
 #define IsType(v, type) (std::is_same_v<std::remove_cvref_t<decltype(v)>, type>)
@@ -303,7 +304,7 @@ namespace byfxxm {
 			}
 		};
 
-		inline const std::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual> gtag_to_ginterface = {
+		inline const std::pmr::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual> gtag_to_ginterface = {
 			{{token::Kind::G, 0}, &Ginterface::G0},
 			{{token::Kind::G, 1}, &Ginterface::G1},
 			{{token::Kind::G, 2}, &Ginterface::G2},
@@ -311,38 +312,33 @@ namespace byfxxm {
 			{{token::Kind::G, 4}, &Ginterface::G4},
 		};
 
-		inline auto Gcmd = [](const std::vector<Value>& tags, Address& addr, Ginterface* pimpl)->Value {
+		inline auto Gcmd = [](const std::pmr::vector<Value>& tags, Address& addr, Ginterface* pimpl)->Value {
 			if (!pimpl)
 				return {};
 
 			if (tags.empty())
 				throw AbstreeException();
 
-			std::ranges::for_each(tags, [](auto&& ele) {
-				if (!std::holds_alternative<Gtag>(ele))
+			auto iter = std::ranges::find_if(tags, [](auto&& tag) {
+				if (!std::holds_alternative<Gtag>(tag))
 					throw AbstreeException();
 
-				if (!IsGcode(std::get<Gtag>(ele).code))
-					throw AbstreeException();
+				return gtag_to_ginterface.contains(std::get<Gtag>(tag));
 				});
 
-			auto& first = std::get<Gtag>(*tags.begin());
-			if (!gtag_to_ginterface.contains(first))
+			if (iter == tags.end())
 				throw AbstreeException();
 
-			Gparams par;
-			std::for_each(tags.begin() + 1, tags.end(), [&](const Value& ele) {
-				auto& tag = std::get<Gtag>(ele);
-				if (IsNaN(tag.value))
+			Gparams par{ &mempool };
+			std::for_each(tags.begin(), tags.end(), [&](const Value& ele) {
+				auto tag = std::get<Gtag>(ele);
+				if (IsNaN(tag.value) || gtag_to_ginterface.contains(tag))
 					return;
 
 				par.push_back(std::get<Gtag>(ele));
 				});
 
-			if (!gtag_to_ginterface.contains(first))
-				throw AbstreeException();
-
-			auto& func = gtag_to_ginterface.at(first);
+			auto func = gtag_to_ginterface.at(std::get<Gtag>(*iter));
 			if (!(pimpl->*func)(par, addr))
 				throw AbstreeException();
 
@@ -370,6 +366,10 @@ namespace byfxxm {
 		, predicate::Gcode<token::Kind::I>
 		, predicate::Gcode<token::Kind::J>
 		, predicate::Gcode<token::Kind::K>
+		, predicate::Gcode<token::Kind::N>
+		, predicate::Gcode<token::Kind::F>
+		, predicate::Gcode<token::Kind::S>
+		, predicate::Gcode<token::Kind::O>
 		, predicate::Max
 		, predicate::Min
 		, predicate::Not

@@ -9,10 +9,18 @@
 #include "../pipeline/syntax.h"
 #include "../pipeline/gparser.h"
 
+#ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib, "../x64/Debug/pipeline.lib")
 #else
 #pragma comment(lib, "../Debug/pipeline.lib")
+#endif
+#else
+#ifdef _WIN64
+#pragma comment(lib, "../x64/Release/pipeline.lib")
+#else
+#pragma comment(lib, "../Release/pipeline.lib")
+#endif
 #endif
 
 struct TestCode : byfxxm::Code {
@@ -293,9 +301,32 @@ void TestParser6() {
 	assert(*addr[2] == 2);
 }
 
+void TestPerformance() {
+	std::filesystem::path pa(R"(D:\NcFiles\兰亭集序.nc)");
+
+	auto f = [](const std::filesystem::path& pa, int times) {
+		auto t0 = std::chrono::high_resolution_clock::now();
+		for (auto i = 0; i < times; ++i) {
+			auto parser = byfxxm::Gparser(pa);
+			parser.Run(nullptr);
+		}
+		auto t1 = std::chrono::high_resolution_clock::now();
+
+		double cost = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1e6;
+		double length = static_cast<double>(std::filesystem::file_size(pa)) / 1e6;
+
+		std::cout << length << " MB" << std::endl;
+		std::cout << cost << " s" << std::endl;
+		std::cout << length / cost << " MB/s" << std::endl;
+	};
+
+	f(pa, 1);
+}
+
 int main()
 {
 	//TestPipeline();
+#ifdef _DEBUG
 	TestParser();
 	TestParser1();
 	TestParser2();
@@ -303,6 +334,9 @@ int main()
 	TestParser4();
 	TestParser5();
 	TestParser6();
+#else
+	TestPerformance();
+#endif
 	return 0;
 }
 

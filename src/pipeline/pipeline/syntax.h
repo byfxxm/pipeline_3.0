@@ -7,7 +7,7 @@
 #include "address.h"
 #include "grammar.h"
 #include "block.h"
-#include "clone_ptr.h"
+#include "memory.h"
 
 namespace byfxxm {
 	template <StreamConcept T>

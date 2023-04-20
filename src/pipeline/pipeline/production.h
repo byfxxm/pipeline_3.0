@@ -14,7 +14,7 @@ namespace byfxxm {
 		bool left_to_right{ false };
 	};
 
-	inline const std::unordered_map<token::Kind, TokenTraits> token_traits = {
+	inline const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
 		{token::Kind::COMMA, {0, Binary{predicate::Comma}, true}},
 		{token::Kind::ASSIGN, {1, Binary{predicate::Assign}}},
 		{token::Kind::GT, {2, Binary{predicate::GT}}},
@@ -44,6 +44,10 @@ namespace byfxxm {
 		{token::Kind::I, {5, Unary{predicate::Gcode<token::Kind::I>}}},
 		{token::Kind::J, {5, Unary{predicate::Gcode<token::Kind::J>}}},
 		{token::Kind::K, {5, Unary{predicate::Gcode<token::Kind::K>}}},
+		{token::Kind::N, {5, Unary{predicate::Gcode<token::Kind::N>}}},
+		{token::Kind::F, {5, Unary{predicate::Gcode<token::Kind::F>}}},
+		{token::Kind::S, {5, Unary{predicate::Gcode<token::Kind::S>}}},
+		{token::Kind::O, {5, Unary{predicate::Gcode<token::Kind::O>}}},
 		{token::Kind::CON, {}},
 	};
 
@@ -77,8 +81,8 @@ namespace byfxxm {
 		}
 
 		Segment _ProcessBracket(SegSubRng range) const {
-			Segment main;
-			Segment sub;
+			Segment main{ &mempool };
+			Segment sub{ &mempool };
 			int level = 0;
 			for (auto& node : range) {
 				if (std::holds_alternative<Abstree::NodePtr>(node)) {
@@ -133,7 +137,7 @@ namespace byfxxm {
 		}
 
 		Abstree::NodePtr _CurNode(SyntaxNode& node) const {
-			auto ret = ClonePtr(std::make_unique<Abstree::Node>());
+			auto ret = ClonePtr(MakeUnique<Abstree::Node>());
 			if (auto abs = std::get_if<Abstree::NodePtr>(&node)) {
 				ret = std::move(*abs);
 			}
@@ -191,10 +195,10 @@ namespace byfxxm {
 			if (seg.empty() || seg.size() % 2 != 0)
 				throw SyntaxException();
 
-			auto root = std::make_unique<Abstree::Node>();
+			auto root = MakeUnique<Abstree::Node>();
 			root->pred = Gcmd{};
 			for (auto iter = seg.begin(); iter != seg.end();) {
-				auto node = std::make_unique<Abstree::Node>();
+				auto node = MakeUnique<Abstree::Node>();
 				node->pred = _TokToPred(std::get<token::Token>(*iter++));
 				node->subs.push_back(std::move(std::get<Abstree::NodePtr>(*iter++)));
 				root->subs.push_back(std::move(node));

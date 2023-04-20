@@ -1,6 +1,6 @@
 #pragma once
 #include "abstree.h"
-#include "clone_ptr.h"
+#include "memory.h"
 
 namespace byfxxm {
 	namespace grammar {
@@ -13,17 +13,17 @@ namespace byfxxm {
 	}
 
 	struct Statement {
-		std::variant<Segment, ClonePtr<block::Block>> statement;
+		std::variant<Segment, ClonePtr<block::Block>> statement{ Segment(&mempool) };
 		size_t line{ 0 };
 	};
 
-	using Scope = std::vector<Statement>;
+	using Scope = std::pmr::vector<Statement>;
 
 	namespace block {
 		class Block {
 		public:
 			virtual ~Block() = default;
-			virtual std::unique_ptr<Block> Clone() const = 0;
+			virtual UniquePtr<Block> Clone() const = 0;
 			virtual std::optional<Statement> Next() = 0;
 		};
 
@@ -52,17 +52,17 @@ namespace byfxxm {
 		class IfElse : public Block {
 			struct If {
 				Statement cond;
-				Scope scope;
+				Scope scope{ &mempool };
 			};
 
 			struct Else {
-				Scope scope;
+				Scope scope{ &mempool };
 			};
 
 			IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
 
-			virtual std::unique_ptr<Block> Clone() const {
-				return std::make_unique<IfElse>(*this);
+			virtual UniquePtr<Block> Clone() const {
+				return MakeUnique<IfElse>(*this);
 			}
 
 			virtual std::optional<Statement> Next() override {
@@ -102,7 +102,7 @@ namespace byfxxm {
 				return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
 			}
 
-			std::vector<If> _ifs;
+			std::pmr::vector<If> _ifs{ &mempool };
 			Else _else;
 			size_t _cur_stmt{ 0 };
 			bool _iscond{ true };
@@ -114,8 +114,8 @@ namespace byfxxm {
 		class While : public Block {
 			While(GetRetVal get_ret) : _get_ret(get_ret) {}
 
-			virtual std::unique_ptr<Block> Clone() const {
-				return std::make_unique<While>(*this);
+			virtual UniquePtr<Block> Clone() const {
+				return MakeUnique<While>(*this);
 			}
 
 			virtual std::optional<Statement> Next() override {
@@ -156,8 +156,8 @@ namespace byfxxm {
 
 			Statement _cond;
 			Statement _cond_backup;
-			Scope _scope;
-			Scope _scope_backup;
+			Scope _scope{ &mempool };
+			Scope _scope_backup{ &mempool };
 			bool _iscond{ true };
 			GetRetVal _get_ret;
 			size_t _scope_index{ 0 };

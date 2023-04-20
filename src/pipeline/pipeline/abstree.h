@@ -6,7 +6,7 @@
 #include "token.h"
 #include "predicate.h"
 #include "ginterface.h"
-#include "clone_ptr.h"
+#include "memory.h"
 
 namespace byfxxm {
 	class Abstree {
@@ -16,7 +16,7 @@ namespace byfxxm {
 
 		struct Node {
 			Predicate pred;
-			std::vector<NodePtr> subs;
+			std::pmr::vector<NodePtr> subs{ &mempool };
 		};
 
 		Abstree(NodePtr&& root, Value& rval, Address& addr, Ginterface* pimpl = nullptr) noexcept : _root(std::move(root)), _return_val(rval), _addr(addr), _pimpl(pimpl) {
@@ -33,7 +33,7 @@ namespace byfxxm {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 
-			std::vector<Value> params;
+			std::pmr::vector<Value> params{ &mempool };
 			std::ranges::for_each(node->subs, [&](auto&& p) {
 				params.emplace_back(_Execute(p));
 				});

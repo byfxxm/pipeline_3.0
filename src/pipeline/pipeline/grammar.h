@@ -3,7 +3,7 @@
 #include "abstree.h"
 #include "production.h"
 #include "block.h"
-#include "clone_ptr.h"
+#include "memory.h"
 
 namespace byfxxm {
 	namespace grammar {
@@ -79,7 +79,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				Segment gtag;
+				Segment gtag{ &mempool };
 				while (1) {
 					auto tok = utils.peek();
 					if (NewSegment(tok)) {
@@ -104,7 +104,7 @@ namespace byfxxm {
 					}
 				}
 
-				Segment ret;
+				Segment ret{ &mempool };
 				ret.emplace_back(gtree(std::move(seg)));
 				return Statement(std::move(ret), utils.line());
 			}
@@ -120,7 +120,7 @@ namespace byfxxm {
 				using Else = block::IfElse::Else;
 
 				auto read_cond = [&]()->Statement {
-					Segment seg;
+					Segment seg{ &mempool };
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -182,7 +182,7 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::ENDIF)
 					throw SyntaxException();
 
-				return Statement(ClonePtr<block::Block>(std::make_unique<block::IfElse>(std::move(ifelse))), utils.line());
+				return Statement(ClonePtr<block::Block>(MakeUnique<block::IfElse>(std::move(ifelse))), utils.line());
 			}
 		};
 
@@ -193,7 +193,7 @@ namespace byfxxm {
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				auto read_cond = [&]()->Statement {
-					Segment seg;
+					Segment seg{ &mempool };
 					while (1) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -232,7 +232,7 @@ namespace byfxxm {
 				if (tok.kind != token::Kind::END)
 					throw SyntaxException();
 
-				return Statement(ClonePtr<block::Block>(std::make_unique<block::While>(std::move(wh))), utils.line());
+				return Statement(ClonePtr<block::Block>(MakeUnique<block::While>(std::move(wh))), utils.line());
 			}
 		};
 
@@ -257,7 +257,7 @@ namespace byfxxm {
 				if (EndOfFile(tok))
 					return {};
 
-				Segment seg;
+				Segment seg{ &mempool };
 				seg.push_back(utils.get());
 
 				auto iter = std::begin(GrammarsList::grammars);

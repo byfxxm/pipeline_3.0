@@ -90,7 +90,7 @@
     <ClInclude Include="block.h">
       <Filter>parser</Filter>
     </ClInclude>
-    <ClInclude Include="clone_ptr.h">
+    <ClInclude Include="memory.h">
       <Filter>parser</Filter>
     </ClInclude>
   </ItemGroup>

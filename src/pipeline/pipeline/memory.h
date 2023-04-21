@@ -26,8 +26,8 @@ namespace byfxxm {
 	public:
 		UniquePtr() = default;
 
-		template <class T2, class D2>
-		UniquePtr(UniquePtr<T2, D2>&& rhs) noexcept : _pointer(std::move(rhs._pointer)) {}
+		template <class T2>
+		UniquePtr(UniquePtr<T2>&& rhs) noexcept : _pointer(std::move(rhs._pointer)) {}
 
 		template <class T2>
 		UniquePtr(T2* rhs) noexcept : _pointer(rhs) {}

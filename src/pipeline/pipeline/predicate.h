@@ -237,13 +237,13 @@ namespace byfxxm {
 					return l;
 				}
 				else if constexpr (IsDouble(l) && IsDouble(r))
-					return Group{ l, r };
+					return Group({ l, r }, &mempool);
 				else if constexpr (IsDouble(l) && IsDoublePtr(r))
-					return Group{ l, *r };
+					return Group({ l, *r }, & mempool);
 				else if constexpr (IsDoublePtr(l) && IsDouble(r))
-					return Group{ *l, r };
+					return Group({ *l, r }, & mempool);
 				else if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
-					return Group{ *l, *r };
+					return Group({ *l, *r }, &mempool);
 				else
 					throw SyntaxException("comma error");
 				}, lhs, rhs);

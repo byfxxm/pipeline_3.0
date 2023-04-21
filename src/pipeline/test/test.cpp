@@ -1,7 +1,7 @@
 ﻿// test.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
 //
-
 #include <iostream>
+#include <utility>
 #include "../pipeline/pipeline.h"
 #include "../pipeline/worker.h"
 #include "../pipeline/code.h"
@@ -301,26 +301,62 @@ void TestParser6() {
 	assert(*addr[2] == 2);
 }
 
-void TestPerformance() {
-	std::filesystem::path pa(R"(D:\NcFiles\兰亭集序.nc)");
+class MyFileStream {
+public:
+	MyFileStream(const std::filesystem::path& pa) {
+		fopen_s(&_file, pa.string().c_str(), "r");
+		assert(_file);
+	}
 
-	auto f = [](const std::filesystem::path& pa, int times) {
+	~MyFileStream() {
+		if (_file)
+			fclose(_file);
+	}
+
+	MyFileStream(MyFileStream&& rhs) noexcept
+		: _file(std::exchange(rhs._file, nullptr))
+		, _cache(std::move(rhs._cache)) {}
+
+	int get() {
+		auto ret = peek();
+		_cache.reset();
+		return ret;
+	}
+
+	int peek() {
+		if (!_cache)
+			_cache = fgetc(_file);
+
+		return _cache.value();
+	}
+
+	bool eof() {
+		return feof(_file) != 0;
+	}
+
+private:
+	FILE* _file{ nullptr };
+	std::optional<int> _cache;
+};
+
+void TestPerformance() {
+	auto perform = [](const std::filesystem::path& pa, int times) {
 		auto t0 = std::chrono::high_resolution_clock::now();
 		for (auto i = 0; i < times; ++i) {
-			auto parser = byfxxm::Gparser(pa);
+			auto parser = byfxxm::Gparser(MyFileStream(pa));
 			parser.Run(nullptr);
 		}
 		auto t1 = std::chrono::high_resolution_clock::now();
 
 		double cost = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1e6;
-		double length = static_cast<double>(std::filesystem::file_size(pa)) / 1e6;
+		double length = static_cast<double>(std::filesystem::file_size(pa)) / 1e6 * times;
 
 		std::cout << length << " MB" << std::endl;
 		std::cout << cost << " s" << std::endl;
 		std::cout << length / cost << " MB/s" << std::endl;
 	};
 
-	f(pa, 1);
+	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\LTJX.nc)"), 1);
 }
 
 int main()

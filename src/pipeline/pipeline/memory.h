@@ -67,7 +67,7 @@ namespace byfxxm {
 		return UniquePtr<T>(new(p) T(std::forward<Args>(args)...));
 	}
 
-	template <class T, template <class> class SmartPtr = UniquePtr>
+	template <class T>
 	class ClonePtr {
 	public:
 		ClonePtr() = default;
@@ -76,9 +76,9 @@ namespace byfxxm {
 		ClonePtr& operator=(ClonePtr&&) noexcept = default;
 
 		template <class T2>
-		ClonePtr(SmartPtr<T2>&& rhs) noexcept : _pointer(std::move(rhs)) {}
+		ClonePtr(UniquePtr<T2>&& rhs) noexcept : _pointer(std::move(rhs)) {}
 
-		ClonePtr(const SmartPtr<T>& rhs) {
+		ClonePtr(const UniquePtr<T>& rhs) {
 			if constexpr (std::is_abstract_v<T>)
 				_pointer = rhs->Clone();
 			else
@@ -115,9 +115,6 @@ namespace byfxxm {
 		}
 
 	private:
-		SmartPtr<T> _pointer;
+		UniquePtr<T> _pointer;
 	};
-
-	template <class T>
-	ClonePtr(UniquePtr<T>) -> ClonePtr<T>;
 }

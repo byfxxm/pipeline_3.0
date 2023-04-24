@@ -5,11 +5,12 @@ namespace byfxxm {
 	namespace word {
 		using Peek = std::function<char()>;
 		using Get = std::function<char()>;
+		using Last = std::function<const std::optional<token::Token>&()>;
 
 		struct Utils {
 			Peek peek;
 			Get get;
-			const std::optional<token::Token> last;
+			Last last;
 		};
 
 		class Word {
@@ -77,9 +78,10 @@ namespace byfxxm {
 					throw LexException();
 
 				auto sym = token::symbols.at(word);
-				if (sym == token::Kind::PLUS && utils.last.has_value() && utils.last.value().kind != token::Kind::CON && utils.last.value().kind != token::Kind::RB)
+				auto last_ = utils.last();
+				if (sym == token::Kind::PLUS && last_.has_value() && last_.value().kind != token::Kind::CON && last_.value().kind != token::Kind::RB)
 					sym = token::Kind::POS;
-				else if (sym == token::Kind::MINUS && utils.last.has_value() && utils.last.value().kind != token::Kind::CON && utils.last.value().kind != token::Kind::RB)
+				else if (sym == token::Kind::MINUS && last_.has_value() && last_.value().kind != token::Kind::CON && last_.value().kind != token::Kind::RB)
 					sym = token::Kind::NEG;
 
 				return token::Token{ sym, {} };

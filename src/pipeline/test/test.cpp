@@ -339,24 +339,28 @@ private:
 	std::optional<int> _cache;
 };
 
+inline auto perform = [](const std::filesystem::path& pa, int times) {
+	auto t0 = std::chrono::high_resolution_clock::now();
+	for (auto i = 0; i < times; ++i) {
+		auto parser = byfxxm::Gparser(MyFileStream(pa));
+		parser.Run(nullptr);
+	}
+	auto t1 = std::chrono::high_resolution_clock::now();
+
+	double cost = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1e6;
+	double length = static_cast<double>(std::filesystem::file_size(pa)) / 1e6 * times;
+
+	std::cout << length << " MB" << std::endl;
+	std::cout << cost << " s" << std::endl;
+	std::cout << length / cost << " MB/s" << std::endl;
+};
+
 void TestPerformance() {
-	auto perform = [](const std::filesystem::path& pa, int times) {
-		auto t0 = std::chrono::high_resolution_clock::now();
-		for (auto i = 0; i < times; ++i) {
-			auto parser = byfxxm::Gparser(MyFileStream(pa));
-			parser.Run(nullptr);
-		}
-		auto t1 = std::chrono::high_resolution_clock::now();
-
-		double cost = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1e6;
-		double length = static_cast<double>(std::filesystem::file_size(pa)) / 1e6 * times;
-
-		std::cout << length << " MB" << std::endl;
-		std::cout << cost << " s" << std::endl;
-		std::cout << length / cost << " MB/s" << std::endl;
-	};
-
 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\LTJX.nc)"), 1);
+}
+
+void TestPerformance1() {
+	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\macro1.nc)"), 100);
 }
 
 int main()
@@ -372,6 +376,7 @@ int main()
 	TestParser6();
 #else
 	TestPerformance();
+	TestPerformance1();
 #endif
 	return 0;
 }

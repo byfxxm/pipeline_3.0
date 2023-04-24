@@ -62,7 +62,7 @@ namespace byfxxm {
 	};
 
 	template <class T, class... Args>
-	auto MakeUnique(Args&&... args) noexcept {
+	[[nodiscard]] auto MakeUnique(Args&&... args) noexcept {
 		return UniquePtr<T>(new(mempool.allocate(sizeof(T))) T(std::forward<Args>(args)...));
 	}
 

@@ -84,7 +84,7 @@ namespace byfxxm {
 					auto tok = utils.peek();
 					if (NewSegment(tok)) {
 						if (!gtag.empty())
-							seg.push_back(expr(std::move(gtag)));
+							seg.push_back(expr(gtag));
 						break;
 					}
 
@@ -99,13 +99,13 @@ namespace byfxxm {
 						utils.get();
 					}
 					else {
-						seg.push_back(expr(std::move(gtag)));
+						seg.push_back(expr(gtag));
 						gtag.clear();
 					}
 				}
 
 				Segment ret{ &mempool };
-				ret.emplace_back(gtree(std::move(seg)));
+				ret.emplace_back(gtree(seg));
 				return Statement(std::move(ret), utils.line());
 			}
 		};

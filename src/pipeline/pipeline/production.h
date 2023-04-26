@@ -56,14 +56,14 @@ namespace byfxxm {
 
 	class Expression {
 	public:
-		Abstree::NodePtr operator()(Segment&& seg) const {
+		Abstree::NodePtr operator()(Segment& seg) const {
 			return _Expression(seg);
 		}
 
 	private:
-		using SegSubRng = decltype(std::ranges::subrange(Segment().begin(), Segment().end()));
+		using _SegSubRng = decltype(std::ranges::subrange(Segment().begin(), Segment().end()));
 
-		Abstree::NodePtr _Expression(SegSubRng range) const {
+		Abstree::NodePtr _Expression(_SegSubRng range) const {
 			if (range.empty())
 				return {};
 
@@ -71,16 +71,16 @@ namespace byfxxm {
 			auto min_pri = _FindMinPriority(seg);
 
 			auto node = _CurNode(*min_pri);
-			if (auto first = _Expression(SegSubRng(seg.begin(), min_pri)))
+			if (auto first = _Expression(_SegSubRng(seg.begin(), min_pri)))
 				node->subs.emplace_back(std::move(first));
-			if (auto second = _Expression(SegSubRng(min_pri + 1, seg.end())))
+			if (auto second = _Expression(_SegSubRng(min_pri + 1, seg.end())))
 				node->subs.emplace_back(std::move(second));
 
 			_CheckError(node);
 			return node;
 		}
 
-		Segment _ProcessBracket(SegSubRng range) const {
+		Segment _ProcessBracket(_SegSubRng range) const {
 			Segment main{ &mempool };
 			Segment sub{ &mempool };
 			int level = 0;
@@ -116,7 +116,7 @@ namespace byfxxm {
 			return main;
 		}
 
-		Segment::iterator _FindMinPriority(SegSubRng range) const {
+		Segment::iterator _FindMinPriority(_SegSubRng range) const {
 			auto less = [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
 				size_t lhs_pri = TokenTraits::default_priority;
 				size_t rhs_pri = TokenTraits::default_priority;
@@ -191,7 +191,7 @@ namespace byfxxm {
 
 	class Gtree {
 	public:
-		Abstree::NodePtr operator()(Segment&& seg) const {
+		Abstree::NodePtr operator()(Segment& seg) const {
 			if (seg.empty() || seg.size() % 2 != 0)
 				throw SyntaxException();
 

@@ -143,33 +143,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="abstree.h" />
-    <ClInclude Include="address.h" />
-    <ClInclude Include="block.h" />
     <ClInclude Include="code.h" />
     <ClInclude Include="coro.h" />
-    <ClInclude Include="exception.h" />
-    <ClInclude Include="production.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="ginterface.h" />
-    <ClInclude Include="grammar.h" />
+    <ClInclude Include="gparser\abstree.h" />
+    <ClInclude Include="gparser\address.h" />
+    <ClInclude Include="gparser\block.h" />
+    <ClInclude Include="gparser\clone_ptr.h" />
+    <ClInclude Include="gparser\exception.h" />
+    <ClInclude Include="gparser\ginterface.h" />
+    <ClInclude Include="gparser\gparser.h" />
+    <ClInclude Include="gparser\grammar.h" />
+    <ClInclude Include="gparser\lexer.h" />
+    <ClInclude Include="gparser\memory.h" />
+    <ClInclude Include="gparser\predicate.h" />
+    <ClInclude Include="gparser\production.h" />
+    <ClInclude Include="gparser\syntax.h" />
+    <ClInclude Include="gparser\token.h" />
+    <ClInclude Include="gparser\word.h" />
     <ClInclude Include="gworker.h" />
-    <ClInclude Include="lexer.h" />
-    <ClInclude Include="gparser.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pipeline.h" />
     <ClInclude Include="pipeline_imp.h" />
-    <ClInclude Include="predicate.h" />
     <ClInclude Include="ring_buffer.h" />
-    <ClInclude Include="syntax.h" />
-    <ClInclude Include="token.h" />
-    <ClInclude Include="memory.h" />
-    <ClInclude Include="word.h" />
     <ClInclude Include="worker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="gparser.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

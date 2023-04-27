@@ -6,27 +6,26 @@
 #include "exception.h"
 #include "memory.h"
 
-#define IsSameType(lhs, rhs) (std::is_same_v<decltype(lhs), decltype(rhs)>)
-#define IsType(v, type) (std::is_same_v<std::remove_cvref_t<decltype(v)>, type>)
-#define IsDouble(v) IsType(v, double)
-#define IsString(v) IsType(v, std::string)
-#define IsDoublePtr(v) IsType(v, double*)
-#define IsGroup(v) IsType(v, Group)
-#define IsBool(v) IsType(v, bool)
+#define byfxxm_IsType(v, type) (std::is_same_v<std::remove_cvref_t<decltype(v)>, type>)
+#define byfxxm_IsDouble(v) byfxxm_IsType(v, double)
+#define byfxxm_IsDoublePtr(v) byfxxm_IsType(v, double*)
+#define byfxxm_IsString(v) byfxxm_IsType(v, std::string)
+#define byfxxm_IsGroup(v) byfxxm_IsType(v, Group)
+#define byfxxm_IsBool(v) byfxxm_IsType(v, bool)
 
 namespace byfxxm {
 	namespace predicate {
 		inline auto Plus = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l + *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l + r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l + *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l + r };
-				else if constexpr (IsString(l) && IsString(r))
+				else if constexpr (byfxxm_IsString(l) && byfxxm_IsString(r))
 					return Value{ l + r };
 				else
 					throw SyntaxException("plus error");
@@ -35,13 +34,13 @@ namespace byfxxm {
 
 		inline auto Minus = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l - *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l - r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l - *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l - r };
 				else
 					throw SyntaxException("minus error");
@@ -50,13 +49,13 @@ namespace byfxxm {
 
 		inline auto Multi = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l * *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l * r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l * *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l * r };
 				else
 					throw SyntaxException("multiple error");
@@ -65,13 +64,13 @@ namespace byfxxm {
 
 		inline auto Div = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l / *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l / r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l / *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l / r };
 				else
 					throw SyntaxException("divide error");
@@ -80,9 +79,9 @@ namespace byfxxm {
 
 		inline auto Assign = [](Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					*l = *r;
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					*l = r;
 				else
 					throw SyntaxException("assign error");
@@ -93,9 +92,9 @@ namespace byfxxm {
 
 		inline auto Neg = [](const Value& value) {
 			return std::visit([](auto&& v)->Value {
-				if constexpr (IsDouble(v))
+				if constexpr (byfxxm_IsDouble(v))
 					return Value{ -v };
-				else if constexpr (IsDoublePtr(v))
+				else if constexpr (byfxxm_IsDoublePtr(v))
 					return Value{ -*v };
 				else
 					throw SyntaxException("negative error");
@@ -104,9 +103,9 @@ namespace byfxxm {
 
 		inline auto Pos = [](const Value& value) {
 			return std::visit([](auto&& v)->Value {
-				if constexpr (IsDouble(v))
+				if constexpr (byfxxm_IsDouble(v))
 					return Value{ v };
-				else if constexpr (IsDoublePtr(v))
+				else if constexpr (byfxxm_IsDoublePtr(v))
 					return Value{ *v };
 				else
 					throw SyntaxException("positive error");
@@ -115,9 +114,9 @@ namespace byfxxm {
 
 		inline auto Sharp = [](const Value& value, Address& addr) {
 			return std::visit([&](auto&& v)->Value {
-				if constexpr (IsDouble(v))
+				if constexpr (byfxxm_IsDouble(v))
 					return addr[v].get();
-				else if constexpr (IsDoublePtr(v))
+				else if constexpr (byfxxm_IsDoublePtr(v))
 					return addr[*v].get();
 				else
 					throw SyntaxException("sharp error");
@@ -126,13 +125,13 @@ namespace byfxxm {
 
 		inline auto GT = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l > *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l > r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l > *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l > r };
 				else
 					throw SyntaxException();
@@ -141,13 +140,13 @@ namespace byfxxm {
 
 		inline auto GE = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l >= *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l >= r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l >= *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l >= r };
 				else
 					throw SyntaxException();
@@ -156,13 +155,13 @@ namespace byfxxm {
 
 		inline auto LT = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l < *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l < r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l < *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l < r };
 				else
 					throw SyntaxException();
@@ -171,13 +170,13 @@ namespace byfxxm {
 
 		inline auto LE = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l <= *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l <= r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l <= *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l <= r };
 				else
 					throw SyntaxException();
@@ -186,13 +185,13 @@ namespace byfxxm {
 
 		inline auto EQ = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l == *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l == r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l == *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l == r };
 				else
 					throw SyntaxException();
@@ -201,13 +200,13 @@ namespace byfxxm {
 
 		inline auto NE = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Value{ *l != *r };
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Value{ *l != r };
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Value{ l != *r };
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l != r };
 				else
 					throw SyntaxException();
@@ -217,9 +216,9 @@ namespace byfxxm {
 		template <token::Kind K>
 		inline auto Gcode = [](const Value& value) {
 			return std::visit([&](auto&& v)->Value {
-				if constexpr (IsDoublePtr(v))
+				if constexpr (byfxxm_IsDoublePtr(v))
 					return Gtag{ K, *v };
-				else if constexpr (IsDouble(v))
+				else if constexpr (byfxxm_IsDouble(v))
 					return Gtag{ K, v };
 				else
 					throw SyntaxException("gcode error");
@@ -228,21 +227,21 @@ namespace byfxxm {
 
 		inline auto Comma = [](Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
-				if constexpr (IsGroup(l) && IsDouble(r)) {
+				if constexpr (byfxxm_IsGroup(l) && byfxxm_IsDouble(r)) {
 					l.push_back(r);
 					return l;
 				}
-				else if constexpr (IsGroup(l) && IsDoublePtr(r)) {
+				else if constexpr (byfxxm_IsGroup(l) && byfxxm_IsDoublePtr(r)) {
 					l.push_back(*r);
 					return l;
 				}
-				else if constexpr (IsDouble(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Group({ l, r }, &mempool);
-				else if constexpr (IsDouble(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
 					return Group({ l, *r }, & mempool);
-				else if constexpr (IsDoublePtr(l) && IsDouble(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					return Group({ *l, r }, & mempool);
-				else if constexpr (IsDoublePtr(l) && IsDoublePtr(r))
+				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Group({ *l, *r }, &mempool);
 				else
 					throw SyntaxException("comma error");
@@ -251,14 +250,14 @@ namespace byfxxm {
 
 		inline auto Max = [](Value& value)->Value {
 			return std::visit([](auto&& v)->Value {
-				if constexpr (IsGroup(v)) {
+				if constexpr (byfxxm_IsGroup(v)) {
 					return *std::ranges::max_element(v, [](double lhs, double rhs) {
 						return lhs < rhs;
 						});
 				}
-				else if constexpr (IsDouble(v))
+				else if constexpr (byfxxm_IsDouble(v))
 					return v;
-				else if constexpr (IsDoublePtr(v))
+				else if constexpr (byfxxm_IsDoublePtr(v))
 					return *v;
 				else
 					throw SyntaxException("max error");
@@ -267,14 +266,14 @@ namespace byfxxm {
 
 		inline auto Min = [](Value& value) {
 			return std::visit([](auto&& v)->Value {
-				if constexpr (IsGroup(v)) {
+				if constexpr (byfxxm_IsGroup(v)) {
 					return *std::ranges::min_element(v, [](double lhs, double rhs) {
 						return lhs < rhs;
 						});
 				}
-				else if constexpr (IsDouble(v))
+				else if constexpr (byfxxm_IsDouble(v))
 					return v;
-				else if constexpr (IsDoublePtr(v))
+				else if constexpr (byfxxm_IsDoublePtr(v))
 					return *v;
 				else
 					throw SyntaxException("min error");
@@ -283,7 +282,7 @@ namespace byfxxm {
 
 		inline auto Not = [](const Value& value) {
 			return std::visit([](auto&& v)->Value {
-				if constexpr (IsBool(v))
+				if constexpr (byfxxm_IsBool(v))
 					return Value{ !v };
 				else
 					throw SyntaxException(R"("NOT" error)");

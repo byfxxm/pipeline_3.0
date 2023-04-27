@@ -19,8 +19,8 @@
     <Filter Include="public">
       <UniqueIdentifier>{4cd21db0-d7f8-470d-b68c-37c42cffb1db}</UniqueIdentifier>
     </Filter>
-    <Filter Include="parser">
-      <UniqueIdentifier>{481c276b-ff5f-4001-930f-4a30847192b4}</UniqueIdentifier>
+    <Filter Include="gparser">
+      <UniqueIdentifier>{1138447e-4390-480c-b9eb-9d5589ceb53a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,50 +48,53 @@
     <ClInclude Include="coro.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="gparser.h">
-      <Filter>parser</Filter>
-    </ClInclude>
-    <ClInclude Include="lexer.h">
-      <Filter>parser</Filter>
-    </ClInclude>
-    <ClInclude Include="token.h">
-      <Filter>parser</Filter>
-    </ClInclude>
     <ClInclude Include="gworker.h">
       <Filter>workers</Filter>
     </ClInclude>
-    <ClInclude Include="syntax.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\abstree.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="exception.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\address.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="word.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\block.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="abstree.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\clone_ptr.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="address.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\exception.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="predicate.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\ginterface.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="ginterface.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\gparser.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="production.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\grammar.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="grammar.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\lexer.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="block.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\memory.h">
+      <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="memory.h">
-      <Filter>parser</Filter>
+    <ClInclude Include="gparser\predicate.h">
+      <Filter>gparser</Filter>
+    </ClInclude>
+    <ClInclude Include="gparser\production.h">
+      <Filter>gparser</Filter>
+    </ClInclude>
+    <ClInclude Include="gparser\syntax.h">
+      <Filter>gparser</Filter>
+    </ClInclude>
+    <ClInclude Include="gparser\token.h">
+      <Filter>gparser</Filter>
+    </ClInclude>
+    <ClInclude Include="gparser\word.h">
+      <Filter>gparser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -103,9 +106,6 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>default</Filter>
-    </ClCompile>
-    <ClCompile Include="gparser.cpp">
-      <Filter>parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

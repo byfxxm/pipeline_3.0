@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "worker.h"
-#include "gparser.h"
+#include "gparser/gparser.h"
 
 namespace byfxxm {
 	class Gworker : private Worker {

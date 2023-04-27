@@ -5,9 +5,7 @@
 #include "../pipeline/pipeline.h"
 #include "../pipeline/worker.h"
 #include "../pipeline/code.h"
-#include "../pipeline/lexer.h"
-#include "../pipeline/syntax.h"
-#include "../pipeline/gparser.h"
+#include "../pipeline/gparser/gparser.h"
 
 #ifdef _DEBUG
 #ifdef _WIN64

@@ -61,7 +61,7 @@ namespace byfxxm {
 		}
 
 	private:
-		using _SegSubRng = decltype(std::ranges::subrange(Segment().begin(), Segment().end()));
+		using _SegSubRng = decltype(std::ranges::subrange(std::declval<Segment&>()));
 
 		Abstree::NodePtr _Expression(_SegSubRng range) const {
 			if (range.empty())

@@ -60,9 +60,6 @@
     <ClInclude Include="gparser\block.h">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\clone_ptr.h">
-      <Filter>gparser</Filter>
-    </ClInclude>
     <ClInclude Include="gparser\exception.h">
       <Filter>gparser</Filter>
     </ClInclude>

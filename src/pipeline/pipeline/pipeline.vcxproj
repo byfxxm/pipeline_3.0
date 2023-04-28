@@ -149,7 +149,6 @@
     <ClInclude Include="gparser\abstree.h" />
     <ClInclude Include="gparser\address.h" />
     <ClInclude Include="gparser\block.h" />
-    <ClInclude Include="gparser\clone_ptr.h" />
     <ClInclude Include="gparser\exception.h" />
     <ClInclude Include="gparser\ginterface.h" />
     <ClInclude Include="gparser\gparser.h" />

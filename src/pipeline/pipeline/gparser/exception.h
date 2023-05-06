@@ -16,8 +16,7 @@ namespace byfxxm{
 	class SyntaxException : public ParseException {
 	public:
 		using ParseException::ParseException;
-		SyntaxException(size_t line, const char* err) : _error(std::to_string(line) + " : " + err) {
-		}
+		SyntaxException(size_t line, const char* err) : _error(std::to_string(line) + " : " + err) {}
 
 	private:
 		std::string _error;

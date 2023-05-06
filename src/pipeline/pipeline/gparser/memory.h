@@ -32,7 +32,7 @@ namespace byfxxm {
 		template <class T2>
 		UniquePtr(T2* rhs) noexcept : _pointer(rhs) {}
 
-		operator bool() const noexcept {
+		explicit operator bool() const noexcept {
 			return _pointer.operator bool();
 		}
 
@@ -89,7 +89,7 @@ namespace byfxxm {
 			return *this;
 		}
 
-		operator bool() const noexcept {
+		explicit operator bool() const noexcept {
 			return _pointer.operator bool();
 		}
 

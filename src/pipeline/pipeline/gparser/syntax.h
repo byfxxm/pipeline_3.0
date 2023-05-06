@@ -16,15 +16,15 @@ namespace byfxxm {
 		Syntax(T&& stream) : _lex(std::move(stream)) {}
 
 		std::optional<Abstree> Next() {
-			auto get = [&]() {
+			auto get = [this]() {
 				auto tok = _lex.Get();
 				if (tok.kind == token::Kind::NEWLINE)
 					++_lineno;
 				return tok;
 			};
-			auto peek = [&]() {return _lex.Peek(); };
-			auto line = [&]() {return _lineno; };
-			auto get_rval = [&]()->Value {return _return_val; };
+			auto peek = [this]() {return _lex.Peek(); };
+			auto line = [this]() {return _lineno; };
+			auto get_rval = [this]()->Value {return _return_val; };
 
 			auto stmt = GetStatement(_remain_block);
 			if (stmt) {

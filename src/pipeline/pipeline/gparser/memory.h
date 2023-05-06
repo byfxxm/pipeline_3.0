@@ -52,10 +52,6 @@ namespace byfxxm {
 			return _pointer.operator*();
 		}
 
-		friend void swap(UniquePtr& lhs, UniquePtr& rhs) noexcept {
-			std::swap(lhs._pointer, rhs._pointer);
-		}
-
 	private:
 		std::unique_ptr<T, D> _pointer;
 		friend class UniquePtr;
@@ -89,7 +85,7 @@ namespace byfxxm {
 		// copy and swap
 		ClonePtr& operator=(const ClonePtr& rhs) {
 			ClonePtr copy(rhs);
-			swap(*this, copy);
+			std::swap(*this, copy);
 			return *this;
 		}
 
@@ -107,10 +103,6 @@ namespace byfxxm {
 
 		decltype(auto) get() const noexcept {
 			return _pointer.get();
-		}
-
-		friend void swap(ClonePtr& lhs, ClonePtr& rhs) noexcept {
-			std::swap(lhs._pointer, rhs._pointer);
 		}
 
 	private:

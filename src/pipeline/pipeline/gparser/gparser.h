@@ -12,7 +12,7 @@ namespace byfxxm {
 		Gparser(const std::filesystem::path& file) : _syntax(std::ifstream(file)) {}
 
 		void Run(Address& addr, Ginterface* pimpl = nullptr) {
-			_syntax.Set(&addr, pimpl);
+			_syntax.Set(addr, pimpl);
 			while (auto abs_tree = _syntax.Next()) {
 				abs_tree.value().Execute();
 			}

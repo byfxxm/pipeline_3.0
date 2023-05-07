@@ -341,7 +341,7 @@ inline auto perform = [](const std::filesystem::path& pa, int times) {
 	auto t0 = std::chrono::high_resolution_clock::now();
 	for (auto i = 0; i < times; ++i) {
 		auto parser = byfxxm::Gparser(MyFileStream(pa));
-		byfxxm::Address addr;
+		byfxxm::Address addr{ {1,1} };
 		parser.Run(&addr, nullptr);
 	}
 	auto t1 = std::chrono::high_resolution_clock::now();

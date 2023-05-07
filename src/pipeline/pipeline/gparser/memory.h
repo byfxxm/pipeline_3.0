@@ -102,7 +102,7 @@ namespace byfxxm {
 		}
 
 		decltype(auto) Get() const noexcept {
-			return _pointer.get();
+			return _pointer.Get();
 		}
 
 	private:

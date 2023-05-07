@@ -118,9 +118,9 @@ namespace byfxxm {
 
 			return std::visit([&](auto&& v)->Value {
 				if constexpr (byfxxm_IsDouble(v))
-					return (*addr)[v].get();
+					return (*addr)[v].Get();
 				else if constexpr (byfxxm_IsDoublePtr(v))
-					return (*addr)[*v].get();
+					return (*addr)[*v].Get();
 				else
 					throw AbstreeException("sharp error");
 				}, value);

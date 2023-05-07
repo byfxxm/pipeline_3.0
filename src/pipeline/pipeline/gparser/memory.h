@@ -40,11 +40,11 @@ namespace byfxxm {
 			return _pointer.operator->();
 		}
 
-		decltype(auto) reset(auto&&... pars) noexcept {
+		decltype(auto) Reset(auto&&... pars) noexcept {
 			return _pointer.reset(std::forward<decltype(pars)>(pars)...);
 		}
 
-		decltype(auto) get() const noexcept {
+		decltype(auto) Get() const noexcept {
 			return _pointer.get();
 		}
 
@@ -97,11 +97,11 @@ namespace byfxxm {
 			return _pointer.operator->();
 		}
 
-		decltype(auto) reset(auto&&... pars) noexcept {
-			return _pointer.reset(std::forward<decltype(pars)>(pars)...);
+		decltype(auto) Reset(auto&&... pars) noexcept {
+			return _pointer.Reset(std::forward<decltype(pars)>(pars)...);
 		}
 
-		decltype(auto) get() const noexcept {
+		decltype(auto) Get() const noexcept {
 			return _pointer.get();
 		}
 

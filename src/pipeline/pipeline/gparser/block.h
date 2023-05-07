@@ -171,7 +171,7 @@ namespace byfxxm {
 			if (tree.has_value())
 				return std::move(tree.value());
 			else
-				block.reset();
+				block.Reset();
 		}
 
 		return {};

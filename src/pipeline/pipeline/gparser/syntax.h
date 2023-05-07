@@ -41,8 +41,8 @@ namespace byfxxm {
 			return _ToAbstree(stmt.value());
 		}
 
-		void Set(Address& addr, Ginterface* pimpl) {
-			_addr = &addr;
+		void Set(Address* addr, Ginterface* pimpl) {
+			_addr = addr;
 			_pimpl = pimpl;
 			assert(_addr);
 		}

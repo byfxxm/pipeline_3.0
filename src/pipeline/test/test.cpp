@@ -134,7 +134,7 @@ void TestParser() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(addr, &pimpl);
+	parser.Run(&addr, &pimpl);
 
 	assert(*addr[1] == -10);
 	assert(*addr[2] == 20);
@@ -156,7 +156,7 @@ void TestParser1() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(addr, &pimpl);
+	parser.Run(&addr, &pimpl);
 
 	assert(byfxxm::IsNaN(*addr[4]));
 	assert(*addr[3] == 2);
@@ -186,7 +186,7 @@ void TestParser2() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(addr, &pimpl);
+	parser.Run(&addr, &pimpl);
 
 	assert(*addr[1] == 1);
 	assert(*addr[6] == 6);
@@ -229,7 +229,7 @@ void TestParser3() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(addr, &pimpl);
+	parser.Run(&addr, &pimpl);
 
 	assert(*addr[1] == 20);
 	assert(*addr[3] == 22);
@@ -252,7 +252,7 @@ void TestParser4() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(addr, &pimpl);
+	parser.Run(&addr, &pimpl);
 
 	assert(*addr[1] == 234.5);
 	assert(*addr[3] == 2);
@@ -268,7 +268,7 @@ void TestParser5() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(addr, &pimpl);
+	parser.Run(&addr, &pimpl);
 
 	assert(*addr[10] == 21);
 }
@@ -293,7 +293,7 @@ void TestParser6() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(addr, &pimpl);
+	parser.Run(&addr, &pimpl);
 
 	assert(*addr[1] == 1);
 	assert(*addr[2] == 2);
@@ -342,7 +342,7 @@ inline auto perform = [](const std::filesystem::path& pa, int times) {
 	for (auto i = 0; i < times; ++i) {
 		auto parser = byfxxm::Gparser(MyFileStream(pa));
 		byfxxm::Address addr;
-		parser.Run(addr, nullptr);
+		parser.Run(&addr, nullptr);
 	}
 	auto t1 = std::chrono::high_resolution_clock::now();
 

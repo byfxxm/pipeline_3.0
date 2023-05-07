@@ -46,21 +46,25 @@ namespace byfxxm {
 						return value;
 					},
 					[&](const Unary& unary) {
+						assert(params.size() == 1);
 						return std::visit([&](auto&& func) {return func(params[0]); }, unary);
 					},
 					[&](const Binary& binary) {
+						assert(params.size() == 2);
 						return std::visit([&](auto&& func) {return func(params[0], params[1]); }, binary);
 					},
 					[&](const Sharp& sharp) {
 						if (!_addr)
 							throw AbstreeException();
 
+						assert(params.size() == 1);
 						return std::visit([&](auto&& func) {return func(params[0], *_addr); }, sharp);
 					},
 					[&](const Gcmd& gcmd) {
 						if (!_addr)
 							throw AbstreeException();
 
+						assert(!params.empty());
 						return std::visit([&](auto&& func) {return func(params, *_addr, _pimpl); }, gcmd);
 					},
 					[](const auto&)->Value { // default

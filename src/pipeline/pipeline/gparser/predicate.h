@@ -112,12 +112,15 @@ namespace byfxxm {
 				}, value);
 		};
 
-		inline auto Sharp = [](const Value& value, Address& addr) {
+		inline auto Sharp = [](const Value& value, Address* addr) {
+			if (!addr)
+				throw AbstreeException();
+
 			return std::visit([&](auto&& v)->Value {
 				if constexpr (byfxxm_IsDouble(v))
-					return addr[v].get();
+					return (*addr)[v].get();
 				else if constexpr (byfxxm_IsDoublePtr(v))
-					return addr[*v].get();
+					return (*addr)[*v].get();
 				else
 					throw AbstreeException("sharp error");
 				}, value);
@@ -289,7 +292,7 @@ namespace byfxxm {
 				}, value);
 		};
 
-		using Gfunc = bool(Ginterface::*)(const Gparams&, const Address&);
+		using Gfunc = bool(Ginterface::*)(const Gparams&, const Address*);
 
 		struct _GtagHash {
 			size_t operator()(const Gtag& tag) const {
@@ -311,7 +314,7 @@ namespace byfxxm {
 			{{token::Kind::G, 4}, &Ginterface::G4},
 		};
 
-		inline auto Gcmd = [](const std::pmr::vector<Value>& tags, Address& addr, Ginterface* pimpl)->Value {
+		inline auto Gcmd = [](const std::pmr::vector<Value>& tags, Address* addr, Ginterface* pimpl)->Value {
 			if (!pimpl)
 				return {};
 

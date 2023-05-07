@@ -99,19 +99,19 @@ void TestLexer() {
 
 class Gpimpl : public byfxxm::Ginterface {
 public:
-	virtual bool G0(const byfxxm::Gparams& prarams, const byfxxm::Address& addr) override {
+	virtual bool G0(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G1(const byfxxm::Gparams& prarams, const byfxxm::Address& addr) override {
+	virtual bool G1(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G2(const byfxxm::Gparams& prarams, const byfxxm::Address& addr) override {
+	virtual bool G2(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G3(const byfxxm::Gparams& prarams, const byfxxm::Address& addr) override {
+	virtual bool G3(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G4(const byfxxm::Gparams& prarams, const byfxxm::Address& addr) override {
+	virtual bool G4(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
 		return true;
 	}
 };

@@ -44,7 +44,6 @@ namespace byfxxm {
 		void Set(Address* addr, Ginterface* pimpl) {
 			_addr = addr;
 			_pimpl = pimpl;
-			assert(_addr);
 		}
 
 		const size_t Line() const {
@@ -53,7 +52,7 @@ namespace byfxxm {
 
 	private:
 		Abstree _ToAbstree(Segment& seg) {
-			return Abstree(expr(seg), _return_val, *_addr, _pimpl);
+			return Abstree(expr(seg), _return_val, _addr, _pimpl);
 		}
 
 		Abstree _ToAbstree(Statement& stmt) {

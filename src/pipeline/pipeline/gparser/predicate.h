@@ -28,7 +28,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsString(l) && byfxxm_IsString(r))
 					return Value{ l + r };
 				else
-					throw SyntaxException("plus error");
+					throw AbstreeException("plus error");
 				}, lhs, rhs);
 		};
 
@@ -43,7 +43,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l - r };
 				else
-					throw SyntaxException("minus error");
+					throw AbstreeException("minus error");
 				}, lhs, rhs);
 		};
 
@@ -58,7 +58,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l * r };
 				else
-					throw SyntaxException("multiple error");
+					throw AbstreeException("multiple error");
 				}, lhs, rhs);
 		};
 
@@ -73,7 +73,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l / r };
 				else
-					throw SyntaxException("divide error");
+					throw AbstreeException("divide error");
 				}, lhs, rhs);
 		};
 
@@ -84,7 +84,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
 					*l = r;
 				else
-					throw SyntaxException("assign error");
+					throw AbstreeException("assign error");
 
 				return Value{ l };
 				}, lhs, rhs);
@@ -97,7 +97,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDoublePtr(v))
 					return Value{ -*v };
 				else
-					throw SyntaxException("negative error");
+					throw AbstreeException("negative error");
 				}, value);
 		};
 
@@ -108,7 +108,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDoublePtr(v))
 					return Value{ *v };
 				else
-					throw SyntaxException("positive error");
+					throw AbstreeException("positive error");
 				}, value);
 		};
 
@@ -119,7 +119,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDoublePtr(v))
 					return addr[*v].get();
 				else
-					throw SyntaxException("sharp error");
+					throw AbstreeException("sharp error");
 				}, value);
 		};
 
@@ -134,7 +134,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l > r };
 				else
-					throw SyntaxException();
+					throw AbstreeException();
 				}, lhs, rhs);
 		};
 
@@ -149,7 +149,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l >= r };
 				else
-					throw SyntaxException();
+					throw AbstreeException();
 				}, lhs, rhs);
 		};
 
@@ -164,7 +164,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l < r };
 				else
-					throw SyntaxException();
+					throw AbstreeException();
 				}, lhs, rhs);
 		};
 
@@ -179,7 +179,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l <= r };
 				else
-					throw SyntaxException();
+					throw AbstreeException();
 				}, lhs, rhs);
 		};
 
@@ -194,7 +194,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l == r };
 				else
-					throw SyntaxException();
+					throw AbstreeException();
 				}, lhs, rhs);
 		};
 
@@ -209,7 +209,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Value{ l != r };
 				else
-					throw SyntaxException();
+					throw AbstreeException();
 				}, lhs, rhs);
 		};
 
@@ -221,7 +221,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(v))
 					return Gtag{ K, v };
 				else
-					throw SyntaxException("gcode error");
+					throw AbstreeException("gcode error");
 				}, value);
 		};
 
@@ -244,7 +244,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Group({ *l, *r }, &mempool);
 				else
-					throw SyntaxException("comma error");
+					throw AbstreeException("comma error");
 				}, lhs, rhs);
 		};
 
@@ -260,7 +260,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDoublePtr(v))
 					return *v;
 				else
-					throw SyntaxException("max error");
+					throw AbstreeException("max error");
 				}, value);
 		};
 
@@ -276,7 +276,7 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDoublePtr(v))
 					return *v;
 				else
-					throw SyntaxException("min error");
+					throw AbstreeException("min error");
 				}, value);
 		};
 
@@ -285,7 +285,7 @@ namespace byfxxm {
 				if constexpr (byfxxm_IsBool(v))
 					return Value{ !v };
 				else
-					throw SyntaxException(R"("NOT" error)");
+					throw AbstreeException(R"("NOT" error)");
 				}, value);
 		};
 

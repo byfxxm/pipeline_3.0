@@ -19,7 +19,8 @@ namespace byfxxm {
 			std::pmr::vector<NodePtr> subs{ &mempool };
 		};
 
-		Abstree(NodePtr&& root, Value& rval, Address& addr, Ginterface* pimpl = nullptr) noexcept : _root(std::move(root)), _return_val(rval), _addr(addr), _pimpl(pimpl) {
+		Abstree(NodePtr&& root, Value& rval, Address* addr, Ginterface* pimpl) noexcept
+			: _root(std::move(root)), _return_val(rval), _addr(addr), _pimpl(pimpl) {
 			assert(_root);
 		}
 
@@ -51,10 +52,16 @@ namespace byfxxm {
 						return std::visit([&](auto&& func) {return func(params[0], params[1]); }, binary);
 					},
 					[&](const Sharp& sharp) {
-						return std::visit([&](auto&& func) {return func(params[0], _addr); }, sharp);
+						if (!_addr)
+							throw AbstreeException();
+
+						return std::visit([&](auto&& func) {return func(params[0], *_addr); }, sharp);
 					},
 					[&](const Gcmd& gcmd) {
-						return std::visit([&](auto&& func) {return func(params, _addr, _pimpl); }, gcmd);
+						if (!_addr)
+							throw AbstreeException();
+
+						return std::visit([&](auto&& func) {return func(params, *_addr, _pimpl); }, gcmd);
 					},
 					[](const auto&)->Value { // default
 						throw AbstreeException();
@@ -64,8 +71,8 @@ namespace byfxxm {
 
 	private:
 		NodePtr _root;
-		Address& _addr;
 		Value& _return_val;
+		Address* _addr{ nullptr };
 		Ginterface* _pimpl{ nullptr };
 	};
 }

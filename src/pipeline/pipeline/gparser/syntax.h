@@ -41,12 +41,10 @@ namespace byfxxm {
 			return _ToAbstree(stmt.value());
 		}
 
-		void SetGpimpl(Ginterface* pimpl) {
+		void Set(Address* addr, Ginterface* pimpl) {
+			_addr = addr;
 			_pimpl = pimpl;
-		}
-
-		const Address& Addr() const {
-			return _addr;
+			assert(_addr);
 		}
 
 		const size_t Line() const {
@@ -55,7 +53,7 @@ namespace byfxxm {
 
 	private:
 		Abstree _ToAbstree(Segment& seg) {
-			return Abstree(expr(seg), _return_val, _addr, _pimpl);
+			return Abstree(expr(seg), _return_val, *_addr, _pimpl);
 		}
 
 		Abstree _ToAbstree(Statement& stmt) {
@@ -78,7 +76,7 @@ namespace byfxxm {
 		size_t _lineno{ 0 };
 		size_t _output_line{ 0 };
 		Value _return_val;
-		Address _addr;
+		Address* _addr{ nullptr };
 		Ginterface* _pimpl{ nullptr };
 		ClonePtr<block::Block> _remain_block;
 	};

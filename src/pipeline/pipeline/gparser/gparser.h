@@ -18,10 +18,6 @@ namespace byfxxm {
 			}
 		}
 
-		const Address& Addr() const {
-			return _syntax.Addr();
-		}
-
 	private:
 		Syntax<T> _syntax;
 	};

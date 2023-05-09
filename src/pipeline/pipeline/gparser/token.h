@@ -212,7 +212,9 @@ namespace byfxxm {
 	};
 
 	template <class... Ts>
-	struct Overload : Ts...{using Ts::operator()...; };
+	struct Overload : Ts... {
+		using Ts::operator()...;
+	};
 
 	struct Gtag {
 		token::Kind code;

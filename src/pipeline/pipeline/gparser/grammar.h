@@ -252,26 +252,20 @@ namespace byfxxm {
 		>;
 
 		inline std::optional<Statement> GetStatement(const Utils& utils) {
-			while (1) {
-				auto tok = utils.peek();
-				if (EndOfFile(tok))
-					return {};
+			auto tok = utils.peek();
+			if (EndOfFile(tok))
+				return {};
 
-				Segment seg{ &mempool };
-				seg.push_back(utils.get());
+			Segment seg{ &mempool };
+			seg.push_back(utils.get());
 
-				auto iter = std::begin(GrammarsList::grammars);
-				for (; iter != std::end(GrammarsList::grammars); ++iter) {
+			for (auto iter = std::begin(GrammarsList::grammars); iter != std::end(GrammarsList::grammars); ++iter) {
+				if ((*iter)->First(tok)) {
 					std::optional<Statement> sub;
-					if ((*iter)->First(tok)) {
-						if (!(sub = (*iter)->Rest(std::move(seg), utils)).has_value())
-							break;
-						return std::move(sub.value());
-					}
+					if (!(sub = (*iter)->Rest(std::move(seg), utils)).has_value())
+						return GetStatement(utils);
+					return std::move(sub.value());
 				}
-
-				if (iter == std::end(GrammarsList::grammars))
-					throw SyntaxException();
 			}
 
 			throw SyntaxException();

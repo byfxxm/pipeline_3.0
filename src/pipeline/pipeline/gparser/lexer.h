@@ -55,16 +55,15 @@ namespace byfxxm {
 				return token::Token{ token::Kind::KEOF, nan };
 
 			SkipSpaces(_stream);
-			auto ch = _stream.get();
 			std::string word;
-			word.push_back(ch);
+			word.push_back(_stream.get());
 
-			auto peek = [&]() {return _stream.peek(); };
-			auto get = [&]() {return _stream.get(); };
-			auto last = [&]()->const std::optional<token::Token>&{return _lasttok; };
+			auto peek = [this]() {return _stream.peek(); };
+			auto get = [this]() {return _stream.get(); };
+			auto last = [this]()->const std::optional<token::Token>&{return _lasttok; };
 			for (const auto& p : word::WordsList::words) {
 				std::optional<token::Token> tok;
-				if (p->First(ch) && (tok = p->Rest(word, { peek, get, last })).has_value()) {
+				if (p->First(word.front()) && (tok = p->Rest(word, {peek, get, last})).has_value()) {
 					return tok.value();
 				}
 			}

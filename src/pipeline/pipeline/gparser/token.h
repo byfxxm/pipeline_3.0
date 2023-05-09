@@ -177,6 +177,12 @@ namespace byfxxm {
 		return false;
 	}
 
+	inline void SkipSpaces(auto&& stream) {
+		while (IsSpace(stream.peek())) {
+			stream.get();
+		}
+	}
+
 	inline bool IsSharp(char ch) {
 		return ch == '#';
 	}

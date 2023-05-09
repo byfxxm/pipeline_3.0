@@ -16,6 +16,13 @@ namespace byfxxm {
 		Syntax(T&& stream) : _lex(std::move(stream)) {}
 
 		std::optional<Abstree> Next() {
+			auto stmt = GetStatement(_remain_block);
+			if (stmt) {
+				_output_line = stmt.value().line;
+				assert(std::holds_alternative<Segment>(stmt.value().statement));
+				return _ToAbstree(std::get<Segment>(stmt.value().statement));
+			}
+
 			auto get = [this]() {
 				auto tok = _lex.Get();
 				if (tok.kind == token::Kind::NEWLINE)
@@ -25,14 +32,6 @@ namespace byfxxm {
 			auto peek = [this]() {return _lex.Peek(); };
 			auto line = [this]() {return _lineno; };
 			auto get_rval = [this]()->Value {return _return_val; };
-
-			auto stmt = GetStatement(_remain_block);
-			if (stmt) {
-				_output_line = stmt.value().line;
-				assert(std::holds_alternative<Segment>(stmt.value().statement));
-				return _ToAbstree(std::get<Segment>(stmt.value().statement));
-			}
-
 			stmt = GetStatement(grammar::Utils{ get, peek, line, get_rval });
 			if (!stmt)
 				return {};

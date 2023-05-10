@@ -20,7 +20,7 @@ namespace byfxxm {
 			if (stmt) {
 				_output_line = stmt.value().line;
 				assert(std::holds_alternative<Segment>(stmt.value().statement));
-				return _ToAbstree(std::get<Segment>(stmt.value().statement));
+				return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)));
 			}
 
 			auto get = [this]() {
@@ -37,7 +37,7 @@ namespace byfxxm {
 				return {};
 
 			_output_line = stmt.value().line;
-			return _ToAbstree(stmt.value());
+			return _ToAbstree(std::move(stmt.value()));
 		}
 
 		void Set(Address* addr, Ginterface* pimpl) {
@@ -50,23 +50,23 @@ namespace byfxxm {
 		}
 
 	private:
-		Abstree _ToAbstree(Segment& seg) {
+		Abstree _ToAbstree(Segment&& seg) {
 			return Abstree(expr(seg), _return_val, _addr, _pimpl);
 		}
 
-		Abstree _ToAbstree(Statement& stmt) {
+		Abstree _ToAbstree(Statement&& stmt) {
 			return std::visit(
 				Overload{
-					[this](Segment& seg)->Abstree {
-						return _ToAbstree(seg);
+					[this](Segment&& seg)->Abstree {
+						return _ToAbstree(std::move(seg));
 					},
-					[this](ClonePtr<block::Block>& chunk)->Abstree {
+					[this](ClonePtr<block::Block>&& chunk)->Abstree {
 						_remain_block = std::move(chunk);
 						auto stmt = GetStatement(_remain_block);
 						assert(std::holds_alternative<Segment>(stmt.value().statement));
-						return _ToAbstree(std::get<Segment>(stmt.value().statement));
+						return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)));
 					},
-				}, stmt.statement);
+				}, std::move(stmt.statement));
 		}
 
 	private:

@@ -56,7 +56,7 @@ namespace byfxxm {
 
 	class Expression {
 	public:
-		Abstree::NodePtr operator()(Segment&& seg) const {
+		Abstree::NodePtr operator()(Segment& seg) const {
 			return _Expression(seg);
 		}
 
@@ -191,7 +191,7 @@ namespace byfxxm {
 
 	class Gtree {
 	public:
-		Abstree::NodePtr operator()(Segment&& seg) const {
+		Abstree::NodePtr operator()(Segment& seg) const {
 			if (seg.empty() || seg.size() % 2 != 0)
 				throw SyntaxException();
 

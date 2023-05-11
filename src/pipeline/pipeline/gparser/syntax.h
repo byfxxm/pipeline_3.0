@@ -51,7 +51,7 @@ namespace byfxxm {
 
 	private:
 		Abstree _ToAbstree(Segment&& seg) {
-			return Abstree(expr(std::move(seg)), _return_val, _addr, _pimpl);
+			return Abstree(expr(seg), _return_val, _addr, _pimpl);
 		}
 
 		Abstree _ToAbstree(Statement&& stmt) {

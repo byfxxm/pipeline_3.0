@@ -153,12 +153,9 @@ namespace byfxxm {
 		}
 
 		void _CheckError(const Abstree::NodePtr& node) const {
-			if (!node)
-				throw SyntaxException();
-
+			assert(node);
 			std::visit(
-				Overload
-				{
+				Overload{
 					[&](const Value& value) {
 						if (std::holds_alternative<std::monostate>(value))
 							return;

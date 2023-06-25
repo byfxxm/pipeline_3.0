@@ -36,7 +36,7 @@ namespace byfxxm {
 
 			std::pmr::vector<Value> params{ &mempool };
 			std::ranges::for_each(node->subs, [&](auto&& p) {
-				params.emplace_back(_Execute(p));
+				params.push_back(_Execute(p));
 				});
 
 			return std::visit(

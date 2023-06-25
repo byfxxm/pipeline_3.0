@@ -98,7 +98,7 @@ namespace byfxxm {
 			if (!_station_list.empty())
 				station->prev = _station_list.back()->next.get();
 
-			_station_list.emplace_back(std::move(station));
+			_station_list.push_back(std::move(station));
 		}
 
 	private:

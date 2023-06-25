@@ -164,16 +164,4 @@ namespace byfxxm {
 			friend class grammar::While;
 		};
 	}
-
-	inline std::optional<Statement> GetStatement(ClonePtr<block::Block>& block) {
-		if (block) {
-			auto tree = block->Next();
-			if (tree.has_value())
-				return std::move(tree.value());
-			else
-				block.Reset();
-		}
-
-		return {};
-	}
 }

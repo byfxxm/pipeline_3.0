@@ -72,9 +72,9 @@ namespace byfxxm {
 
 			auto node = _CurNode(*min_pri);
 			if (auto first = _Expression(_SegSubRng(seg.begin(), min_pri)))
-				node->subs.emplace_back(std::move(first));
+				node->subs.push_back(std::move(first));
 			if (auto second = _Expression(_SegSubRng(min_pri + 1, seg.end())))
-				node->subs.emplace_back(std::move(second));
+				node->subs.push_back(std::move(second));
 
 			_CheckError(node);
 			return node;

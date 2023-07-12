@@ -27,7 +27,7 @@ namespace byfxxm {
 		}
 
 		inline void SkipNewlines(const Utils& utils) {
-			while (1) {
+			for (;;) {
 				auto tok = utils.peek();
 				if (tok.kind != token::Kind::NEWLINE)
 					break;
@@ -61,7 +61,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				while (1) {
+				for (;;) {
 					auto tok = utils.get();
 					if (NewSegment(tok))
 						break;
@@ -80,7 +80,7 @@ namespace byfxxm {
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				Segment gtag{ &mempool };
-				while (1) {
+				for (;;) {
 					auto tok = utils.peek();
 					if (NewSegment(tok)) {
 						if (!gtag.empty())
@@ -121,7 +121,7 @@ namespace byfxxm {
 
 				auto read_cond = [&]()->Statement {
 					Segment seg{ &mempool };
-					while (1) {
+					for (;;) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
 							throw SyntaxException();
@@ -136,7 +136,7 @@ namespace byfxxm {
 				};
 
 				auto read_scope = [&](Scope& scope) {
-					while (1) {
+					for (;;) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
 						if (tok.kind == token::Kind::ELSE
@@ -159,7 +159,7 @@ namespace byfxxm {
 				read_scope(ifelse._ifs.back().scope);
 
 				// read elseif
-				while (1) {
+				for (;;) {
 					SkipNewlines(utils);
 					auto tok = utils.peek();
 					if (tok.kind != token::Kind::ELSEIF)

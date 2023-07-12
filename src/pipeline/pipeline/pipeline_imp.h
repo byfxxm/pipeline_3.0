@@ -62,7 +62,7 @@ namespace byfxxm {
 							write(nullptr);
 						}
 						else {
-							while (1) {
+							for (;;) {
 								Code* code = read();
 								if (!code)
 									break;

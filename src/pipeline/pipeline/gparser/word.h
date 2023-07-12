@@ -37,7 +37,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<token::Token> Rest(std::string& word, const Utils& utils) const override {
-				while (1) {
+				for (;;) {
 					auto ch = utils.peek();
 					if (!std::isdigit(ch) && ch != '.')
 						break;
@@ -54,7 +54,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<token::Token> Rest(std::string& word, const Utils& utils) const override {
-				while (1) {
+				for (;;) {
 					auto ch = utils.peek();
 					if (!std::isalpha(ch))
 						break;

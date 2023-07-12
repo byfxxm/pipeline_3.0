@@ -11,9 +11,12 @@ namespace byfxxm {
 		Gparser(const std::string& str) : _syntax(std::istringstream(str)) {}
 		Gparser(const std::filesystem::path& file) : _syntax(std::ifstream(file)) {}
 
-		void Run(Address* addr, Ginterface* pimpl) {
+		void Run(Address* addr, Ginterface* pimpl, std::function<void(size_t)> updateline = {}) {
 			_syntax.Set(addr, pimpl);
 			while (auto abs_tree = _syntax.Next()) {
+				if (updateline)
+					updateline(_syntax.Line());
+
 				abs_tree.value().Execute();
 			}
 		}

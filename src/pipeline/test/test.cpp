@@ -299,6 +299,33 @@ void TestParser6() {
 	assert(*addr[2] == 2);
 }
 
+void TestParser7() {
+	std::string s =
+		R"(
+		#1 = 1
+		#2 = 2
+		IF #1 LT #2 THEN
+			#3 = 3
+			
+			IF #2 LT #3 THEN
+				#6 = 6
+			ELSE
+				#7=7
+			ENDIF
+			#5=5
+		ELSE
+			#4 = 4
+		ENDIF
+)";
+
+	auto parser = byfxxm::Gparser(s);
+	auto pimpl = Gpimpl();
+	byfxxm::Address addr;
+	parser.Run(&addr, &pimpl, [](size_t line) {
+		std::cout << line << std::endl;
+		});
+}
+
 class MyFileStream {
 public:
 	MyFileStream(const std::filesystem::path& pa) {
@@ -366,13 +393,14 @@ int main()
 {
 	//TestPipeline();
 #ifdef _DEBUG
-	TestParser();
-	TestParser1();
-	TestParser2();
-	TestParser3();
-	TestParser4();
-	TestParser5();
-	TestParser6();
+	//TestParser();
+	//TestParser1();
+	//TestParser2();
+	//TestParser3();
+	//TestParser4();
+	//TestParser5();
+	//TestParser6();
+	TestParser7();
 #else
 	TestPerformance();
 	TestPerformance1();

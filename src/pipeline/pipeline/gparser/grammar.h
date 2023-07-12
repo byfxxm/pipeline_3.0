@@ -69,7 +69,7 @@ namespace byfxxm {
 					seg.push_back(std::move(tok));
 				}
 
-				return Statement(std::move(seg), utils.line());
+				return Statement(std::move(seg), utils.line() - 1);
 			}
 		};
 

@@ -194,7 +194,7 @@ namespace byfxxm {
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				auto read_cond = [&]()->Statement {
 					Segment seg{ &mempool };
-					while (1) {
+					for (;;) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
 							throw SyntaxException();
@@ -209,7 +209,7 @@ namespace byfxxm {
 				};
 
 				auto read_scope = [&](Scope& scope) {
-					while (1) {
+					for (;;) {
 						SkipNewlines(utils);
 						auto tok = utils.peek();
 						if (tok.kind == token::Kind::END)

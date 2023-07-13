@@ -128,7 +128,7 @@ namespace byfxxm {
 	}
 
 	inline bool _IsMapping(const token::Dictionary& dict, char ch) {
-		return std::ranges::find_if(dict, [&](auto& ele) {return ch == ele.first[0]; }) != dict.end();
+		return std::ranges::find_if(dict, [&](auto&& ele) {return ch == ele.first[0]; }) != dict.end();
 	}
 
 	inline bool IsKeyword(char ch) {

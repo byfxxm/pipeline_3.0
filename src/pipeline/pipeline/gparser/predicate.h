@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <variant>
 #include <string>
+#include <algorithm>
 #include "token.h"
 #include "ginterface.h"
 #include "exception.h"

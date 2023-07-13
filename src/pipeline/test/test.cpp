@@ -393,13 +393,13 @@ int main()
 {
 	//TestPipeline();
 #ifdef _DEBUG
-	//TestParser();
-	//TestParser1();
-	//TestParser2();
-	//TestParser3();
-	//TestParser4();
-	//TestParser5();
-	//TestParser6();
+	TestParser();
+	TestParser1();
+	TestParser2();
+	TestParser3();
+	TestParser4();
+	TestParser5();
+	TestParser6();
 	TestParser7();
 #else
 	TestPerformance();

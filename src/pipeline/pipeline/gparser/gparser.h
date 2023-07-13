@@ -14,10 +14,11 @@ namespace byfxxm {
 		void Run(Address* addr, Ginterface* pimpl, std::function<void(size_t)> updateline = {}) {
 			_syntax.Set(addr, pimpl);
 			while (auto abs_tree = _syntax.Next()) {
+				auto& [tree, line] = abs_tree.value();
 				if (updateline)
-					updateline(_syntax.Line());
+					updateline(line);
 
-				abs_tree.value().Execute();
+				tree.Execute();
 			}
 		}
 

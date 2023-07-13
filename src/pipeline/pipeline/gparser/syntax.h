@@ -22,17 +22,19 @@ namespace byfxxm {
 		return {};
 	}
 
+	using AbstreeWithLineno = std::tuple<Abstree, size_t>;
+
 	template <StreamConcept T>
 	class Syntax {
 	public:
 		Syntax(T&& stream) : _lex(std::move(stream)) {}
 
-		std::optional<Abstree> Next() {
+		std::optional<AbstreeWithLineno> Next() {
 			auto stmt = GetStatement(_remain_block);
 			if (stmt) {
 				_output_lineno = stmt.value().line;
 				assert(std::holds_alternative<Segment>(stmt.value().statement));
-				return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)));
+				return AbstreeWithLineno{ _ToAbstree(std::get<Segment>(std::move(stmt.value().statement))), _output_lineno };
 			}
 
 			auto get = [this]() {
@@ -49,16 +51,12 @@ namespace byfxxm {
 				return {};
 
 			_output_lineno = stmt.value().line;
-			return _ToAbstree(std::move(stmt.value()));
+			return AbstreeWithLineno{ _ToAbstree(std::move(stmt.value())), _output_lineno };
 		}
 
 		void Set(Address* addr, Ginterface* pimpl) {
 			_addr = addr;
 			_pimpl = pimpl;
-		}
-
-		const size_t Line() const {
-			return _output_lineno;
 		}
 
 	private:

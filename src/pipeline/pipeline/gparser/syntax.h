@@ -32,9 +32,9 @@ namespace byfxxm {
 		std::optional<AbstreeWithLineno> Next() {
 			auto stmt = GetStatement(_remain_block);
 			if (stmt) {
-				_output_lineno = stmt.value().line;
+				_execute_line = stmt.value().line;
 				assert(std::holds_alternative<Segment>(stmt.value().statement));
-				return AbstreeWithLineno{ _ToAbstree(std::get<Segment>(std::move(stmt.value().statement))), _output_lineno };
+				return AbstreeWithLineno{ _ToAbstree(std::get<Segment>(std::move(stmt.value().statement))), _execute_line };
 			}
 
 			auto get = [this]() {
@@ -50,8 +50,8 @@ namespace byfxxm {
 			if (!stmt)
 				return {};
 
-			_output_lineno = stmt.value().line;
-			return AbstreeWithLineno{ _ToAbstree(std::move(stmt.value())), _output_lineno };
+			_execute_line = stmt.value().line;
+			return AbstreeWithLineno{ _ToAbstree(std::move(stmt.value())), _execute_line };
 		}
 
 		void Set(Address* addr, Ginterface* pimpl) {
@@ -74,7 +74,7 @@ namespace byfxxm {
 						_remain_block = std::move(chunk);
 						auto stmt = GetStatement(_remain_block);
 						assert(std::holds_alternative<Segment>(stmt.value().statement));
-						_output_lineno = stmt.value().line;
+						_execute_line = stmt.value().line;
 						return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)));
 					},
 				}, std::move(stmt.statement));
@@ -83,7 +83,7 @@ namespace byfxxm {
 	private:
 		Lexer<T> _lex;
 		size_t _lineno{ 1 };
-		size_t _output_lineno{ 1 };
+		size_t _execute_line{ 1 };
 		Value _return_val;
 		Address* _addr{ nullptr };
 		Ginterface* _pimpl{ nullptr };

@@ -333,7 +333,7 @@ namespace byfxxm {
 				throw AbstreeException();
 
 			Gparams par{ &mempool };
-			std::for_each(tags.begin(), tags.end(), [&](const Value& ele) {
+			std::ranges::for_each(tags, [&](const Value& ele) {
 				auto tag = std::get<Gtag>(ele);
 				if (IsNaN(tag.value) || gtag_to_ginterface.contains(tag))
 					return;

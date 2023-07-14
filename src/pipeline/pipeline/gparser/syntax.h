@@ -32,9 +32,8 @@ namespace byfxxm {
 		std::optional<AbstreeWithLineno> Next() {
 			auto stmt = GetStatement(_remain_block);
 			if (stmt) {
-				_execute_line = stmt.value().line;
 				assert(std::holds_alternative<Segment>(stmt.value().statement));
-				return AbstreeWithLineno{ _ToAbstree(std::get<Segment>(std::move(stmt.value().statement))), _execute_line };
+				return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)), stmt.value().line);
 			}
 
 			auto get = [this]() {
@@ -50,8 +49,7 @@ namespace byfxxm {
 			if (!stmt)
 				return {};
 
-			_execute_line = stmt.value().line;
-			return AbstreeWithLineno{ _ToAbstree(std::move(stmt.value())), _execute_line };
+			return _ToAbstree(std::move(stmt.value()));
 		}
 
 		void Set(Address* addr, Ginterface* pimpl) {
@@ -60,22 +58,21 @@ namespace byfxxm {
 		}
 
 	private:
-		Abstree _ToAbstree(Segment&& seg) {
-			return Abstree(expr(seg), _return_val, _addr, _pimpl);
+		AbstreeWithLineno _ToAbstree(Segment&& seg, size_t line) {
+			return { Abstree(expr(seg), _return_val, _addr, _pimpl), line };
 		}
 
-		Abstree _ToAbstree(Statement&& stmt) {
+		AbstreeWithLineno _ToAbstree(Statement&& stmt) {
 			return std::visit(
 				Overload{
-					[this](Segment&& seg)->Abstree {
-						return _ToAbstree(std::move(seg));
+					[this, line = stmt.line](Segment&& seg) {
+						return _ToAbstree(std::move(seg), line);
 					},
-					[this](ClonePtr<block::Block>&& chunk)->Abstree {
-						_remain_block = std::move(chunk);
+					[this](ClonePtr<block::Block>&& block_) {
+						_remain_block = std::move(block_);
 						auto stmt = GetStatement(_remain_block);
 						assert(std::holds_alternative<Segment>(stmt.value().statement));
-						_execute_line = stmt.value().line;
-						return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)));
+						return _ToAbstree(std::get<Segment>(std::move(stmt.value().statement)), stmt.value().line);
 					},
 				}, std::move(stmt.statement));
 		}
@@ -83,7 +80,6 @@ namespace byfxxm {
 	private:
 		Lexer<T> _lex;
 		size_t _lineno{ 1 };
-		size_t _execute_line{ 1 };
 		Value _return_val;
 		Address* _addr{ nullptr };
 		Ginterface* _pimpl{ nullptr };

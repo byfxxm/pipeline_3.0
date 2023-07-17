@@ -99,19 +99,19 @@ void TestLexer() {
 
 class Gpimpl : public byfxxm::Ginterface {
 public:
-	virtual bool G0(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
+	virtual bool G0(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G1(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
+	virtual bool G1(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G2(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
+	virtual bool G2(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G3(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
+	virtual bool G3(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 		return true;
 	}
-	virtual bool G4(const byfxxm::Gparams& prarams, const byfxxm::Address* addr) override {
+	virtual bool G4(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 		return true;
 	}
 };
@@ -389,6 +389,17 @@ void TestPerformance1() {
 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\macro1.nc)"), 100);
 }
 
+void TestPipeline1() {
+	auto pipeline = pipeline_new();
+	auto worker = gworker_new(gworker_t::MEMORY, R"(G0 X0Y0Z0
+G1 X100
+G1 Y100
+)");
+	pipeline_add_worker(pipeline, worker);
+	pipeline_start(pipeline);
+	pipeline_delete(pipeline);
+}
+
 int main()
 {
 	//TestPipeline();
@@ -401,6 +412,7 @@ int main()
 	TestParser5();
 	TestParser6();
 	TestParser7();
+	TestPipeline1();
 #else
 	TestPerformance();
 	TestPerformance1();

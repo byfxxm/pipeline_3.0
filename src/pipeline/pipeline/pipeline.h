@@ -6,6 +6,11 @@
 #define PIPELINE_API __declspec(dllimport)
 #endif
 
+enum class gworker_t{
+	FILE = 0,
+	MEMORY,
+};
+
 extern "C" {
 	PIPELINE_API void* pipeline_new();
 	PIPELINE_API void pipeline_delete(void* pipeline);
@@ -13,8 +18,6 @@ extern "C" {
 	PIPELINE_API void pipeline_start(void* pipeline);
 	PIPELINE_API void pipeline_stop(void* pipeline);
 
-	PIPELINE_API void* garser_new();
-	PIPELINE_API void garser_delete(void* gparser);
-	//PIPELINE_API bool garser_loadfile(void* gparser, const char* file);
-	//PIPELINE_API bool garser_loadmemory(void* gparser, const char* file);
+	PIPELINE_API void* gworker_new(gworker_t, const char*);
+	PIPELINE_API void gworker_delete(void* gparser);
 }

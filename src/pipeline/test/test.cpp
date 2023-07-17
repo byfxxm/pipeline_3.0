@@ -99,6 +99,9 @@ void TestLexer() {
 
 class Gpimpl : public byfxxm::Ginterface {
 public:
+	virtual bool None(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+		return true;
+	}
 	virtual bool G0(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 		return true;
 	}
@@ -392,8 +395,8 @@ void TestPerformance1() {
 void TestPipeline1() {
 	auto pipeline = pipeline_new();
 	auto worker = gworker_new(gworker_t::MEMORY, R"(G0 X0Y0Z0
-G1 X100
-G1 Y100
+G1X100
+Y100
 )");
 	pipeline_add_worker(pipeline, worker);
 	pipeline_start(pipeline);

@@ -322,16 +322,6 @@ namespace byfxxm {
 			if (tags.empty())
 				throw AbstreeException();
 
-			auto iter = std::ranges::find_if(tags, [](auto&& tag) {
-				if (!std::holds_alternative<Gtag>(tag))
-					throw AbstreeException();
-
-				return gtag_to_ginterface.contains(std::get<Gtag>(tag));
-				});
-
-			if (iter == tags.end())
-				throw AbstreeException();
-
 			Gparams par{ &mempool };
 			std::ranges::for_each(tags, [&](const Value& ele) {
 				auto tag = std::get<Gtag>(ele);
@@ -341,7 +331,14 @@ namespace byfxxm {
 				par.push_back(std::get<Gtag>(ele));
 				});
 
-			auto func = gtag_to_ginterface.at(std::get<Gtag>(*iter));
+			auto iter = std::ranges::find_if(tags, [](auto&& tag) {
+				if (!std::holds_alternative<Gtag>(tag))
+					throw AbstreeException();
+
+				return gtag_to_ginterface.contains(std::get<Gtag>(tag));
+				});
+
+			auto func = iter == tags.end() ? &Ginterface::None : gtag_to_ginterface.at(std::get<Gtag>(*iter));
 			if (!(pimpl->*func)(par, addr))
 				throw AbstreeException();
 

@@ -19,26 +19,47 @@ namespace byfxxm {
 
 	class Gpimpl : public byfxxm::Ginterface {
 	public:
+		virtual bool None(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+			std::string str;
+			if (_last == Gtag{token::Kind::G, 0})
+				str = "G0";
+			else if (_last == Gtag{token::Kind::G, 1})
+				str = "G1";
+			else if (_last == Gtag{token::Kind::G, 2})
+				str = "G2";
+			else if (_last == Gtag{token::Kind::G, 3})
+				str = "G3";
+
+			print_gparams(str.c_str(), params);
+			return true;
+		}
 		virtual bool G0(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			print_gparams("G0", params);
+			_last = { token::Kind::G, 0 };
 			return true;
 		}
 		virtual bool G1(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			print_gparams("G1", params);
+			_last = { token::Kind::G, 1 };
 			return true;
 		}
 		virtual bool G2(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			print_gparams("G2", params);
+			_last = { token::Kind::G, 2 };
 			return true;
 		}
 		virtual bool G3(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			print_gparams("G3", params);
+			_last = { token::Kind::G, 3 };
 			return true;
 		}
 		virtual bool G4(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			print_gparams("G4", params);
 			return true;
 		}
+
+	private:
+		Gtag _last;
 	};
 
 	class Gworker : private Worker {

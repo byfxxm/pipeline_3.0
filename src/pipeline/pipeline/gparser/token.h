@@ -221,6 +221,10 @@ namespace byfxxm {
 		double value;
 	};
 
+	bool operator==(const Gtag& lhs, const Gtag& rhs) {
+		return lhs.code == rhs.code && lhs.value == rhs.value;
+	}
+
 	using Group = std::pmr::vector<double>;
 	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
 	using GetRetVal = std::function<Value()>;

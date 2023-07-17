@@ -64,7 +64,7 @@ namespace byfxxm {
 		}
 
 	private:
-		Gtag _last;
+		Gtag _last{ token::Kind::G, 0 };
 	};
 
 	class Gworker : private Worker {

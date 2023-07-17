@@ -24,14 +24,14 @@ void pipeline_stop(void* pipeline) {
 	static_cast<PipelineImp*>(pipeline)->Stop();
 }
 
-void* gworker_new(gworker_t type, const char* name) {
+void* gworker_new(gworker_t type, const char* content) {
 	try {
 		switch (type) {
 		case gworker_t::FILE:
-			return new Gworker(std::fstream(name));
+			return new Gworker(std::fstream(content));
 
 		case gworker_t::MEMORY:
-			return new Gworker(std::stringstream(name));
+			return new Gworker(std::stringstream(content));
 
 		default:
 			assert(0);

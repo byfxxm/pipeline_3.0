@@ -33,26 +33,31 @@ namespace byfxxm {
 			print_gparams(str.c_str(), params);
 			return true;
 		}
+
 		virtual bool G0(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
-			print_gparams("G0", params);
 			_last = { token::Kind::G, 0 };
+			print_gparams("G0", params);
 			return true;
 		}
+
 		virtual bool G1(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
-			print_gparams("G1", params);
 			_last = { token::Kind::G, 1 };
+			print_gparams("G1", params);
 			return true;
 		}
+
 		virtual bool G2(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
-			print_gparams("G2", params);
 			_last = { token::Kind::G, 2 };
+			print_gparams("G2", params);
 			return true;
 		}
+
 		virtual bool G3(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
-			print_gparams("G3", params);
 			_last = { token::Kind::G, 3 };
+			print_gparams("G3", params);
 			return true;
 		}
+
 		virtual bool G4(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			print_gparams("G4", params);
 			return true;

@@ -74,6 +74,7 @@ namespace byfxxm {
 	public:
 		Gworker(StreamConcept auto&& stream) : _parser(std::forward<decltype(stream)>(stream)) {}
 
+	private:
 		virtual bool Do(Code*, const WriteFunc& writefn) noexcept override {
 			std::visit([&](auto&& parser) {
 				if constexpr (std::is_same_v<std::monostate, std::decay_t<decltype(parser)>>)

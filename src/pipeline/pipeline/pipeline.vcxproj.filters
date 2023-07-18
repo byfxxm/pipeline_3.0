@@ -93,6 +93,9 @@
     <ClInclude Include="gparser\word.h">
       <Filter>gparser</Filter>
     </ClInclude>
+    <ClInclude Include="array_nd.h">
+      <Filter>public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">

@@ -2,6 +2,7 @@
 #include <type_traits>
 #include "worker.h"
 #include "gparser/gparser.h"
+#include "code.h"
 
 namespace byfxxm {
 	inline void print_gparams(std::string str, const byfxxm::Gparams& params) {
@@ -17,6 +18,28 @@ namespace byfxxm {
 		puts(str.c_str());
 	}
 
+	inline AxesArray GparamsToAxesArray(const byfxxm::Gparams& params) {
+		AxesArray ret(6);
+		ret.Memset(nan);
+		std::ranges::for_each(params, [&](const Gtag& item) {
+			switch (item.code) {
+			case token::Kind::X:
+				ret[0] = item.value;
+				break;
+			case token::Kind::Y:
+				ret[1] = item.value;
+				break;
+			case token::Kind::Z:
+				ret[2] = item.value;
+				break;
+			default:
+				break;
+			}
+			});
+
+		return ret;
+	}
+
 	class Gpimpl : public byfxxm::Ginterface {
 	public:
 		Gpimpl(const WriteFunc& writefn) : _writefn(writefn) {}
@@ -24,27 +47,26 @@ namespace byfxxm {
 		virtual bool None(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			std::string str;
 			if (_last == Gtag{token::Kind::G, 0})
-				str = "G0";
+				_writefn(std::make_unique<Move>(GparamsToAxesArray(params)));
 			else if (_last == Gtag{token::Kind::G, 1})
-				str = "G1";
+				_writefn(std::make_unique<Line>(GparamsToAxesArray(params)));
 			else if (_last == Gtag{token::Kind::G, 2})
 				str = "G2";
 			else if (_last == Gtag{token::Kind::G, 3})
 				str = "G3";
 
-			print_gparams(str.c_str(), params);
 			return true;
 		}
 
 		virtual bool G0(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			_last = { token::Kind::G, 0 };
-			print_gparams("G0", params);
+			_writefn(std::make_unique<Move>(GparamsToAxesArray(params)));
 			return true;
 		}
 
 		virtual bool G1(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			_last = { token::Kind::G, 1 };
-			print_gparams("G1", params);
+			_writefn(std::make_unique<Line>(GparamsToAxesArray(params)));
 			return true;
 		}
 
@@ -75,7 +97,7 @@ namespace byfxxm {
 		Gworker(StreamConcept auto&& stream) : _parser(std::forward<decltype(stream)>(stream)) {}
 
 	private:
-		virtual bool Do(Code*, const WriteFunc& writefn) noexcept override {
+		virtual bool Do(std::unique_ptr<Code>, const WriteFunc& writefn) noexcept override {
 			std::visit([&](auto&& parser) {
 				if constexpr (std::is_same_v<std::monostate, std::decay_t<decltype(parser)>>)
 					assert(0);

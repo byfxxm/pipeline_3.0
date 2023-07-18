@@ -6,7 +6,7 @@
 #include "ring_buffer.h"
 
 namespace byfxxm {
-	using Fifo = RingBuffer<Code*, 4>;
+	using Fifo = RingBuffer<std::unique_ptr<Code>, 4>;
 	struct Station {
 		Worker* worker = nullptr;
 		std::unique_ptr<Fifo> next = std::make_unique<Fifo>();
@@ -31,8 +31,8 @@ namespace byfxxm {
 
 			for (auto& sta : _station_list) {
 				_co.AddSub([&](CoSubHelper* helper, void*) {
-					auto read = [&]()->Code* {
-						Code* code = nullptr;
+					auto read = [&]() {
+						std::unique_ptr<Code> code;
 						while (!sta->prev->Read(code)) {
 							if (_cur_station > 0 && _station_list[_cur_station - 1]->done) {
 								sta->done = true;
@@ -47,8 +47,8 @@ namespace byfxxm {
 						return code;
 					};
 
-					auto write = [&](Code* code) {
-						while (!sta->next->Write(code)) {
+					auto write = [&](std::unique_ptr<Code> code) {
+						while (!sta->next->Write(std::move(code))) {
 							++_cur_station;
 							helper->SwitchToMain();
 						}
@@ -63,11 +63,11 @@ namespace byfxxm {
 						}
 						else {
 							for (;;) {
-								Code* code = read();
+								auto code = read();
 								if (!code)
 									break;
 
-								if (!sta->worker->Do(code, write))
+								if (!sta->worker->Do(std::move(code), write))
 									throw PipelineException();
 							}
 						}

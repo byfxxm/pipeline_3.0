@@ -5,15 +5,17 @@ namespace byfxxm {
 	using AxesArray = ArrayNd<double, 1>;
 	struct Code {};
 
-	struct Move {
+	struct Move : Code {
+		Move(AxesArray end_) : end(std::move(end_)) {}
 		AxesArray end;
 	};
 
-	struct Line {
+	struct Line : Code {
+		Line(AxesArray end_) : end(std::move(end_)) {}
 		AxesArray end;
 	};
 
-	struct Arc {
+	struct Arc : Code {
 		AxesArray end;
 		AxesArray center;
 		bool bCcw{ false };

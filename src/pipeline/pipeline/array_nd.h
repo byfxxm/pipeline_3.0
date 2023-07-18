@@ -70,8 +70,6 @@ namespace byfxxm {
 			};
 
 		public:
-			ArrayNd() = default;
-
 			template <std::integral... Args> requires (sizeof...(Args) == Num)
 				ArrayNd(Args&&... args) : _count((... * std::forward<Args>(args))), _shapes{ static_cast<size_t>(args)... } {
 				_elems = std::make_unique<Ty[]>(_count);

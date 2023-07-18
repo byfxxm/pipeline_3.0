@@ -30,9 +30,9 @@ class FirstWorker : public byfxxm::Worker {
 public:
 	~FirstWorker() override = default;
 
-	bool Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) noexcept override {
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
 		for (size_t i = 0; i < 10000; ++i) {
-			write(new TestCode(i));
+			write(std::make_unique<TestCode>(i));
 		}
 
 		return true;
@@ -43,11 +43,11 @@ class TestWorker : public byfxxm::Worker {
 public:
 	~TestWorker() override = default;
 
-	bool Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) noexcept override {
-		if (static_cast<TestCode*>(code)->_n == 1000)
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
+		if (static_cast<TestCode*>(code.get())->_n == 1000)
 			return false;
 
-		write(code);
+		write(std::move(code));
 		return true;
 	}
 };
@@ -56,9 +56,8 @@ class LastWorker : public byfxxm::Worker {
 public:
 	~LastWorker() override = default;
 
-	bool Do(byfxxm::Code* code, const byfxxm::WriteFunc& write) noexcept override {
-		std::cout << static_cast<TestCode*>(code)->_n << std::endl;
-		delete code;
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
+		std::cout << static_cast<TestCode*>(code.get())->_n << std::endl;
 		return true;
 	}
 };

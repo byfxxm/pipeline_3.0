@@ -216,7 +216,7 @@ namespace byfxxm {
 		double value;
 	};
 
-	bool operator==(const Gtag& lhs, const Gtag& rhs) {
+	inline bool operator==(const Gtag& lhs, const Gtag& rhs) {
 		return lhs.code == rhs.code && lhs.value == rhs.value;
 	}
 

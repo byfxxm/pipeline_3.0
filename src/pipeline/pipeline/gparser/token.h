@@ -169,12 +169,7 @@ namespace byfxxm {
 	};
 
 	inline bool IsSpace(char ch) {
-		for (auto c : spaces) {
-			if (c == ch)
-				return true;
-		}
-
-		return false;
+		return std::ranges::find(spaces, ch) != std::end(spaces);
 	}
 
 	inline void SkipSpaces(auto&& stream) {

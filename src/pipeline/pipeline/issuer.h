@@ -8,7 +8,7 @@
 #include "code.h"
 
 namespace byfxxm {
-	std::string Format(const AxesArray& axes) {
+	std::string _Format(const AxesArray& axes) {
 		std::string ret;
 		std::ranges::for_each(axes, [&](auto&& item) {
 			ret += " ";
@@ -23,10 +23,10 @@ namespace byfxxm {
 		virtual bool Do(std::unique_ptr<Code> code, const WriteFunc& writefn) noexcept override {
 			switch (code->tag) {
 			case codetag::MOVE:
-				std::cout << "G0" << Format(static_cast<Move*>(code.get())->end) << std::endl;
+				std::cout << "G0" << _Format(static_cast<Move*>(code.get())->end) << std::endl;
 				break;
 			case codetag::LINE:
-				std::cout << "G1" << Format(static_cast<Line*>(code.get())->end) << std::endl;
+				std::cout << "G1" << _Format(static_cast<Line*>(code.get())->end) << std::endl;
 				break;
 			case codetag::ARC:
 				break;

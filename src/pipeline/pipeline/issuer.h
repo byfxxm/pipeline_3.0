@@ -18,10 +18,7 @@ namespace byfxxm {
 		return ret;
 	}
 
-	class Issuer : public Worker {
-	public:
-		Issuer() = default;
-
+	class Issuer : private Worker {
 	private:
 		virtual bool Do(std::unique_ptr<Code> code, const WriteFunc& writefn) noexcept override {
 			switch (code->tag) {

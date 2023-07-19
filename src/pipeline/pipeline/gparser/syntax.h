@@ -38,7 +38,7 @@ namespace byfxxm {
 
 			auto get = [this]() {
 				auto tok = _lex.Get();
-				if (tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::KEOF)
+				if (tok.kind == token::Kind::NEWLINE)
 					++_lineno;
 				return tok;
 			};

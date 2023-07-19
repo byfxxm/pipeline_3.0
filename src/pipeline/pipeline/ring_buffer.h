@@ -18,7 +18,7 @@ namespace byfxxm {
 				return _Mod(write_index_ + 1) == read_index_;
 			}
 
-			bool Write(Ty t) {
+			bool Write(Ty&& t) {
 				if (IsFull())
 					return false;
 

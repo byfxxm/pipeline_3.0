@@ -96,6 +96,9 @@
     <ClInclude Include="array_nd.h">
       <Filter>public</Filter>
     </ClInclude>
+    <ClInclude Include="issuer.h">
+      <Filter>workers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">

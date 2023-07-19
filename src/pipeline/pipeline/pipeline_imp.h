@@ -92,6 +92,10 @@ namespace byfxxm {
 			_stop = true;
 		}
 
+		void Wait() {
+			_co.Wait();
+		}
+
 		void AddWorker(void* worker) {
 			auto station = std::make_unique<Station>();
 			station->worker = static_cast<Worker*>(worker);

@@ -397,8 +397,13 @@ void TestPipeline1() {
 G1X100
 Y100
 )");
+	auto issuer = issuer_new();
 	pipeline_add_worker(pipeline, worker);
+	pipeline_add_worker(pipeline, issuer);
 	pipeline_start(pipeline);
+	pipeline_wait(pipeline);
+	issuer_delete(issuer);
+	gworker_delete(worker);
 	pipeline_delete(pipeline);
 }
 

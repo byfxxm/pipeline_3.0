@@ -18,7 +18,7 @@ namespace byfxxm {
 		puts(str.c_str());
 	}
 
-	inline AxesArray GparamsToAxesArray(const byfxxm::Gparams& params) {
+	inline AxesArray GparamsToEnd(const byfxxm::Gparams& params) {
 		AxesArray ret(6);
 		ret.Memset(nan);
 		std::ranges::for_each(params, [&](const Gtag& item) {
@@ -40,45 +40,66 @@ namespace byfxxm {
 		return ret;
 	}
 
+	inline AxesArray GparamsToCenter(const byfxxm::Gparams& params) {
+		AxesArray ret(6);
+		ret.Memset(nan);
+		std::ranges::for_each(params, [&](const Gtag& item) {
+			switch (item.code) {
+			case token::Kind::I:
+				ret[0] = item.value;
+				break;
+			case token::Kind::J:
+				ret[1] = item.value;
+				break;
+			case token::Kind::K:
+				ret[2] = item.value;
+				break;
+			default:
+				break;
+			}
+			});
+
+		return ret;
+	}
+
 	class Gpimpl : public byfxxm::Ginterface {
 	public:
 		Gpimpl(const WriteFunc& writefn) : _writefn(writefn) {}
 
 		virtual bool None(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
-			std::string str;
 			if (_last == Gtag{token::Kind::G, 0})
-				_writefn(std::make_unique<Move>(GparamsToAxesArray(params)));
+				_writefn(std::make_unique<Move>(GparamsToEnd(params)));
 			else if (_last == Gtag{token::Kind::G, 1})
-				_writefn(std::make_unique<Line>(GparamsToAxesArray(params)));
+				_writefn(std::make_unique<Line>(GparamsToEnd(params)));
 			else if (_last == Gtag{token::Kind::G, 2})
-				str = "G2";
+				_writefn(std::make_unique<Arc>(GparamsToEnd(params), GparamsToCenter(params), false));
 			else if (_last == Gtag{token::Kind::G, 3})
-				str = "G3";
+				_writefn(std::make_unique<Arc>(GparamsToEnd(params), GparamsToCenter(params), true));
 
 			return true;
 		}
 
 		virtual bool G0(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			_last = { token::Kind::G, 0 };
-			_writefn(std::make_unique<Move>(GparamsToAxesArray(params)));
+			_writefn(std::make_unique<Move>(GparamsToEnd(params)));
 			return true;
 		}
 
 		virtual bool G1(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			_last = { token::Kind::G, 1 };
-			_writefn(std::make_unique<Line>(GparamsToAxesArray(params)));
+			_writefn(std::make_unique<Line>(GparamsToEnd(params)));
 			return true;
 		}
 
 		virtual bool G2(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			_last = { token::Kind::G, 2 };
-			print_gparams("G2", params);
+			_writefn(std::make_unique<Arc>(GparamsToEnd(params), GparamsToCenter(params), false));
 			return true;
 		}
 
 		virtual bool G3(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
 			_last = { token::Kind::G, 3 };
-			print_gparams("G3", params);
+			_writefn(std::make_unique<Arc>(GparamsToEnd(params), GparamsToCenter(params), true));
 			return true;
 		}
 

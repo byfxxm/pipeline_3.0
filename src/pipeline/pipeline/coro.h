@@ -64,6 +64,11 @@ namespace byfxxm {
 				});
 		}
 
+		void Wait() {
+			if (_runtime.joinable())
+				_runtime.join();
+		}
+
 		void Run() {
 			if (_runtime.joinable())
 				return;

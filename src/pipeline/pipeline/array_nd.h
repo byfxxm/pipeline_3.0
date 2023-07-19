@@ -135,6 +135,14 @@ namespace byfxxm {
 				return _shapes[N];
 			}
 
+			Ty* begin() const {
+				return _elems.get();
+			}
+
+			Ty* end() const {
+				return _elems.get() + _count;
+			}
+
 			friend void swap(ArrayNd& lhs, ArrayNd& rhs) noexcept {
 				using std::swap;
 				swap(lhs._count, rhs._count);

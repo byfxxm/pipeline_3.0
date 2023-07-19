@@ -242,9 +242,9 @@ namespace byfxxm {
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
 					return Group({ l, r }, &mempool);
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
-					return Group({ l, *r }, & mempool);
+					return Group({ l, *r }, &mempool);
 				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
-					return Group({ *l, r }, & mempool);
+					return Group({ *l, r }, &mempool);
 				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
 					return Group({ *l, *r }, &mempool);
 				else

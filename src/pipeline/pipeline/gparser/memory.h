@@ -85,7 +85,8 @@ namespace byfxxm {
 		// copy and swap
 		ClonePtr& operator=(const ClonePtr& rhs) {
 			ClonePtr copy(rhs);
-			std::swap(*this, copy);
+			using std::swap;
+			swap(*this, copy);
 			return *this;
 		}
 

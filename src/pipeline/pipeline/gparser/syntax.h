@@ -52,7 +52,7 @@ namespace byfxxm {
 			return _ToAbstree(std::move(stmt.value()));
 		}
 
-		void Set(Address* addr, Ginterface* pimpl) {
+		void SetEnv(Address* addr, Ginterface* pimpl) {
 			_addr = addr;
 			_pimpl = pimpl;
 		}

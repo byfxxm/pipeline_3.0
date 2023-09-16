@@ -41,7 +41,7 @@ namespace test_ui
         private static extern void Wait(IntPtr v);
 
         [DllImport("pipeline_adapter.dll")]
-        private static extern void SetGlobalOutput(SetGlobalOutputCallback f);
+        private static extern void SetGlobalOutput(SetGlobalOutputCallback cb);
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

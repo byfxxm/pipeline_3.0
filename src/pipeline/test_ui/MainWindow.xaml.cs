@@ -26,7 +26,7 @@ namespace test_ui
         }
 
         [DllImport("pipeline_adapter.dll")]
-        private static extern IntPtr CreateAuto();
+        private static extern IntPtr CreateAuto(SetGlobalOutputCallback cb);
 
         [DllImport("pipeline_adapter.dll")]
         private static extern void DeleteAuto(IntPtr v);
@@ -40,17 +40,13 @@ namespace test_ui
         [DllImport("pipeline_adapter.dll")]
         private static extern void Wait(IntPtr v);
 
-        [DllImport("pipeline_adapter.dll")]
-        private static extern void SetGlobalOutput(SetGlobalOutputCallback cb);
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             string text = "";
-            SetGlobalOutput((string s)=>
+            var auto = CreateAuto((string s) =>
             {
                 text += s;
             });
-            var auto = CreateAuto();
             Start(auto);
             Wait(auto);
             Text1.Text = text;

@@ -9,10 +9,9 @@
 typedef void(*OutputFunc)(const char*);
 
 extern "C" {
-	PIPELINEADAPTER_API void* CreateAuto();
+	PIPELINEADAPTER_API void* CreateAuto(OutputFunc);
 	PIPELINEADAPTER_API void DeleteAuto(void*);
 	PIPELINEADAPTER_API void Start(void*);
 	PIPELINEADAPTER_API void Stop(void*);
 	PIPELINEADAPTER_API void Wait(void*);
-	PIPELINEADAPTER_API void SetGlobalOutput(OutputFunc);
 }

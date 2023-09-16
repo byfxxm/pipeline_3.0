@@ -3,10 +3,6 @@
 #include "../pipeline/pipeline.h"
 #include "../pipeline/code.h"
 
-OutputFunc g_func = [](const char* s) {
-	std::printf(s);
-	};
-
 struct TestCode : byfxxm::Code {
 	TestCode(size_t n) : _n(n) {}
 	size_t _n;
@@ -43,21 +39,32 @@ public:
 	~LastWorker() override = default;
 
 	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		if (g_func)
-			g_func(std::format("{}\n", static_cast<TestCode*>(code.get())->_n).c_str());
+		if (_output_func)
+			_output_func(std::format("{}\n", static_cast<TestCode*>(code.get())->_n).c_str());
 
 		return true;
 	}
+
+	void SetOutput(OutputFunc func) {
+		_output_func = func;
+	}
+
+private:
+	OutputFunc _output_func = [](const char* s) {
+		std::printf(s);
+		};
 };
 
-void* CreateAuto() {
+void* CreateAuto(OutputFunc func) {
 	auto pipeline = byfxxm::MakePipeline();
 	pipeline->AddWorker(std::make_unique<FirstWorker>());
 	for (int i = 0; i < 2; ++i) {
 		pipeline->AddWorker(std::make_unique<TestWorker>());
 	}
 
-	pipeline->AddWorker(std::make_unique<LastWorker>());
+	auto last = std::make_unique<LastWorker>();
+	last->SetOutput(func);
+	pipeline->AddWorker(std::move(last));
 	return static_cast<void*>(pipeline.release());
 }
 
@@ -75,8 +82,4 @@ void Stop(void* pipeline) {
 
 void Wait(void* pipeline) {
 	return static_cast<byfxxm::Pipeline*>(pipeline)->Wait();
-}
-
-void SetGlobalOutput(OutputFunc func) {
-	g_func = func;
 }

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <functional>
+#include <memory>
 
 #ifdef PIPELINE_EXPORTS
 #define PIPELINE_API __declspec(dllexport)
@@ -25,7 +26,7 @@ namespace byfxxm {
 	class Pipeline {
 	public:
 		virtual ~Pipeline() = default;
-		virtual void AddWorker(Worker*) = 0;
+		virtual void AddWorker(std::unique_ptr<Worker>) = 0;
 		virtual void Start() = 0;
 		virtual void Stop() = 0;
 		virtual void Wait() = 0;

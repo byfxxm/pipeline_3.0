@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline.dll bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline.pdb bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline_adapter.dll bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline_adapter.pdb bin\$(Configuration)\net6.0-windows" />
+  </Target>
+
+</Project>

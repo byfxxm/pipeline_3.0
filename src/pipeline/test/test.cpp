@@ -30,7 +30,7 @@ public:
 	~FirstWorker() override = default;
 
 	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		for (size_t i = 0; i < 10000; ++i) {
+		for (size_t i = 0; i < 10; ++i) {
 			write(std::make_unique<TestCode>(i));
 		}
 
@@ -64,14 +64,14 @@ public:
 void TestPipeline() {
 	auto pipeline = byfxxm::MakePipeline();
 	FirstWorker first;
-	TestWorker workers[2];
-	pipeline->AddWorker(&first);
-	for (auto& w : workers) {
-		pipeline->AddWorker(&w);
+	pipeline->AddWorker(std::make_unique<FirstWorker>());
+	for (int i = 0; i < 20; ++i) {
+		pipeline->AddWorker(std::make_unique<TestWorker>());
 	}
-	LastWorker last;
-	pipeline->AddWorker(&last);
+
+	pipeline->AddWorker(std::make_unique<LastWorker>());
 	pipeline->Start();
+	pipeline->Wait();
 }
 
 void TestLexer() {
@@ -391,20 +391,17 @@ void TestPerformance1() {
 
 void TestPipeline1() {
 	auto pipeline = byfxxm::MakePipeline();
-	auto worker = MakeGworker(byfxxm::gworker_t::MEMORY, R"(G0 X0Y0Z0
+	pipeline->AddWorker(MakeGworker(byfxxm::gworker_t::MEMORY, R"(G0 X0Y0Z0
 G1X100
 Y100
-)");
-	auto issuer = byfxxm::MakeIssuer();
-	pipeline->AddWorker(worker.get());
-	pipeline->AddWorker(issuer.get());
+)"));
+	pipeline->AddWorker(byfxxm::MakeIssuer());
 	pipeline->Start();
 	pipeline->Wait();
 }
 
 int main()
 {
-	//TestPipeline();
 #ifdef _DEBUG
 	TestParser();
 	TestParser1();
@@ -414,6 +411,7 @@ int main()
 	TestParser5();
 	TestParser6();
 	TestParser7();
+	TestPipeline();
 	TestPipeline1();
 #else
 	TestPerformance();

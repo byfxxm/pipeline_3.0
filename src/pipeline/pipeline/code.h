@@ -5,13 +5,14 @@ namespace byfxxm {
 	using AxesArray = ArrayNd<double, 1>;
 
 	enum class codetag {
+		NA,
 		MOVE,
 		LINE,
 		ARC,
 	};
 
 	struct Code {
-		codetag tag;
+		codetag tag{ codetag::NA };
 	};
 
 	struct Move : Code {

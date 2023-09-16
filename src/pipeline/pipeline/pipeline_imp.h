@@ -7,7 +7,7 @@
 namespace byfxxm {
 	using Fifo = RingBuffer<std::unique_ptr<Code>, 4>;
 	struct Station {
-		Worker* worker = nullptr;
+		std::unique_ptr<Worker> worker;
 		std::unique_ptr<Fifo> next = std::make_unique<Fifo>();
 		Fifo* prev = nullptr;
 		bool done = false;
@@ -95,7 +95,10 @@ namespace byfxxm {
 			_co.Wait();
 		}
 
-		void AddWorker(Worker* worker) override {
+		void AddWorker(std::unique_ptr<Worker> worker) override {
+			if (!worker)
+				throw std::exception("worker is null");
+
 			auto station = std::make_unique<Station>();
 			station->worker = std::move(worker);
 			if (!_station_list.empty())

@@ -4,7 +4,6 @@
 #include <format>
 #include <algorithm>
 #include <iostream>
-#include "worker.h"
 #include "code.h"
 
 namespace byfxxm {
@@ -18,7 +17,7 @@ namespace byfxxm {
 		return ret;
 	}
 
-	class Issuer : private Worker {
+	class Issuer : public Worker {
 	private:
 		virtual bool Do(std::unique_ptr<Code> code, const WriteFunc& writefn) noexcept override {
 			switch (code->tag) {

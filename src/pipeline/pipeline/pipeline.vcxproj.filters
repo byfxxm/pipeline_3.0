@@ -39,9 +39,6 @@
     <ClInclude Include="pipeline.h">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="worker.h">
-      <Filter>public</Filter>
-    </ClInclude>
     <ClInclude Include="code.h">
       <Filter>public</Filter>
     </ClInclude>

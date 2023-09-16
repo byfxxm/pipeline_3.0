@@ -167,7 +167,6 @@
     <ClInclude Include="pipeline.h" />
     <ClInclude Include="pipeline_imp.h" />
     <ClInclude Include="ring_buffer.h" />
-    <ClInclude Include="worker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

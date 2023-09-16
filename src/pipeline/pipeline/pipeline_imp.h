@@ -2,7 +2,6 @@
 #include <vector>
 #include <memory>
 #include "coro.h"
-#include "worker.h"
 #include "ring_buffer.h"
 
 namespace byfxxm {
@@ -17,9 +16,9 @@ namespace byfxxm {
 	struct PipelineException : public std::exception {
 	};
 
-	class PipelineImp {
+	class PipelineImp : public Pipeline {
 	public:
-		void Start() {
+		void Start() override {
 			if (_station_list.empty())
 				return;
 
@@ -88,17 +87,17 @@ namespace byfxxm {
 			_co.AsyncRun();
 		}
 
-		void Stop() {
+		void Stop() override {
 			_stop = true;
 		}
 
-		void Wait() {
+		void Wait() override {
 			_co.Wait();
 		}
 
-		void AddWorker(void* worker) {
+		void AddWorker(Worker* worker) override {
 			auto station = std::make_unique<Station>();
-			station->worker = static_cast<Worker*>(worker);
+			station->worker = std::move(worker);
 			if (!_station_list.empty())
 				station->prev = _station_list.back()->next.get();
 

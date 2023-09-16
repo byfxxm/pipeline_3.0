@@ -3,7 +3,6 @@
 #include <iostream>
 #include <utility>
 #include "../pipeline/pipeline.h"
-#include "../pipeline/worker.h"
 #include "../pipeline/code.h"
 #include "../pipeline/gparser/gparser.h"
 
@@ -63,17 +62,16 @@ public:
 };
 
 void TestPipeline() {
-	auto pipeline = pipeline_new();
+	auto pipeline = byfxxm::MakePipeline();
 	FirstWorker first;
 	TestWorker workers[2];
-	pipeline_add_worker(pipeline, &first);
+	pipeline->AddWorker(&first);
 	for (auto& w : workers) {
-		pipeline_add_worker(pipeline, &w);
+		pipeline->AddWorker(&w);
 	}
 	LastWorker last;
-	pipeline_add_worker(pipeline, &last);
-	pipeline_start(pipeline);
-	pipeline_delete(pipeline);
+	pipeline->AddWorker(&last);
+	pipeline->Start();
 }
 
 void TestLexer() {
@@ -392,19 +390,16 @@ void TestPerformance1() {
 }
 
 void TestPipeline1() {
-	auto pipeline = pipeline_new();
-	auto worker = gworker_new(gworker_t::MEMORY, R"(G0 X0Y0Z0
+	auto pipeline = byfxxm::MakePipeline();
+	auto worker = MakeGworker(byfxxm::gworker_t::MEMORY, R"(G0 X0Y0Z0
 G1X100
 Y100
 )");
-	auto issuer = issuer_new();
-	pipeline_add_worker(pipeline, worker);
-	pipeline_add_worker(pipeline, issuer);
-	pipeline_start(pipeline);
-	pipeline_wait(pipeline);
-	issuer_delete(issuer);
-	gworker_delete(worker);
-	pipeline_delete(pipeline);
+	auto issuer = byfxxm::MakeIssuer();
+	pipeline->AddWorker(worker.get());
+	pipeline->AddWorker(issuer.get());
+	pipeline->Start();
+	pipeline->Wait();
 }
 
 int main()

@@ -4,60 +4,32 @@
 #include "gworker.h"
 #include "issuer.h"
 
-using namespace byfxxm;
+namespace byfxxm {
+	std::unique_ptr<Pipeline> MakePipeline() {
+		return std::make_unique<PipelineImp>();
+	}
 
-void* pipeline_new() {
-	return new PipelineImp();
-}
+	std::unique_ptr<Worker> MakeGworker(gworker_t type, const char* content) {
+		try {
+			switch (type) {
+			case gworker_t::FILE:
+				return std::make_unique<Gworker>(std::fstream(content));
 
-void pipeline_delete(void* pipeline) {
-	delete static_cast<PipelineImp*>(pipeline);
-}
+			case gworker_t::MEMORY:
+				return std::make_unique<Gworker>(std::stringstream(content));
 
-void pipeline_add_worker(void* pipeline, void* worker) {
-	static_cast<PipelineImp*>(pipeline)->AddWorker(worker);
-}
-
-void pipeline_start(void* pipeline) {
-	static_cast<PipelineImp*>(pipeline)->Start();
-}
-
-void pipeline_stop(void* pipeline) {
-	static_cast<PipelineImp*>(pipeline)->Stop();
-}
-
-void pipeline_wait(void* pipeline) {
-	static_cast<PipelineImp*>(pipeline)->Wait();
-}
-
-void* gworker_new(gworker_t type, const char* content) {
-	try {
-		switch (type) {
-		case gworker_t::FILE:
-			return new Gworker(std::fstream(content));
-
-		case gworker_t::MEMORY:
-			return new Gworker(std::stringstream(content));
-
-		default:
-			assert(0);
+			default:
+				assert(0);
+			}
 		}
+		catch (const std::exception& exc) {
+			puts(exc.what());
+		}
+
+		return {};
 	}
-	catch (const std::exception& exc) {
-		puts(exc.what());
+
+	std::unique_ptr<Worker> MakeIssuer() {
+		return std::make_unique<Issuer>();
 	}
-
-	return nullptr;
-}
-
-void gworker_delete(void* gworker) {
-	delete static_cast<Gworker*>(gworker);
-}
-
-void* issuer_new() {
-	return new Issuer();
-}
-
-void issuer_delete(void* issuer) {
-	delete static_cast<Issuer*>(issuer);
 }

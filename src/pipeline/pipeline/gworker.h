@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <type_traits>
-#include "worker.h"
 #include "gparser/gparser.h"
 #include "code.h"
 
@@ -113,7 +112,7 @@ namespace byfxxm {
 		WriteFunc _writefn;
 	};
 
-	class Gworker : private Worker {
+	class Gworker : public Worker {
 	public:
 		Gworker(StreamConcept auto&& stream) : _parser(std::forward<decltype(stream)>(stream)) {}
 

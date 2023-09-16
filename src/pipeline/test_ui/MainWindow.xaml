@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:test_ui"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="0,0,0,-264">
         <Button Content="Button" HorizontalAlignment="Left" Margin="67,42,0,0" VerticalAlignment="Top" Height="30" Width="70" Click="Button_Click"/>
-        <TextBox x:Name="Text1" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Width="666" Height="280" TextChanged="TextBox_TextChanged"/>
+        <TextBox x:Name="Text1" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="666" Height="586" TextChanged="TextBox_TextChanged" Margin="0,77,0,0"/>
 
     </Grid>
 </Window>

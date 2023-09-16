@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline.dll bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline.pdb bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline_adapter.dll bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline_adapter.pdb bin\$(Configuration)\net6.0-windows" />
+    <Exec Command="xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline.dll bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\pipeline.pdb bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\test.dll bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)x64\$(Configuration)\test.pdb bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)test\LTJX.nc bin\$(Configuration)\net6.0-windows&#xD;&#xA;xcopy /y $(SolutionDir)test\macro1.nc bin\$(Configuration)\net6.0-windows" />
   </Target>
 
 </Project>

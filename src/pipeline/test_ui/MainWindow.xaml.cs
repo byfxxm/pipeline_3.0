@@ -18,39 +18,29 @@ namespace test_ui
     /// </summary>
     public partial class MainWindow : Window
     {
-        delegate void SetGlobalOutputCallback(string v);
+        delegate void OutputFunc(string v);
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        [DllImport("pipeline_adapter.dll")]
-        private static extern IntPtr CreateAuto(SetGlobalOutputCallback cb);
+        [DllImport("test.dll")]
+        private static extern void SetOutput(OutputFunc cb);
 
-        [DllImport("pipeline_adapter.dll")]
-        private static extern void DeleteAuto(IntPtr v);
-
-        [DllImport("pipeline_adapter.dll")]
-        private static extern void Start(IntPtr v);
-
-        [DllImport("pipeline_adapter.dll")]
-        private static extern void Stop(IntPtr v);
-
-        [DllImport("pipeline_adapter.dll")]
-        private static extern void Wait(IntPtr v);
+        [DllImport("test.dll")]
+        private static extern int TestMain();
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             string text = "";
             await Task.Run(() =>
             {
-                var auto = CreateAuto((string s) =>
+                SetOutput((string s) =>
                 {
                     text += s;
                 });
-                Start(auto);
-                Wait(auto);
+                TestMain();
             });
             Text1.Text = text;
         }

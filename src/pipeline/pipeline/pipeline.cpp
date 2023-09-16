@@ -2,7 +2,6 @@
 #include "pipeline.h"
 #include "pipeline_imp.h"
 #include "gworker.h"
-#include "issuer.h"
 
 namespace byfxxm {
 	std::unique_ptr<Pipeline> MakePipeline() {
@@ -27,9 +26,5 @@ namespace byfxxm {
 		}
 
 		return {};
-	}
-
-	std::unique_ptr<Worker> MakeIssuer() {
-		return std::make_unique<Issuer>();
 	}
 }

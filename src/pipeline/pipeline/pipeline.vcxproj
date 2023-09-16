@@ -162,7 +162,6 @@
     <ClInclude Include="gparser\token.h" />
     <ClInclude Include="gparser\word.h" />
     <ClInclude Include="gworker.h" />
-    <ClInclude Include="issuer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pipeline.h" />
     <ClInclude Include="pipeline_imp.h" />

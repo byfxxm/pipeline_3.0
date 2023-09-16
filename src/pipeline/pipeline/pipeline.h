@@ -34,5 +34,4 @@ namespace byfxxm {
 
 	PIPELINE_API std::unique_ptr<Pipeline> MakePipeline();
 	PIPELINE_API std::unique_ptr<Worker> MakeGworker(gworker_t type, const char* content);
-	PIPELINE_API std::unique_ptr<Worker> MakeIssuer();
 }

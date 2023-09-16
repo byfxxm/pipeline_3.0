@@ -20,6 +20,23 @@
 #endif
 #endif
 
+using OutputFunc = void(*)(const char*);
+OutputFunc g_outputfunc = [](const char* str) {
+	printf(str);
+	};
+
+template <class T>
+void PrintLine(T&& t) {
+	if (g_outputfunc)
+		g_outputfunc(std::format("{}\n", t).c_str());
+}
+
+template <class T>
+void Print(T&& t) {
+	if (g_outputfunc)
+		g_outputfunc(std::format("{}", t).c_str());
+}
+
 struct TestCode : byfxxm::Code {
 	TestCode(size_t n) : _n(n) {}
 	size_t _n;
@@ -56,7 +73,7 @@ public:
 	~LastWorker() override = default;
 
 	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		std::cout << static_cast<TestCode*>(code.get())->_n << std::endl;
+		PrintLine(static_cast<TestCode*>(code.get())->_n);
 		return true;
 	}
 };
@@ -90,7 +107,7 @@ void TestLexer() {
 	}
 
 	std::for_each(res.begin(), res.end(), [](const byfxxm::token::Token& tok) {
-		std::cout << static_cast<int>(tok.kind) << std::endl;
+		PrintLine(static_cast<int>(tok.kind));
 		});
 }
 
@@ -322,7 +339,7 @@ void TestParser7() {
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
 	parser.Run(&addr, &pimpl, [](size_t line) {
-		std::cout << line << std::endl;
+		PrintLine(line);
 		});
 }
 
@@ -376,9 +393,12 @@ inline auto perform = [](const std::filesystem::path& pa, int times) {
 	double cost = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1e6;
 	double length = static_cast<double>(std::filesystem::file_size(pa)) / 1e6 * times;
 
-	std::cout << length << " MB" << std::endl;
-	std::cout << cost << " s" << std::endl;
-	std::cout << length / cost << " MB/s" << std::endl;
+	Print(length);
+	PrintLine(" MB");
+	Print(cost);
+	PrintLine(" s");
+	Print(length / cost);
+	PrintLine(" MB/s");
 };
 
 void TestPerformance() {
@@ -389,18 +409,50 @@ void TestPerformance1() {
 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\macro1.nc)"), 100);
 }
 
+std::string _Format(const byfxxm::AxesArray& axes) {
+	std::string ret;
+	std::ranges::for_each(axes, [&](auto&& item) {
+		ret += " ";
+		ret += std::to_string(item);
+		});
+
+	return ret;
+}
+
+class Issuer : public byfxxm::Worker {
+private:
+	virtual bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& writefn) noexcept override {
+		switch (code->tag) {
+		case byfxxm::codetag::MOVE:
+			Print("G0");
+			PrintLine(_Format(static_cast<byfxxm::Move*>(code.get())->end));
+			break;
+		case byfxxm::codetag::LINE:
+			Print("G1");
+			PrintLine(_Format(static_cast<byfxxm::Line*>(code.get())->end));
+			break;
+		case byfxxm::codetag::ARC:
+			break;
+		default:
+			break;
+		}
+
+		return true;
+	}
+};
+
 void TestPipeline1() {
 	auto pipeline = byfxxm::MakePipeline();
 	pipeline->AddWorker(MakeGworker(byfxxm::gworker_t::MEMORY, R"(G0 X0Y0Z0
 G1X100
 Y100
 )"));
-	pipeline->AddWorker(byfxxm::MakeIssuer());
+	pipeline->AddWorker(std::make_unique<Issuer>());
 	pipeline->Start();
 	pipeline->Wait();
 }
 
-int main()
+extern "C" __declspec(dllexport) int TestMain()
 {
 #ifdef _DEBUG
 	TestParser();
@@ -418,6 +470,10 @@ int main()
 	TestPerformance1();
 #endif
 	return 0;
+}
+
+extern "C" __declspec(dllexport) void SetOutput(OutputFunc func) {
+	g_outputfunc = func;
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

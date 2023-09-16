@@ -10,9 +10,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj",
 		{61415DD8-4899-4F1E-BC9A-A165880E55B1} = {61415DD8-4899-4F1E-BC9A-A165880E55B1}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test_ui", "test_ui\test_ui.csproj", "{A0BD7424-8288-47B3-9719-4936C50245C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test_ui", "test_ui\test_ui.csproj", "{A0BD7424-8288-47B3-9719-4936C50245C9}"
 	ProjectSection(ProjectDependencies) = postProject
-		{63A6DD6E-1157-4984-B704-BFA92B544DD8} = {63A6DD6E-1157-4984-B704-BFA92B544DD8}
+		{2AF5A7A4-49EA-4A9E-AEED-04BD8CB351E4} = {2AF5A7A4-49EA-4A9E-AEED-04BD8CB351E4}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pipeline_adapter", "pipeline_adapter\pipeline_adapter.vcxproj", "{63A6DD6E-1157-4984-B704-BFA92B544DD8}"

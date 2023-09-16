@@ -40,15 +40,18 @@ namespace test_ui
         [DllImport("pipeline_adapter.dll")]
         private static extern void Wait(IntPtr v);
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             string text = "";
-            var auto = CreateAuto((string s) =>
+            await Task.Run(() =>
             {
-                text += s;
+                var auto = CreateAuto((string s) =>
+                {
+                    text += s;
+                });
+                Start(auto);
+                Wait(auto);
             });
-            Start(auto);
-            Wait(auto);
             Text1.Text = text;
         }
 

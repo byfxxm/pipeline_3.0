@@ -42,6 +42,7 @@ public:
 		if (_output_func)
 			_output_func(std::format("{}\n", static_cast<TestCode*>(code.get())->_n).c_str());
 
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		return true;
 	}
 

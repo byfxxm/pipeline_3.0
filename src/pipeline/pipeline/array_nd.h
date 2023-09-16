@@ -144,13 +144,6 @@ namespace byfxxm {
 				return _elems.get() + _count;
 			}
 
-			friend void swap(ArrayNd& lhs, ArrayNd& rhs) noexcept {
-				std::swap(lhs._count, rhs._count);
-				std::swap(lhs._shapes, rhs._shapes);
-				std::swap(lhs._factors, rhs._factors);
-				std::swap(lhs._elems, rhs._elems);
-			}
-
 		private:
 			void _InitializeShapes(std::initializer_list<Ty> list, size_t index) {
 				if (auto list_size = list.size(); list_size > _shapes[index]) {

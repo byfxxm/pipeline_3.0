@@ -17,7 +17,7 @@ public:
 	~FirstWorker() override = default;
 
 	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		for (size_t i = 0; i < 10000; ++i) {
+		for (size_t i = 0; i < 10; ++i) {
 			write(std::make_unique<TestCode>(i));
 		}
 

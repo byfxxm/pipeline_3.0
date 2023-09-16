@@ -45,22 +45,19 @@ namespace test_ui
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-                SetGlobalOutput(Input);
-                var auto = CreateAuto();
-                Start(auto);
-                Wait(auto);
-                Text1.Text = text1;
-        }
-
-        private void Input(string s)
-        {
-            text1 += s;
+            string text = "";
+            SetGlobalOutput((string s)=>
+            {
+                text += s;
+            });
+            var auto = CreateAuto();
+            Start(auto);
+            Wait(auto);
+            Text1.Text = text;
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
         }
-
-        private string text1 = new("");
     }
 }

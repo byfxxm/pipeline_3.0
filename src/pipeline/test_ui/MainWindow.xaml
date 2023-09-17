@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:test_ui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Cursor="AppStarting" Height="700">
+        Title="MainWindow" Height="800" Width="800">
+    <Grid Height="800" VerticalAlignment="Top">
         <Button Content="Button" HorizontalAlignment="Left" Margin="67,42,0,0" VerticalAlignment="Top" Height="30" Width="70" Click="Button_Click" Cursor="AppStarting" Background="#FF89DED4"/>
         <TextBox x:Name="Text1" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="666" Height="586" TextChanged="TextBox_TextChanged" Margin="0,77,0,0"/>
 

@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace test_ui
 {
@@ -23,6 +24,23 @@ namespace test_ui
         public MainWindow()
         {
             InitializeComponent();
+            timer.Tick += Timer_Tick;
+            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Start();
+        }
+
+        private async void Timer_Tick(object? sender, EventArgs e)
+        {
+            Text1.Text = await Task.Run(() =>
+            {
+                string text = "";
+                SetOutput((string s) =>
+                {
+                    text += s;
+                });
+                TestMain();
+                return text;
+            });
         }
 
         [DllImport("test.dll")]
@@ -33,20 +51,12 @@ namespace test_ui
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            string text = "";
-            await Task.Run(() =>
-            {
-                SetOutput((string s) =>
-                {
-                    text += s;
-                });
-                TestMain();
-            });
-            Text1.Text = text;
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
         }
+
+        private DispatcherTimer timer = new DispatcherTimer();
     }
 }

@@ -155,7 +155,7 @@ namespace byfxxm {
 		void _CheckError(const Abstree::NodePtr& node) const {
 			assert(node);
 			std::visit(
-				Overload{
+				Overloaded{
 					[&](const Value& value) {
 						if (std::holds_alternative<std::monostate>(value))
 							return;

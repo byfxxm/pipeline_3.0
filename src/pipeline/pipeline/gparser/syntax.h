@@ -64,7 +64,7 @@ namespace byfxxm {
 
 		AbstreeWithLineno _ToAbstree(Statement&& stmt) {
 			return std::visit(
-				Overload{
+				Overloaded{
 					[this, line = stmt.line](Segment&& seg)->AbstreeWithLineno {
 						return { _ToAbstree(std::move(seg)), line };
 					},

@@ -207,7 +207,7 @@ namespace byfxxm {
 	};
 
 	template <class... Ts>
-	struct Overload : Ts... {
+	struct Overloaded : Ts... {
 		using Ts::operator()...;
 	};
 

@@ -46,7 +46,7 @@ namespace byfxxm {
 				});
 
 			return std::visit(
-				Overload{
+				Overloaded{
 					[](const Value& value) {
 						return value;
 					},

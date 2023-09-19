@@ -49,7 +49,7 @@ namespace test_ui
         [DllImport("test.dll")]
         private static extern int TestMain();
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
         }
 

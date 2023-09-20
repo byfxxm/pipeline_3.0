@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -33,13 +34,13 @@ namespace test_ui
         {
             Text1.Text = await Task.Run(() =>
             {
-                var stringbuilder = new StringBuilder();
+                string text = "";
                 SetOutput((string s) =>
                 {
-                    stringbuilder.Append(s);
+                    text += s;
                 });
                 TestMain();
-                return stringbuilder.ToString();
+                return text;
             });
         }
 

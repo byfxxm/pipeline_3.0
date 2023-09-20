@@ -33,13 +33,13 @@ namespace test_ui
         {
             Text1.Text = await Task.Run(() =>
             {
-                string text = "";
+                var stringbuilder = new StringBuilder();
                 SetOutput((string s) =>
                 {
-                    text += s;
+                    stringbuilder.Append(s);
                 });
                 TestMain();
-                return text;
+                return stringbuilder.ToString();
             });
         }
 

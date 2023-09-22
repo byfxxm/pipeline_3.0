@@ -35,4 +35,4 @@
 .vs
 Debug
 Release
-obj
+**/obj/

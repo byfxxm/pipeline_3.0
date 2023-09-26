@@ -25,14 +25,18 @@ OutputFunc g_outputfunc = [](const char* str) {
 	printf(str);
 	};
 
+std::mutex g_mutex;
+
 template <class T>
 void PrintLine(T&& t) {
+	std::unique_lock lock(g_mutex);
 	if (g_outputfunc)
 		g_outputfunc(std::format("{}\n", t).c_str());
 }
 
 template <class T>
 void Print(T&& t) {
+	std::unique_lock lock(g_mutex);
 	if (g_outputfunc)
 		g_outputfunc(std::format("{}", t).c_str());
 }

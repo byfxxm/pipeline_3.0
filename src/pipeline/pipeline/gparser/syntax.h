@@ -67,9 +67,9 @@ namespace byfxxm {
 					},
 					[this](ClonePtr<block::Block>&& block_)->AbstreeWithLineno {
 						_remain_block = std::move(block_);
-						auto stmt = GetStatement(_remain_block);
-						assert(std::holds_alternative<Segment>(std::get<0>(stmt.value())));
-						return { _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt.value())))), std::get<1>(stmt.value()) };
+						auto stmt_ = GetStatement(_remain_block);
+						assert(std::holds_alternative<Segment>(std::get<0>(stmt_.value())));
+						return { _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt_.value())))), std::get<1>(stmt_.value()) };
 					},
 				}, std::move(std::get<0>(stmt)));
 		}

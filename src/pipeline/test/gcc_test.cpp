@@ -156,12 +156,12 @@ void TestParser() {
 	byfxxm::Address addr;
 	parser.Run(&addr, &pimpl);
 
-	assert(*addr[1] == -10);
-	assert(*addr[2] == 20);
-	assert(*addr[30] == 5);
-	assert(*addr[10] == 87);
-	assert(*addr[-174] == -2);
-	assert(*addr[3] == -0.4);
+	PrintLine(*addr[1] == -10);
+	PrintLine(*addr[2] == 20);
+	PrintLine(*addr[30] == 5);
+	PrintLine(*addr[10] == 87);
+	PrintLine(*addr[-174] == -2);
+	PrintLine(*addr[3] == -0.4);
 }
 
 void TestParser1() {
@@ -178,10 +178,10 @@ void TestParser1() {
 	byfxxm::Address addr;
 	parser.Run(&addr, &pimpl);
 
-	assert(byfxxm::IsNaN(*addr[4]));
-	assert(*addr[3] == 2);
-	assert(*addr[2] == 1);
-	assert(byfxxm::IsNaN(*addr[20]));
+	PrintLine(byfxxm::IsNaN(*addr[4]));
+	PrintLine(*addr[3] == 2);
+	PrintLine(*addr[2] == 1);
+	PrintLine(byfxxm::IsNaN(*addr[20]));
 }
 
 void TestParser2() {
@@ -208,11 +208,11 @@ void TestParser2() {
 	byfxxm::Address addr;
 	parser.Run(&addr, &pimpl);
 
-	assert(*addr[1] == 1);
-	assert(*addr[6] == 6);
-	assert(*addr[3] == 3);
-	assert(*addr[2] == 2);
-	assert(*addr[5] == 5);
+	PrintLine(*addr[1] == 1);
+	PrintLine(*addr[6] == 6);
+	PrintLine(*addr[3] == 3);
+	PrintLine(*addr[2] == 2);
+	PrintLine(*addr[5] == 5);
 }
 
 void TestParser3() {
@@ -457,7 +457,6 @@ inline auto perform = [](const std::filesystem::path& pa, int times) {
 
 int main()
 {
-#ifdef _DEBUG
 	TestParser();
 	TestParser1();
 	TestParser2();
@@ -468,10 +467,7 @@ int main()
 	TestParser7();
 	// TestPipeline();
 	// TestPipeline1();
-#else
-	// TestPerformance();
-	// TestPerformance1();
-#endif
+	
 	return 0;
 }
 

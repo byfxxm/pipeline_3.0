@@ -404,13 +404,13 @@ inline auto perform = [](const std::filesystem::path& pa, int times) {
 	PrintLine(" MB/s");
 };
 
-// void TestPerformance() {
-// 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\LTJX.nc)"), 1);
-// }
+void TestPerformance() {
+	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\LTJX.nc)"), 1);
+}
 
-// void TestPerformance1() {
-// 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\macro1.nc)"), 100);
-// }
+void TestPerformance1() {
+	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\macro1.nc)"), 100);
+}
 
 // std::string _Format(const byfxxm::AxesArray& axes) {
 // 	std::string ret;
@@ -465,8 +465,8 @@ int main()
 	TestParser5();
 	TestParser6();
 	TestParser7();
-	// TestPipeline();
-	// TestPipeline1();
+	TestPerformance();
+	TestPerformance1();
 	
 	return 0;
 }

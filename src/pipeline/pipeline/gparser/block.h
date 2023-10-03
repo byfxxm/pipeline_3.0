@@ -1,4 +1,6 @@
 #pragma once
+#include <optional>
+#include <tuple>
 #include "abstree.h"
 #include "memory.h"
 
@@ -12,11 +14,7 @@ namespace byfxxm {
 		class Block;
 	}
 
-	struct Statement {
-		std::variant<Segment, ClonePtr<block::Block>> statement{ Segment(&mempool) };
-		size_t line{ 0 };
-	};
-
+	using Statement = std::tuple<std::variant<Segment, ClonePtr<block::Block>>, size_t>;
 	using Scope = std::pmr::vector<Statement>;
 
 	namespace block {
@@ -33,12 +31,12 @@ namespace byfxxm {
 
 			std::optional<Statement> ret;
 			auto& stmt = scope[index];
-			if (std::holds_alternative<Segment>(stmt.statement)) {
+			if (std::holds_alternative<Segment>(std::get<0>(stmt))) {
 				ret = std::move(stmt);
 				++index;
 			}
-			else if (std::holds_alternative<ClonePtr<Block>>(stmt.statement)) {
-				auto& block = std::get<ClonePtr<Block>>(stmt.statement);
+			else if (std::holds_alternative<ClonePtr<Block>>(std::get<0>(stmt))) {
+				auto& block = std::get<ClonePtr<Block>>(std::get<0>(stmt));
 				auto next = block->Next();
 				ret = next ? std::move(next.value()) : std::optional<Statement>();
 				if (!ret) {

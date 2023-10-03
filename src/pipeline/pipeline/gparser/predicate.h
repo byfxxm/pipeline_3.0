@@ -6,6 +6,7 @@
 #include "ginterface.h"
 #include "exception.h"
 #include "memory.h"
+#include "address.h"
 
 #define byfxxm_IsType(v, type) (std::is_same_v<std::remove_cvref_t<decltype(v)>, type>)
 #define byfxxm_IsDouble(v) byfxxm_IsType(v, double)

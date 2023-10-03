@@ -29,8 +29,8 @@ namespace byfxxm {
 		std::optional<AbstreeWithLineno> Next() {
 			auto stmt = GetStatement(_remain_block);
 			if (stmt) {
-				assert(std::holds_alternative<Segment>(stmt.value().statement));
-				return AbstreeWithLineno{ _ToAbstree(std::get<Segment>(std::move(stmt.value().statement))), stmt.value().line };
+				assert(std::holds_alternative<Segment>(std::get<0>(stmt.value())));
+				return AbstreeWithLineno{ _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt.value())))), std::get<1>(stmt.value()) };
 			}
 
 			auto get = [this]() {
@@ -62,16 +62,16 @@ namespace byfxxm {
 		AbstreeWithLineno _ToAbstree(Statement&& stmt) {
 			return std::visit(
 				Overloaded{
-					[this, line = stmt.line](Segment&& seg)->AbstreeWithLineno {
+					[this, line = std::get<1>(stmt)](Segment&& seg)->AbstreeWithLineno {
 						return { _ToAbstree(std::move(seg)), line };
 					},
 					[this](ClonePtr<block::Block>&& block_)->AbstreeWithLineno {
 						_remain_block = std::move(block_);
 						auto stmt = GetStatement(_remain_block);
-						assert(std::holds_alternative<Segment>(stmt.value().statement));
-						return { _ToAbstree(std::get<Segment>(std::move(stmt.value().statement))), stmt.value().line };
+						assert(std::holds_alternative<Segment>(std::get<0>(stmt.value())));
+						return { _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt.value())))), std::get<1>(stmt.value()) };
 					},
-				}, std::move(stmt.statement));
+				}, std::move(std::get<0>(stmt)));
 		}
 
 	private:

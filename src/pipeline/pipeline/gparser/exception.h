@@ -1,11 +1,15 @@
 #pragma once
 #include <exception>
+#include <string>
 
 namespace byfxxm{
 	class ParseException : public std::exception {
 	public:
 		ParseException() = default;
-		using std::exception::exception;
+		ParseException(std::string err) : _error(std::move(err)) {}
+
+	private:
+		std::string _error;
 	};
 
 	class LexException : public ParseException {
@@ -16,10 +20,7 @@ namespace byfxxm{
 	class SyntaxException : public ParseException {
 	public:
 		using ParseException::ParseException;
-		SyntaxException(size_t line, const char* err) : _error(std::to_string(line) + " : " + err) {}
-
-	private:
-		std::string _error;
+		SyntaxException(size_t line, const char* err) : ParseException(std::to_string(line) + " : " + err) {}
 	};
 
 	class AbstreeException : public ParseException {

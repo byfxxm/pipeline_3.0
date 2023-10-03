@@ -122,7 +122,7 @@ namespace byfxxm {
 
 		template <class... _Words>
 		struct _WordsList {
-			static inline const std::unique_ptr<word::Word> words[]{
+			static inline const std::unique_ptr<word::Word> words[sizeof...(_Words)]{
 				std::make_unique<_Words>()...
 			};
 		};

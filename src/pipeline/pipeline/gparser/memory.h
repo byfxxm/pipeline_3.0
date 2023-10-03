@@ -13,7 +13,7 @@ namespace byfxxm {
 		template <std::derived_from<T> T2>
 		Deleter(const Deleter<T2>&) noexcept : _size(sizeof(T2)) {}
 
-		void operator()(T* p) const noexcept {
+		void operator()(T* p) const {
 			p->~T();
 			mempool.deallocate(p, _size);
 		}
@@ -54,6 +54,8 @@ namespace byfxxm {
 
 	private:
 		std::unique_ptr<T, D> _pointer;
+
+		template <class T2, class D2>
 		friend class UniquePtr;
 	};
 

@@ -2,6 +2,9 @@
 #include <unordered_map>
 #include <optional>
 #include <variant>
+#include <limits>
+#include <memory_resource>
+#include <functional>
 
 namespace byfxxm {
 	inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();

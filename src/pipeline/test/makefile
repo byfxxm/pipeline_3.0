@@ -1,6 +1,13 @@
-gcc_test : gcc_test.cpp
-	g++ gcc_test.cpp -o gcc_test -std=c++20 -O3
+gcc_config=-std=c++20 -O3
+VPATH=.\..\pipeline
 
-.PHONY : clean
-clean :
+all:gcc_test.o
+	g++ gcc_test.o -o gcc_test $(gcc_config)
+
+gcc_test.o:gcc_test.cpp
+	g++ gcc_test.cpp -c -o gcc_test.o $(gcc_config)
+
+.PHONY:clean
+clean:
 	del gcc_test.exe
+	del *.o

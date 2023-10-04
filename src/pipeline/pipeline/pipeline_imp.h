@@ -97,7 +97,7 @@ namespace byfxxm {
 
 		void AddWorker(std::unique_ptr<Worker> worker) override {
 			if (!worker)
-				throw std::exception("worker is null");
+				throw std::exception();
 
 			auto station = std::make_unique<Station>();
 			station->worker = std::move(worker);

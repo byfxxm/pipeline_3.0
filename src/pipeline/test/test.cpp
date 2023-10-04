@@ -406,7 +406,7 @@ inline auto perform = [](const std::filesystem::path& pa, int times) {
 	PrintLine(" s");
 	Print(length / cost);
 	PrintLine(" MB/s");
-};
+	};
 
 void TestPerformance() {
 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\LTJX.nc)"), 1);

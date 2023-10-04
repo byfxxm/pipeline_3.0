@@ -2,7 +2,7 @@
 #include <exception>
 #include <string>
 
-namespace byfxxm{
+namespace byfxxm {
 	class ParseException : public std::exception {
 	public:
 		ParseException() = default;

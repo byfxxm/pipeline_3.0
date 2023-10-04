@@ -127,7 +127,7 @@ namespace byfxxm {
 					rhs_pri = token_traits.at(p->kind).priority;
 
 				return lhs_pri < rhs_pri;
-			};
+				};
 
 			auto ret = std::ranges::min_element(range, less);
 			if (auto p = std::get_if<token::Token>(&*ret); p && (token_traits.at(p->kind).left_to_right))

@@ -32,7 +32,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("plus error");
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto Minus = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -47,7 +47,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("minus error");
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto Multi = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -62,7 +62,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("multiple error");
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto Div = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -77,7 +77,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("divide error");
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto Assign = [](Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -90,7 +90,7 @@ namespace byfxxm {
 
 				return Value{ l };
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto Neg = [](const Value& value) {
 			return std::visit([](auto&& v)->Value {
@@ -101,7 +101,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("negative error");
 				}, value);
-		};
+			};
 
 		inline auto Pos = [](const Value& value) {
 			return std::visit([](auto&& v)->Value {
@@ -112,7 +112,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("positive error");
 				}, value);
-		};
+			};
 
 		inline auto Sharp = [](const Value& value, Address* addr) {
 			if (!addr)
@@ -126,7 +126,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("sharp error");
 				}, value);
-		};
+			};
 
 		inline auto GT = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -141,7 +141,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException();
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto GE = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -156,7 +156,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException();
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto LT = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -171,7 +171,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException();
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto LE = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -186,7 +186,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException();
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto EQ = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -201,7 +201,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException();
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto NE = [](const Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -216,7 +216,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException();
 				}, lhs, rhs);
-		};
+			};
 
 		template <token::Kind K>
 		inline auto Gcode = [](const Value& value) {
@@ -228,7 +228,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("gcode error");
 				}, value);
-		};
+			};
 
 		inline auto Comma = [](Value& lhs, const Value& rhs) {
 			return std::visit([](auto&& l, auto&& r)->Value {
@@ -251,7 +251,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("comma error");
 				}, lhs, rhs);
-		};
+			};
 
 		inline auto Max = [](Value& value)->Value {
 			return std::visit([](auto&& v)->Value {
@@ -267,7 +267,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("max error");
 				}, value);
-		};
+			};
 
 		inline auto Min = [](Value& value) {
 			return std::visit([](auto&& v)->Value {
@@ -283,7 +283,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException("min error");
 				}, value);
-		};
+			};
 
 		inline auto Not = [](const Value& value) {
 			return std::visit([](auto&& v)->Value {
@@ -292,7 +292,7 @@ namespace byfxxm {
 				else
 					throw AbstreeException(R"("NOT" error)");
 				}, value);
-		};
+			};
 
 		using Gfunc = bool(Ginterface::*)(const Gparams&, const Address*);
 
@@ -344,7 +344,7 @@ namespace byfxxm {
 				throw AbstreeException();
 
 			return std::monostate{};
-		};
+			};
 	}
 
 	template <class... Ts>

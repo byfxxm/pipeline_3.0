@@ -5,7 +5,7 @@ namespace byfxxm {
 	namespace word {
 		using Peek = std::function<char()>;
 		using Get = std::function<char()>;
-		using Last = std::function<const std::optional<token::Token>&()>;
+		using Last = std::function<const std::optional<token::Token>& ()>;
 
 		struct Utils {
 			Peek peek;

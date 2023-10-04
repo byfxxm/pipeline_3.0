@@ -67,13 +67,13 @@ namespace byfxxm {
 		Gpimpl(const WriteFunc& writefn) : _writefn(writefn) {}
 
 		virtual bool None(const Gparams& params, const Address* addr) override {
-			if (_last == Gtag{token::Kind::G, 0})
+			if (_last == Gtag{ token::Kind::G, 0 })
 				_writefn(std::make_unique<Move>(GparamsToEnd(params)));
-			else if (_last == Gtag{token::Kind::G, 1})
+			else if (_last == Gtag{ token::Kind::G, 1 })
 				_writefn(std::make_unique<Line>(GparamsToEnd(params)));
-			else if (_last == Gtag{token::Kind::G, 2})
+			else if (_last == Gtag{ token::Kind::G, 2 })
 				_writefn(std::make_unique<Arc>(GparamsToEnd(params), GparamsToCenter(params), false));
-			else if (_last == Gtag{token::Kind::G, 3})
+			else if (_last == Gtag{ token::Kind::G, 3 })
 				_writefn(std::make_unique<Arc>(GparamsToEnd(params), GparamsToCenter(params), true));
 
 			return true;

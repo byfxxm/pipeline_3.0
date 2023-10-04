@@ -44,14 +44,14 @@ namespace byfxxm {
 						}
 
 						return code;
-					};
+						};
 
 					auto write = [&](std::unique_ptr<Code> code) {
 						while (!sta->next->Write(std::move(code))) {
 							++_cur_station;
 							helper->SwitchToMain();
 						}
-					};
+						};
 
 					try {
 						if (sta->prev == nullptr) {

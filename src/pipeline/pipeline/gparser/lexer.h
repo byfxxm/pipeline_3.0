@@ -57,7 +57,7 @@ namespace byfxxm {
 			auto last = [this]()->const std::optional<token::Token>&{return _lasttok; };
 			for (const auto& p : word::WordsList::words) {
 				std::optional<token::Token> tok;
-				if (p->First(word.front()) && (tok = p->Rest(word, {peek, get, last})).has_value()) {
+				if (p->First(word.front()) && (tok = p->Rest(word, { peek, get, last })).has_value()) {
 					return tok.value();
 				}
 			}

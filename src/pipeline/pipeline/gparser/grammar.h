@@ -133,7 +133,7 @@ namespace byfxxm {
 					}
 
 					return { std::move(seg), utils.line() };
-				};
+					};
 
 				auto read_scope = [&](Scope& scope) {
 					for (;;) {
@@ -151,7 +151,7 @@ namespace byfxxm {
 
 						scope.push_back(std::move(stmt.value()));
 					}
-				};
+					};
 
 				// read if
 				block::IfElse ifelse(utils.return_val);
@@ -206,7 +206,7 @@ namespace byfxxm {
 					}
 
 					return { std::move(seg), utils.line() };
-				};
+					};
 
 				auto read_scope = [&](Scope& scope) {
 					for (;;) {
@@ -221,7 +221,7 @@ namespace byfxxm {
 
 						scope.push_back(std::move(stmt.value()));
 					}
-				};
+					};
 
 				block::While wh(utils.return_val);
 				wh._cond = read_cond();

@@ -2,7 +2,7 @@
 #include <vector>
 
 namespace byfxxm {
-	using Gparams = std::pmr::vector<Gtag>;
+	using Gparams = std::vector<Gtag>;
 	class Address;
 
 	class Ginterface {

@@ -15,7 +15,7 @@ namespace byfxxm {
 	}
 
 	using Statement = std::tuple<std::variant<Segment, ClonePtr<block::Block>>, size_t>;
-	using Scope = std::vector<Statement>;
+	using Scope = std::pmr::vector<Statement>;
 
 	namespace block {
 		class Block {
@@ -100,7 +100,7 @@ namespace byfxxm {
 				return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
 			}
 
-			std::vector<If> _ifs;
+			std::pmr::vector<If> _ifs;
 			Else _else;
 			size_t _cur_stmt{ 0 };
 			bool _iscond{ true };

@@ -308,7 +308,7 @@ namespace byfxxm {
 			}
 		};
 
-		inline const std::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual> gtag_to_ginterface = {
+		inline const std::pmr::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual> gtag_to_ginterface = {
 			{{token::Kind::G, 0}, &Ginterface::G0},
 			{{token::Kind::G, 1}, &Ginterface::G1},
 			{{token::Kind::G, 2}, &Ginterface::G2},
@@ -316,7 +316,7 @@ namespace byfxxm {
 			{{token::Kind::G, 4}, &Ginterface::G4},
 		};
 
-		inline auto Gcmd = [](const std::vector<Value>& tags, Address* addr, Ginterface* pimpl)->Value {
+		inline auto Gcmd = [](const std::pmr::vector<Value>& tags, Address* addr, Ginterface* pimpl)->Value {
 			if (!pimpl)
 				return {};
 

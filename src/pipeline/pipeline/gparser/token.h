@@ -73,7 +73,7 @@ namespace byfxxm {
 			std::optional<std::variant<double, std::string>> value;
 		};
 
-		using Dictionary = std::unordered_map<std::string, token::Kind>;
+		using Dictionary = std::pmr::unordered_map<std::string, token::Kind>;
 
 		inline const Dictionary keywords = {
 			{"IF", Kind::IF},
@@ -223,7 +223,7 @@ namespace byfxxm {
 		return lhs.code == rhs.code && lhs.value == rhs.value;
 	}
 
-	using Group = std::vector<double>;
+	using Group = std::pmr::vector<double>;
 	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
 	using GetRetVal = std::function<Value()>;
 }

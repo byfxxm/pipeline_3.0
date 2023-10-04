@@ -16,7 +16,7 @@ namespace byfxxm {
 
 		struct Node {
 			Predicate pred;
-			std::vector<NodePtr> subs;
+			std::pmr::vector<NodePtr> subs;
 		};
 
 		Abstree(NodePtr&& root, Value& rval, Address* addr, Ginterface* pimpl) noexcept
@@ -40,7 +40,7 @@ namespace byfxxm {
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 
-			std::vector<Value> params;
+			std::pmr::vector<Value> params;
 			std::ranges::for_each(node->subs, [&](auto&& p) {
 				params.push_back(_Execute(p));
 				});

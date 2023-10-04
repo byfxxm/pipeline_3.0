@@ -79,7 +79,7 @@ namespace byfxxm {
 			}
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				Segment gtag{ &mempool };
+				Segment gtag;
 				for (;;) {
 					auto tok = utils.peek();
 					if (NewSegment(tok)) {
@@ -104,7 +104,7 @@ namespace byfxxm {
 					}
 				}
 
-				Segment ret{ &mempool };
+				Segment ret;
 				ret.push_back(gtree(seg));
 				return Statement(std::move(ret), utils.line());
 			}
@@ -120,7 +120,7 @@ namespace byfxxm {
 				using Else = block::IfElse::Else;
 
 				auto read_cond = [&]()->Statement {
-					Segment seg{ &mempool };
+					Segment seg;
 					for (;;) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -193,7 +193,7 @@ namespace byfxxm {
 
 			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
 				auto read_cond = [&]()->Statement {
-					Segment seg{ &mempool };
+					Segment seg;
 					for (;;) {
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
@@ -257,7 +257,7 @@ namespace byfxxm {
 				if (EndOfFile(tok))
 					return {};
 
-				Segment seg{ &mempool };
+				Segment seg;
 				seg.push_back(utils.get());
 
 				auto iter = std::begin(GrammarsList::grammars);

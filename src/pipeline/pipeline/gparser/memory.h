@@ -4,8 +4,6 @@
 #include <memory_resource>
 
 namespace byfxxm {
-	inline std::pmr::unsynchronized_pool_resource mempool;
-
 	template <class T>
 	struct Deleter {
 		Deleter() = default;
@@ -14,8 +12,7 @@ namespace byfxxm {
 		Deleter(const Deleter<T2>&) noexcept : _size(sizeof(T2)) {}
 
 		void operator()(T* p) const {
-			p->~T();
-			mempool.deallocate(p, _size);
+			delete p;
 		}
 
 		size_t _size{ sizeof(T) };
@@ -61,7 +58,7 @@ namespace byfxxm {
 
 	template <class T, class... Args>
 	[[nodiscard]] auto MakeUnique(Args&&... args) noexcept {
-		return UniquePtr<T>(new(mempool.allocate(sizeof(T))) T(std::forward<Args>(args)...));
+		return UniquePtr<T>(new T(std::forward<Args>(args)...));
 	}
 
 	template <class T>

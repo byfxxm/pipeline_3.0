@@ -81,8 +81,8 @@ namespace byfxxm {
 		}
 
 		Segment _ProcessBracket(_SegSubRng range) const {
-			Segment main{ &mempool };
-			Segment sub{ &mempool };
+			Segment main;
+			Segment sub;
 			int level = 0;
 			for (auto& node : range) {
 				if (std::holds_alternative<Abstree::NodePtr>(node)) {

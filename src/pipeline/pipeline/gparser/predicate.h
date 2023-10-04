@@ -241,13 +241,13 @@ namespace byfxxm {
 					return l;
 				}
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
-					return Group({ l, r }, &mempool);
+					return Group({ l, r });
 				else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDoublePtr(r))
-					return Group({ l, *r }, &mempool);
+					return Group({ l, *r });
 				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDouble(r))
-					return Group({ *l, r }, &mempool);
+					return Group({ *l, r });
 				else if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
-					return Group({ *l, *r }, &mempool);
+					return Group({ *l, *r });
 				else
 					throw AbstreeException("comma error");
 				}, lhs, rhs);
@@ -323,7 +323,7 @@ namespace byfxxm {
 			if (tags.empty())
 				throw AbstreeException();
 
-			Gparams par{ &mempool };
+			Gparams par;
 			std::ranges::for_each(tags, [&](const Value& ele) {
 				auto tag = std::get<Gtag>(ele);
 				if (IsNaN(tag.value) || gtag_to_ginterface.contains(tag))

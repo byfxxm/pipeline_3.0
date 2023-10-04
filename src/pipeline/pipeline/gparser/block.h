@@ -50,11 +50,11 @@ namespace byfxxm {
 		class IfElse : public Block {
 			struct If {
 				Statement cond;
-				Scope scope{ &mempool };
+				Scope scope;
 			};
 
 			struct Else {
-				Scope scope{ &mempool };
+				Scope scope;
 			};
 
 			IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
@@ -100,7 +100,7 @@ namespace byfxxm {
 				return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
 			}
 
-			std::pmr::vector<If> _ifs{ &mempool };
+			std::pmr::vector<If> _ifs;
 			Else _else;
 			size_t _cur_stmt{ 0 };
 			bool _iscond{ true };
@@ -154,8 +154,8 @@ namespace byfxxm {
 
 			Statement _cond;
 			Statement _cond_backup;
-			Scope _scope{ &mempool };
-			Scope _scope_backup{ &mempool };
+			Scope _scope;
+			Scope _scope_backup;
 			bool _iscond{ true };
 			GetRetVal _get_ret;
 			size_t _scope_index{ 0 };

@@ -39,6 +39,6 @@ namespace byfxxm {
 		}
 
 	private:
-		std::pmr::unordered_map<_Key, _Value> _dict{ &mempool };
+		std::pmr::unordered_map<_Key, _Value> _dict;
 	};
 }

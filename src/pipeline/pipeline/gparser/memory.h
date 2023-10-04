@@ -4,7 +4,7 @@
 #include <memory_resource>
 
 namespace byfxxm {
-	inline thread_local std::pmr::unsynchronized_pool_resource mempool;
+	inline std::pmr::unsynchronized_pool_resource mempool;
 
 	template <class T>
 	struct Deleter {

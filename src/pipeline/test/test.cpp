@@ -2,10 +2,12 @@
 //
 #include <iostream>
 #include <utility>
+#include <format>
 #include "../pipeline/pipeline.h"
 #include "../pipeline/code.h"
 #include "../pipeline/gparser/gparser.h"
 
+#ifdef _MSC_VER
 #ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib, "../x64/Debug/pipeline.lib")
@@ -17,6 +19,7 @@
 #pragma comment(lib, "../x64/Release/pipeline.lib")
 #else
 #pragma comment(lib, "../Release/pipeline.lib")
+#endif
 #endif
 #endif
 
@@ -456,9 +459,8 @@ Y100
 	pipeline->Wait();
 }
 
-extern "C" __declspec(dllexport) int TestMain()
+int main()
 {
-#ifdef _DEBUG
 	TestParser();
 	TestParser1();
 	TestParser2();
@@ -469,14 +471,12 @@ extern "C" __declspec(dllexport) int TestMain()
 	TestParser7();
 	TestPipeline();
 	TestPipeline1();
-#else
 	TestPerformance();
 	TestPerformance1();
-#endif
 	return 0;
 }
 
-extern "C" __declspec(dllexport) void SetOutput(OutputFunc func) {
+void SetOutput(OutputFunc func) {
 	g_outputfunc = func;
 }
 

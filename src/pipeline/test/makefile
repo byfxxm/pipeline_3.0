@@ -5,7 +5,7 @@ all:test.o pipeline.o
 	g++ test.o pipeline.o -o test $(gcc_config)
 test.o:test.cpp
 	g++ test.cpp -c -o test.o $(gcc_config)
-pipeline.o:pipeline.cpp pipeline.h
+pipeline.o:pipeline.cpp
 	g++ ../pipeline/pipeline.cpp -c -o pipeline.o $(gcc_config)
 .PHONY:clean
 clean:

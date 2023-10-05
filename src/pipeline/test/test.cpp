@@ -508,18 +508,18 @@ Y100
 
 int main()
 {
-	// TestParser();
-	// TestParser1();
-	// TestParser2();
-	// TestParser3();
-	// TestParser4();
-	// TestParser5();
-	// TestParser6();
-	// TestParser7();
+	TestParser();
+	TestParser1();
+	TestParser2();
+	TestParser3();
+	TestParser4();
+	TestParser5();
+	TestParser6();
+	TestParser7();
 	TestPipeline();
-	// TestPipeline1();
-	// TestPerformance();
-	// TestPerformance1();
+	TestPipeline1();
+	TestPerformance();
+	TestPerformance1();
 	return 0;
 }
 

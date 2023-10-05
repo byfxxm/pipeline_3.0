@@ -29,7 +29,7 @@ namespace byfxxm
 
 			_thread = std::thread([this]()
 								  {
-					_Run(0);
+					_DoStation(0);
 					_stop = false; });
 		}
 
@@ -58,7 +58,7 @@ namespace byfxxm
 		}
 
 	private:
-		void _Run(size_t station_idex) const
+		void _DoStation(size_t station_idex) const
 		{
 			if (station_idex == _station_list.size())
 				return;
@@ -71,9 +71,9 @@ namespace byfxxm
 					if (_stop)
 						return;
 
-					_Run(station_idex + 1);
+					_DoStation(station_idex + 1);
 				}
-				_Run(station_idex + 1);
+				_DoStation(station_idex + 1);
 				cur_station->done = true;
 			};
 
@@ -100,7 +100,7 @@ namespace byfxxm
 						if (_stop)
 							return;
 
-						_Run(station_idex + 1);
+						_DoStation(station_idex + 1);
 					} });
 
 				if (station_idex == 0 || !res)

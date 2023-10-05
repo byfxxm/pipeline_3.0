@@ -1,6 +1,6 @@
 VPATH=.\..\pipeline
 ifeq ($(MAKECMDGOALS),d)
-	gcc_config=-std=c++20 -g
+	gcc_config=-std=c++20 -O3
 else
 	gcc_config=-std=c++20 -O3 -DNDEBUG
 endif

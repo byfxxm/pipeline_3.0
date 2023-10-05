@@ -272,15 +272,19 @@ namespace byfxxm
 			}
 		};
 
-		template <class... _Gram>
+		template <class... _Grams>
 		struct _GrammarsList
 		{
-			static inline std::unique_ptr<grammar::Grammar> grammars[]{
-				std::make_unique<_Gram>()...};
+			static inline const std::unique_ptr<grammar::Grammar> grammars[sizeof...(_Grams)]{
+				std::make_unique<_Grams>()...};
 		};
 
 		using GrammarsList = _GrammarsList<
-			grammar::Blank, grammar::Expr, grammar::Ggram, grammar::IfElse, grammar::While>;
+			grammar::Blank,
+			grammar::Expr,
+			grammar::Ggram,
+			grammar::IfElse,
+			grammar::While>;
 
 		inline std::optional<Statement> GetStatement(const Utils &utils)
 		{

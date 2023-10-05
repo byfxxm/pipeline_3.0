@@ -153,6 +153,11 @@ namespace byfxxm
 		};
 
 		using WordsList = _WordsList<
-			word::Sharp, word::Constant, word::Key, word::Symbol, word::Gcode, word::Newline>;
+			word::Sharp,
+			word::Constant,
+			word::Key,
+			word::Symbol,
+			word::Gcode,
+			word::Newline>;
 	}
 }

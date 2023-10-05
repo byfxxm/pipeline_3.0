@@ -393,7 +393,7 @@ namespace byfxxm
 	}
 
 	template <class... Ts>
-	inline consteval std::variant<std::remove_reference_t<Ts>...> ToVariant(Ts &&...) noexcept
+	consteval std::variant<std::remove_reference_t<Ts>...> ToVariant(Ts &&...) noexcept
 	{
 		return {};
 	}

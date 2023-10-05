@@ -400,11 +400,41 @@ namespace byfxxm
 
 	// 一元操作符
 	using Unary = decltype(ToVariant(
-		predicate::Neg, predicate::Pos, predicate::Gcode<token::Kind::G>, predicate::Gcode<token::Kind::M>, predicate::Gcode<token::Kind::X>, predicate::Gcode<token::Kind::Y>, predicate::Gcode<token::Kind::Z>, predicate::Gcode<token::Kind::A>, predicate::Gcode<token::Kind::B>, predicate::Gcode<token::Kind::C>, predicate::Gcode<token::Kind::I>, predicate::Gcode<token::Kind::J>, predicate::Gcode<token::Kind::K>, predicate::Gcode<token::Kind::N>, predicate::Gcode<token::Kind::F>, predicate::Gcode<token::Kind::S>, predicate::Gcode<token::Kind::O>, predicate::Max, predicate::Min, predicate::Not));
+		predicate::Neg,
+		predicate::Pos,
+		predicate::Gcode<token::Kind::G>,
+		predicate::Gcode<token::Kind::M>,
+		predicate::Gcode<token::Kind::X>,
+		predicate::Gcode<token::Kind::Y>,
+		predicate::Gcode<token::Kind::Z>,
+		predicate::Gcode<token::Kind::A>,
+		predicate::Gcode<token::Kind::B>,
+		predicate::Gcode<token::Kind::C>,
+		predicate::Gcode<token::Kind::I>,
+		predicate::Gcode<token::Kind::J>,
+		predicate::Gcode<token::Kind::K>,
+		predicate::Gcode<token::Kind::N>,
+		predicate::Gcode<token::Kind::F>,
+		predicate::Gcode<token::Kind::S>,
+		predicate::Gcode<token::Kind::O>,
+		predicate::Max,
+		predicate::Min,
+		predicate::Not));
 
 	// 二元操作符
 	using Binary = decltype(ToVariant(
-		predicate::Plus, predicate::Minus, predicate::Multi, predicate::Div, predicate::Assign, predicate::GT, predicate::GE, predicate::LT, predicate::LE, predicate::EQ, predicate::NE, predicate::Comma));
+		predicate::Plus,
+		predicate::Minus,
+		predicate::Multi,
+		predicate::Div,
+		predicate::Assign,
+		predicate::GT,
+		predicate::GE,
+		predicate::LT,
+		predicate::LE,
+		predicate::EQ,
+		predicate::NE,
+		predicate::Comma));
 
 	using Sharp = decltype(ToVariant(
 		predicate::Sharp));

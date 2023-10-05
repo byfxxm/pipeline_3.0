@@ -508,7 +508,6 @@ Y100
 
 int main()
 {
-#if defined(_DEBUG) || !defined(NDEBUG)
 	TestParser();
 	TestParser1();
 	TestParser2();
@@ -519,10 +518,8 @@ int main()
 	TestParser7();
 	TestPipeline();
 	TestPipeline1();
-#else
 	TestPerformance();
 	TestPerformance1();
-#endif
 	return 0;
 }
 

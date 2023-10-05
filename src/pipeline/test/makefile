@@ -1,8 +1,8 @@
 VPATH=.\..\pipeline
-ifeq ($(MAKECMDGOALS),r)
-	gcc_config=-std=c++20 -O3 -g -DNDEBUG
-else
+ifeq ($(MAKECMDGOALS),d)
 	gcc_config=-std=c++20 -O3 -g
+else
+	gcc_config=-std=c++20 -O3 -g -DNDEBUG
 endif
 
 r: clean test.o pipeline.o

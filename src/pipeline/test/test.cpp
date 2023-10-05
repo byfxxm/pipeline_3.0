@@ -49,55 +49,6 @@ struct TestCode : byfxxm::Code {
 	size_t _n;
 };
 
-class FirstWorker : public byfxxm::Worker {
-public:
-	~FirstWorker() override = default;
-
-	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		for (size_t i = 0; i < 10; ++i) {
-			write(std::make_unique<TestCode>(i));
-		}
-
-		return true;
-	}
-};
-
-class TestWorker : public byfxxm::Worker {
-public:
-	~TestWorker() override = default;
-
-	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		if (static_cast<TestCode*>(code.get())->_n == 1000)
-			return false;
-
-		write(std::move(code));
-		return true;
-	}
-};
-
-class LastWorker : public byfxxm::Worker {
-public:
-	~LastWorker() override = default;
-
-	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		PrintLine(static_cast<TestCode*>(code.get())->_n);
-		return true;
-	}
-};
-
-void TestPipeline() {
-	auto pipeline = byfxxm::MakePipeline();
-	FirstWorker first;
-	pipeline->AddWorker(std::make_unique<FirstWorker>());
-	for (int i = 0; i < 20; ++i) {
-		pipeline->AddWorker(std::make_unique<TestWorker>());
-	}
-
-	pipeline->AddWorker(std::make_unique<LastWorker>());
-	pipeline->Start();
-	pipeline->Wait();
-}
-
 void TestLexer() {
 	std::string s =
 		R"(
@@ -448,6 +399,59 @@ private:
 	}
 };
 
+class FirstWorker : public byfxxm::Worker {
+public:
+	~FirstWorker() override = default;
+
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
+		for (size_t i = 0; i < 10000; ++i) {
+			write(std::make_unique<TestCode>(i));
+		}
+
+		return true;
+	}
+};
+
+class TestWorker : public byfxxm::Worker {
+public:
+	~TestWorker() override = default;
+
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
+		if (static_cast<TestCode*>(code.get())->_n == 1000)
+			return false;
+
+		write(std::move(code));
+		return true;
+	}
+};
+
+class LastWorker : public byfxxm::Worker {
+public:
+	~LastWorker() override = default;
+
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
+		PrintLine(static_cast<TestCode*>(code.get())->_n);
+		return true;
+	}
+};
+
+void TestPipeline() {
+	auto pipeline = byfxxm::MakePipeline();
+	FirstWorker first;
+	pipeline->AddWorker(std::make_unique<FirstWorker>());
+	for (int i = 0; i < 20; ++i) {
+		pipeline->AddWorker(std::make_unique<TestWorker>());
+	}
+
+	pipeline->AddWorker(std::make_unique<LastWorker>());
+	pipeline->Start();
+	std::thread([&]() {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		pipeline->Stop();
+		}).detach();
+		pipeline->Wait();
+}
+
 void TestPipeline1() {
 	auto pipeline = byfxxm::MakePipeline();
 	pipeline->AddWorker(MakeGworker(byfxxm::gworker_t::MEMORY, R"(G0 X0Y0Z0
@@ -461,18 +465,18 @@ Y100
 
 int main()
 {
-	TestParser();
-	TestParser1();
-	TestParser2();
-	TestParser3();
-	TestParser4();
-	TestParser5();
-	TestParser6();
-	TestParser7();
-	// TestPipeline();
-	// TestPipeline1();
-	TestPerformance();
-	TestPerformance1();
+	//TestParser();
+	//TestParser1();
+	//TestParser2();
+	//TestParser3();
+	//TestParser4();
+	//TestParser5();
+	//TestParser6();
+	//TestParser7();
+	TestPipeline();
+	//TestPipeline1();
+	//TestPerformance();
+	//TestPerformance1();
 	return 0;
 }
 

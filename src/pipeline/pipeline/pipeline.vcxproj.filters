@@ -42,9 +42,6 @@
     <ClInclude Include="code.h">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="coro.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="gworker.h">
       <Filter>workers</Filter>
     </ClInclude>

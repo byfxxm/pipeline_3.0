@@ -6,12 +6,14 @@
 #include "predicate.h"
 #include "abstree.h"
 
-namespace byfxxm {
-	struct TokenTraits {
+namespace byfxxm
+{
+	struct TokenTraits
+	{
 		static constexpr size_t default_priority = -1;
-		size_t priority{ default_priority };
-		Predicate pred{ Value() };
-		bool left_to_right{ false };
+		size_t priority{default_priority};
+		Predicate pred{Value()};
+		bool left_to_right{false};
 	};
 
 	inline const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
@@ -54,16 +56,19 @@ namespace byfxxm {
 	using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
 	using Segment = std::pmr::vector<SyntaxNode>;
 
-	class Expression {
+	class Expression
+	{
 	public:
-		Abstree::NodePtr operator()(Segment& seg) const {
+		Abstree::NodePtr operator()(Segment &seg) const
+		{
 			return _Expression(seg);
 		}
 
 	private:
-		using _SegSubRng = decltype(std::ranges::subrange(std::declval<Segment&>()));
+		using _SegSubRng = decltype(std::ranges::subrange(std::declval<Segment &>()));
 
-		Abstree::NodePtr _Expression(_SegSubRng range) const {
+		Abstree::NodePtr _Expression(_SegSubRng range) const
+		{
 			if (range.empty())
 				return {};
 
@@ -80,25 +85,31 @@ namespace byfxxm {
 			return node;
 		}
 
-		Segment _ProcessBracket(_SegSubRng range) const {
+		Segment _ProcessBracket(_SegSubRng range) const
+		{
 			Segment main;
 			Segment sub;
 			int level = 0;
-			for (auto& node : range) {
-				if (std::holds_alternative<Abstree::NodePtr>(node)) {
+			for (auto &node : range)
+			{
+				if (std::holds_alternative<Abstree::NodePtr>(node))
+				{
 					main.push_back(std::move(node));
 					continue;
 				}
 
 				auto tok = std::get<token::Token>(node);
-				if (tok.kind == token::Kind::LB) {
+				if (tok.kind == token::Kind::LB)
+				{
 					++level;
 					if (level == 1)
 						continue;
 				}
-				else if (tok.kind == token::Kind::RB) {
+				else if (tok.kind == token::Kind::RB)
+				{
 					--level;
-					if (level == 0) {
+					if (level == 0)
+					{
 						main.push_back(_Expression(sub));
 						sub.clear();
 						continue;
@@ -116,8 +127,10 @@ namespace byfxxm {
 			return main;
 		}
 
-		Segment::iterator _FindMinPriority(_SegSubRng range) const {
-			auto less = [](const SyntaxNode& lhs, const SyntaxNode& rhs) {
+		Segment::iterator _FindMinPriority(_SegSubRng range) const
+		{
+			auto less = [](const SyntaxNode &lhs, const SyntaxNode &rhs)
+			{
 				size_t lhs_pri = TokenTraits::default_priority;
 				size_t rhs_pri = TokenTraits::default_priority;
 
@@ -127,7 +140,7 @@ namespace byfxxm {
 					rhs_pri = token_traits.at(p->kind).priority;
 
 				return lhs_pri < rhs_pri;
-				};
+			};
 
 			auto ret = std::ranges::min_element(range, less);
 			if (auto p = std::get_if<token::Token>(&*ret); p && (token_traits.at(p->kind).left_to_right))
@@ -136,65 +149,80 @@ namespace byfxxm {
 			return ret;
 		}
 
-		Abstree::NodePtr _CurNode(SyntaxNode& node) const {
+		Abstree::NodePtr _CurNode(SyntaxNode &node) const
+		{
 			auto ret = ClonePtr(MakeUnique<Abstree::Node>());
-			if (auto abs = std::get_if<Abstree::NodePtr>(&node)) {
+			if (auto abs = std::get_if<Abstree::NodePtr>(&node))
+			{
 				ret = std::move(*abs);
 			}
-			else {
-				auto& tok = std::get<token::Token>(node);
+			else
+			{
+				auto &tok = std::get<token::Token>(node);
 				if (!tok.value)
 					ret->pred = token_traits.at(tok.kind).pred;
 				else
-					ret->pred = std::visit([](auto&& v)->Value {return v; }, std::move(tok.value.value()));
+					ret->pred = std::visit([](auto &&v) -> Value
+										   { return v; },
+										   std::move(tok.value.value()));
 			}
 
 			return ret;
 		}
 
-		void _CheckError(const Abstree::NodePtr& node) const {
+		void _CheckError(const Abstree::NodePtr &node) const
+		{
 			assert(node);
 			std::visit(
 				Overloaded{
-					[&](const Value& value) {
+					[&](const Value &value)
+					{
 						if (std::holds_alternative<std::monostate>(value))
 							return;
 
 						if (!node->subs.empty())
 							throw SyntaxException();
 					},
-					[&](const Unary&) {
+					[&](const Unary &)
+					{
 						if (node->subs.size() != 1)
 							throw SyntaxException();
 					},
-					[&](const Binary&) {
+					[&](const Binary &)
+					{
 						if (node->subs.size() != 2)
 							throw SyntaxException();
 					},
-					[&](const Sharp&) {
+					[&](const Sharp &)
+					{
 						if (node->subs.size() != 1)
 							throw SyntaxException();
 					},
-					[&](const Gcmd&) {
+					[&](const Gcmd &)
+					{
 						if (node->subs.size() == 0)
 							throw SyntaxException();
 					},
-					[](const auto&) { // default
+					[](const auto &) { // default
 						throw SyntaxException();
 					},
-				}, node->pred);
+				},
+				node->pred);
 		}
 	};
 
-	class Gtree {
+	class Gtree
+	{
 	public:
-		Abstree::NodePtr operator()(Segment& seg) const {
+		Abstree::NodePtr operator()(Segment &seg) const
+		{
 			if (seg.empty() || seg.size() % 2 != 0)
 				throw SyntaxException();
 
 			auto root = MakeUnique<Abstree::Node>();
 			root->pred = Gcmd{};
-			for (auto iter = seg.begin(); iter != seg.end();) {
+			for (auto iter = seg.begin(); iter != seg.end();)
+			{
 				auto node = MakeUnique<Abstree::Node>();
 				node->pred = _TokToPred(std::get<token::Token>(*iter++));
 				node->subs.push_back(std::move(std::get<Abstree::NodePtr>(*iter++)));
@@ -205,7 +233,8 @@ namespace byfxxm {
 		}
 
 	private:
-		Predicate _TokToPred(const token::Token& tok) const {
+		Predicate _TokToPred(const token::Token &tok) const
+		{
 			if (!token_traits.contains(tok.kind))
 				throw SyntaxException();
 

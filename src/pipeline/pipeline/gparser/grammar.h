@@ -5,29 +5,36 @@
 #include "block.h"
 #include "memory.h"
 
-namespace byfxxm {
-	namespace grammar {
+namespace byfxxm
+{
+	namespace grammar
+	{
 		using Get = std::function<token::Token()>;
 		using Peek = std::function<token::Token()>;
 		using Line = std::function<size_t()>;
 
-		struct Utils {
+		struct Utils
+		{
 			Get get;
 			Peek peek;
 			Line line;
 			GetRetVal return_val;
 		};
 
-		inline bool NewSegment(const token::Token& tok) {
+		inline bool NewSegment(const token::Token &tok)
+		{
 			return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 		}
 
-		inline bool EndOfFile(const token::Token& tok) {
+		inline bool EndOfFile(const token::Token &tok)
+		{
 			return tok.kind == token::Kind::KEOF;
 		}
 
-		inline void SkipNewlines(const Utils& utils) {
-			for (;;) {
+		inline void SkipNewlines(const Utils &utils)
+		{
+			for (;;)
+			{
 				auto tok = utils.peek();
 				if (tok.kind != token::Kind::NEWLINE)
 					break;
@@ -36,32 +43,40 @@ namespace byfxxm {
 			}
 		}
 
-		inline std::optional<Statement> GetStatement(const Utils&);
+		inline std::optional<Statement> GetStatement(const Utils &);
 
-		class Grammar {
+		class Grammar
+		{
 		public:
 			virtual ~Grammar() = default;
-			virtual bool First(const token::Token&) const = 0;
-			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const = 0;
+			virtual bool First(const token::Token &) const = 0;
+			virtual std::optional<Statement> Rest(Segment &&, const Utils &) const = 0;
 		};
 
-		class Blank : public Grammar {
-			virtual bool First(const token::Token& tok) const override {
+		class Blank : public Grammar
+		{
+			virtual bool First(const token::Token &tok) const override
+			{
 				return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&&, const Utils&) const override {
+			virtual std::optional<Statement> Rest(Segment &&, const Utils &) const override
+			{
 				return {};
 			}
 		};
 
-		class Expr : public Grammar {
-			virtual bool First(const token::Token& tok) const override {
+		class Expr : public Grammar
+		{
+			virtual bool First(const token::Token &tok) const override
+			{
 				return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				for (;;) {
+			virtual std::optional<Statement> Rest(Segment &&seg, const Utils &utils) const override
+			{
+				for (;;)
+				{
 					auto tok = utils.get();
 					if (NewSegment(tok))
 						break;
@@ -73,32 +88,40 @@ namespace byfxxm {
 			}
 		};
 
-		class Ggram : public Grammar {
-			virtual bool First(const token::Token& tok) const override {
+		class Ggram : public Grammar
+		{
+			virtual bool First(const token::Token &tok) const override
+			{
 				return IsGcode(tok);
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(Segment &&seg, const Utils &utils) const override
+			{
 				Segment gtag;
-				for (;;) {
+				for (;;)
+				{
 					auto tok = utils.peek();
-					if (NewSegment(tok)) {
+					if (NewSegment(tok))
+					{
 						if (!gtag.empty())
 							seg.push_back(expr(gtag));
 						break;
 					}
 
-					if (!IsGcode(tok)) {
+					if (!IsGcode(tok))
+					{
 						gtag.push_back(std::move(tok));
 						utils.get();
 						continue;
 					}
 
-					if (gtag.empty()) {
+					if (gtag.empty())
+					{
 						seg.push_back(std::move(tok));
 						utils.get();
 					}
-					else {
+					else
+					{
 						seg.push_back(expr(gtag));
 						gtag.clear();
 					}
@@ -110,18 +133,23 @@ namespace byfxxm {
 			}
 		};
 
-		class IfElse : public Grammar {
-			virtual bool First(const token::Token& tok) const override {
+		class IfElse : public Grammar
+		{
+			virtual bool First(const token::Token &tok) const override
+			{
 				return tok.kind == token::Kind::IF;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
+			virtual std::optional<Statement> Rest(Segment &&seg, const Utils &utils) const override
+			{
 				using If = block::IfElse::If;
 				using Else = block::IfElse::Else;
 
-				auto read_cond = [&]()->Statement {
+				auto read_cond = [&]() -> Statement
+				{
 					Segment seg;
-					for (;;) {
+					for (;;)
+					{
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
 							throw SyntaxException();
@@ -132,17 +160,16 @@ namespace byfxxm {
 						seg.push_back(std::move(tok));
 					}
 
-					return { std::move(seg), utils.line() };
-					};
+					return {std::move(seg), utils.line()};
+				};
 
-				auto read_scope = [&](Scope& scope) {
-					for (;;) {
+				auto read_scope = [&](Scope &scope)
+				{
+					for (;;)
+					{
 						SkipNewlines(utils);
 						auto tok = utils.peek();
-						if (tok.kind == token::Kind::ELSE
-							|| tok.kind == token::Kind::ELSEIF
-							|| tok.kind == token::Kind::ENDIF
-							)
+						if (tok.kind == token::Kind::ELSE || tok.kind == token::Kind::ELSEIF || tok.kind == token::Kind::ENDIF)
 							break;
 
 						auto stmt = GetStatement(utils);
@@ -151,7 +178,7 @@ namespace byfxxm {
 
 						scope.push_back(std::move(stmt.value()));
 					}
-					};
+				};
 
 				// read if
 				block::IfElse ifelse(utils.return_val);
@@ -159,7 +186,8 @@ namespace byfxxm {
 				read_scope(ifelse._ifs.back().scope);
 
 				// read elseif
-				for (;;) {
+				for (;;)
+				{
 					SkipNewlines(utils);
 					auto tok = utils.peek();
 					if (tok.kind != token::Kind::ELSEIF)
@@ -171,7 +199,8 @@ namespace byfxxm {
 
 				// read else
 				auto tok = utils.peek();
-				if (tok.kind == token::Kind::ELSE) {
+				if (tok.kind == token::Kind::ELSE)
+				{
 					utils.get();
 					SkipNewlines(utils);
 					read_scope(ifelse._else.scope);
@@ -186,15 +215,20 @@ namespace byfxxm {
 			}
 		};
 
-		class While : public Grammar {
-			virtual bool First(const token::Token& tok) const override {
+		class While : public Grammar
+		{
+			virtual bool First(const token::Token &tok) const override
+			{
 				return tok.kind == token::Kind::WHILE;
 			}
 
-			virtual std::optional<Statement> Rest(Segment&& seg, const Utils& utils) const override {
-				auto read_cond = [&]()->Statement {
+			virtual std::optional<Statement> Rest(Segment &&seg, const Utils &utils) const override
+			{
+				auto read_cond = [&]() -> Statement
+				{
 					Segment seg;
-					for (;;) {
+					for (;;)
+					{
 						auto tok = utils.get();
 						if (tok.kind == token::Kind::NEWLINE)
 							throw SyntaxException();
@@ -205,11 +239,13 @@ namespace byfxxm {
 						seg.push_back(std::move(tok));
 					}
 
-					return { std::move(seg), utils.line() };
-					};
+					return {std::move(seg), utils.line()};
+				};
 
-				auto read_scope = [&](Scope& scope) {
-					for (;;) {
+				auto read_scope = [&](Scope &scope)
+				{
+					for (;;)
+					{
 						SkipNewlines(utils);
 						auto tok = utils.peek();
 						if (tok.kind == token::Kind::END)
@@ -221,7 +257,7 @@ namespace byfxxm {
 
 						scope.push_back(std::move(stmt.value()));
 					}
-					};
+				};
 
 				block::While wh(utils.return_val);
 				wh._cond = read_cond();
@@ -237,22 +273,19 @@ namespace byfxxm {
 		};
 
 		template <class... _Gram>
-		struct _GrammarsList {
+		struct _GrammarsList
+		{
 			static inline std::unique_ptr<grammar::Grammar> grammars[]{
-				std::make_unique<_Gram>()...
-			};
+				std::make_unique<_Gram>()...};
 		};
 
-		using GrammarsList = _GrammarsList <
-			grammar::Blank
-			, grammar::Expr
-			, grammar::Ggram
-			, grammar::IfElse
-			, grammar::While
-		>;
+		using GrammarsList = _GrammarsList<
+			grammar::Blank, grammar::Expr, grammar::Ggram, grammar::IfElse, grammar::While>;
 
-		inline std::optional<Statement> GetStatement(const Utils& utils) {
-			for (;;) {
+		inline std::optional<Statement> GetStatement(const Utils &utils)
+		{
+			for (;;)
+			{
 				auto tok = utils.peek();
 				if (EndOfFile(tok))
 					return {};
@@ -261,8 +294,10 @@ namespace byfxxm {
 				seg.push_back(utils.get());
 
 				auto iter = std::begin(GrammarsList::grammars);
-				for (; iter != std::end(GrammarsList::grammars); ++iter) {
-					if ((*iter)->First(tok)) {
+				for (; iter != std::end(GrammarsList::grammars); ++iter)
+				{
+					if ((*iter)->First(tok))
+					{
 						std::optional<Statement> sub;
 						if (!(sub = (*iter)->Rest(std::move(seg), utils)).has_value())
 							break;

@@ -6,49 +6,53 @@
 #include <memory_resource>
 #include <functional>
 
-namespace byfxxm {
+namespace byfxxm
+{
 	inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-	inline bool IsNaN(double v) {
+	inline bool IsNaN(double v)
+	{
 		return v != v;
 	}
 
-	namespace token {
-		enum class Kind {
-			CON,			// 常量
-			IDN,				// 标识符
-			FOR,				// for
-			IF,					// IF
-			ELSE,			// ELSE
-			LB,				// [
-			RB,				// ]
-			POS,				// +
-			NEG,				// -
-			PLUS,			// +
-			MINUS,			// -
-			MUL,			// *
-			DIV,				// /
-			ASSIGN,		// =
-			EQ,				// ==
-			NE,				// !=
-			LT,				// <
-			LE,				// <=
-			GT,				// >
-			GE,				// >=
-			KEOF,			// EOF
-			SHARP,			// #
-			WHILE,			// WHILE
-			ELSEIF,			// ELSEIF
-			ENDIF,			// ENDIF
-			THEN,			// THEN
-			DO,				// DO
-			END,				// END
-			NEWLINE,		// \r | \n | \r\n
-			SEMI,			// ;
-			COMMA,		// ,
-			MAX,			// MAX
-			MIN,				// MIN
-			STRING,		// "..."
-			NOT,			// NOT
+	namespace token
+	{
+		enum class Kind
+		{
+			CON,	 // 常量
+			IDN,	 // 标识符
+			FOR,	 // for
+			IF,		 // IF
+			ELSE,	 // ELSE
+			LB,		 // [
+			RB,		 // ]
+			POS,	 // +
+			NEG,	 // -
+			PLUS,	 // +
+			MINUS,	 // -
+			MUL,	 // *
+			DIV,	 // /
+			ASSIGN,	 // =
+			EQ,		 // ==
+			NE,		 // !=
+			LT,		 // <
+			LE,		 // <=
+			GT,		 // >
+			GE,		 // >=
+			KEOF,	 // EOF
+			SHARP,	 // #
+			WHILE,	 // WHILE
+			ELSEIF,	 // ELSEIF
+			ENDIF,	 // ENDIF
+			THEN,	 // THEN
+			DO,		 // DO
+			END,	 // END
+			NEWLINE, // \r | \n | \r\n
+			SEMI,	 // ;
+			COMMA,	 // ,
+			MAX,	 // MAX
+			MIN,	 // MIN
+			STRING,	 // "..."
+			NOT,	 // NOT
 
 			G,
 			M,
@@ -68,7 +72,8 @@ namespace byfxxm {
 		};
 
 		// 种别码
-		struct Token {
+		struct Token
+		{
 			Kind kind;
 			std::optional<std::variant<double, std::string>> value;
 		};
@@ -126,43 +131,55 @@ namespace byfxxm {
 		};
 	}
 
-	inline bool _IsMapping(const token::Dictionary& dict, const std::string& word) {
+	inline bool _IsMapping(const token::Dictionary &dict, const std::string &word)
+	{
 		return dict.contains(word);
 	}
 
-	inline bool _IsMapping(const token::Dictionary& dict, char ch) {
-		return std::ranges::find_if(dict, [&](auto&& ele) {return ch == ele.first[0]; }) != dict.end();
+	inline bool _IsMapping(const token::Dictionary &dict, char ch)
+	{
+		return std::ranges::find_if(dict, [&](auto &&ele)
+									{ return ch == ele.first[0]; }) != dict.end();
 	}
 
-	inline bool IsKeyword(char ch) {
+	inline bool IsKeyword(char ch)
+	{
 		return _IsMapping(token::keywords, ch);
 	}
 
-	inline bool IsKeyword(const std::string& word) {
+	inline bool IsKeyword(const std::string &word)
+	{
 		return _IsMapping(token::keywords, word);
 	}
 
-	inline bool IsSymbol(char ch) {
+	inline bool IsSymbol(char ch)
+	{
 		return _IsMapping(token::symbols, ch);
 	}
 
-	inline bool IsSymbol(const std::string& word) {
+	inline bool IsSymbol(const std::string &word)
+	{
 		return _IsMapping(token::symbols, word);
 	}
 
-	inline bool IsGcode(char ch) {
+	inline bool IsGcode(char ch)
+	{
 		return _IsMapping(token::gcodes, ch);
 	}
 
-	inline bool IsGcode(token::Kind kind) {
-		return std::ranges::find_if(token::gcodes, [&](auto&& pair) {return pair.second == kind; }) != token::gcodes.end();
+	inline bool IsGcode(token::Kind kind)
+	{
+		return std::ranges::find_if(token::gcodes, [&](auto &&pair)
+									{ return pair.second == kind; }) != token::gcodes.end();
 	}
 
-	inline bool IsGcode(token::Token tok) {
+	inline bool IsGcode(token::Token tok)
+	{
 		return IsGcode(tok.kind);
 	}
 
-	inline bool IsGcode(const std::string& word) {
+	inline bool IsGcode(const std::string &word)
+	{
 		return _IsMapping(token::gcodes, word);
 	}
 
@@ -171,21 +188,26 @@ namespace byfxxm {
 		'\t',
 	};
 
-	inline bool IsSpace(char ch) {
+	inline bool IsSpace(char ch)
+	{
 		return std::ranges::find(spaces, ch) != std::end(spaces);
 	}
 
-	inline void SkipSpaces(auto&& stream) {
-		while (IsSpace(stream.peek())) {
+	inline void SkipSpaces(auto &&stream)
+	{
+		while (IsSpace(stream.peek()))
+		{
 			stream.get();
 		}
 	}
 
-	inline bool IsSharp(char ch) {
+	inline bool IsSharp(char ch)
+	{
 		return ch == '#';
 	}
 
-	inline bool IsSharp(const std::string word) {
+	inline bool IsSharp(const std::string word)
+	{
 		return word == "#";
 	}
 
@@ -194,36 +216,47 @@ namespace byfxxm {
 		'\r',
 	};
 
-	inline bool IsNewline(const std::string word) {
+	inline bool IsNewline(const std::string word)
+	{
 		return word == "\n" || word == "\r\n" || word == "\r";
 	}
 
-	inline bool IsNewline(char ch) {
+	inline bool IsNewline(char ch)
+	{
 		return std::ranges::find(newline, ch) != std::end(newline);
 	}
 
 	template <class T>
 	concept StreamConcept = requires(T t) {
-		{ t.get() }->std::integral;
-		{ t.peek() }->std::integral;
-		{ t.eof() }->std::same_as<bool>;
+		{
+			t.get()
+		} -> std::integral;
+		{
+			t.peek()
+		} -> std::integral;
+		{
+			t.eof()
+		} -> std::same_as<bool>;
 	};
 
 	template <class... Ts>
-	struct Overloaded : Ts... {
+	struct Overloaded : Ts...
+	{
 		using Ts::operator()...;
 	};
 
-	struct Gtag {
+	struct Gtag
+	{
 		token::Kind code;
 		double value;
 	};
 
-	inline bool operator==(const Gtag& lhs, const Gtag& rhs) {
+	inline bool operator==(const Gtag &lhs, const Gtag &rhs)
+	{
 		return lhs.code == rhs.code && lhs.value == rhs.value;
 	}
 
 	using Group = std::pmr::vector<double>;
-	using Value = std::variant<std::monostate, double, double*, std::string, bool, Gtag, Group>;
+	using Value = std::variant<std::monostate, double, double *, std::string, bool, Gtag, Group>;
 	using GetRetVal = std::function<Value()>;
 }

@@ -12,31 +12,37 @@
 #include "exception.h"
 #include "word.h"
 
-namespace byfxxm {
+namespace byfxxm
+{
 	template <StreamConcept T>
-	class Lexer {
+	class Lexer
+	{
 	public:
-		Lexer(T&& stream) : _stream(std::move(stream)) {}
+		Lexer(T &&stream) : _stream(std::move(stream)) {}
 
-		void Reset(const std::filesystem::path& file) {
+		void Reset(const std::filesystem::path &file)
+		{
 			using std::swap;
 			auto copy = Lexer(file);
 			swap(*this, copy);
 		}
 
-		void Reset(const std::string& memory) {
+		void Reset(const std::string &memory)
+		{
 			using std::swap;
 			auto copy = Lexer(memory);
 			swap(*this, copy);
 		}
 
-		token::Token Get() {
+		token::Token Get()
+		{
 			_lasttok = Peek();
 			_peektok.reset();
 			return _lasttok.value();
 		}
 
-		token::Token Peek() {
+		token::Token Peek()
+		{
 			if (!_peektok.has_value())
 				_peektok = _Next();
 
@@ -44,20 +50,26 @@ namespace byfxxm {
 		}
 
 	private:
-		token::Token _Next() {
+		token::Token _Next()
+		{
 			if (_stream.eof())
-				return token::Token{ token::Kind::KEOF, nan };
+				return token::Token{token::Kind::KEOF, nan};
 
 			SkipSpaces(_stream);
 			std::string word;
 			word.push_back(_stream.get());
 
-			auto peek = [this]() {return _stream.peek(); };
-			auto get = [this]() {return _stream.get(); };
-			auto last = [this]()->const std::optional<token::Token>&{return _lasttok; };
-			for (const auto& p : word::WordsList::words) {
+			auto peek = [this]()
+			{ return _stream.peek(); };
+			auto get = [this]()
+			{ return _stream.get(); };
+			auto last = [this]() -> const std::optional<token::Token> &
+			{ return _lasttok; };
+			for (const auto &p : word::WordsList::words)
+			{
 				std::optional<token::Token> tok;
-				if (p->First(word.front()) && (tok = p->Rest(word, { peek, get, last })).has_value()) {
+				if (p->First(word.front()) && (tok = p->Rest(word, {peek, get, last})).has_value())
+				{
 					return tok.value();
 				}
 			}

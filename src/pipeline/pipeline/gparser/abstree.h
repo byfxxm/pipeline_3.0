@@ -8,74 +8,93 @@
 #include "ginterface.h"
 #include "memory.h"
 
-namespace byfxxm {
-	class Abstree {
+namespace byfxxm
+{
+	class Abstree
+	{
 	public:
 		struct Node;
 		using NodePtr = ClonePtr<Node>;
 
-		struct Node {
+		struct Node
+		{
 			Predicate pred;
 			std::pmr::vector<NodePtr> subs;
 		};
 
-		Abstree(NodePtr&& root, Value& rval, Address* addr, Ginterface* pimpl) noexcept
-			: _root(std::move(root)), _return_val(rval), _addr(addr), _pimpl(pimpl) {
+		Abstree(NodePtr &&root, Value &rval, Address *addr, Ginterface *pimpl) noexcept
+			: _root(std::move(root)), _return_val(rval), _addr(addr), _pimpl(pimpl)
+		{
 			assert(_root);
 		}
 
 		~Abstree() = default;
-		Abstree(const Abstree&) = delete;
-		Abstree(Abstree&&) noexcept = default;
-		Abstree& operator=(const Abstree&) = delete;
-		Abstree& operator=(Abstree&&) noexcept = default;
+		Abstree(const Abstree &) = delete;
+		Abstree(Abstree &&) noexcept = default;
+		Abstree &operator=(const Abstree &) = delete;
+		Abstree &operator=(Abstree &&) noexcept = default;
 
-		Value Execute() {
+		Value Execute()
+		{
 			_return_val = _Execute(_root);
 			return _return_val;
 		}
 
 	private:
-		Value _Execute(const NodePtr& node) {
+		Value _Execute(const NodePtr &node)
+		{
 			if (std::holds_alternative<Value>(node->pred))
 				return std::get<Value>(node->pred);
 
 			std::pmr::vector<Value> params;
-			std::ranges::for_each(node->subs, [&](auto&& p) {
-				params.push_back(_Execute(p));
-				});
+			std::ranges::for_each(node->subs, [&](auto &&p)
+								  { params.push_back(_Execute(p)); });
 
 			return std::visit(
 				Overloaded{
-					[](const Value& value) {
+					[](const Value &value)
+					{
 						return value;
 					},
-					[&](const Unary& unary) {
+					[&](const Unary &unary)
+					{
 						assert(params.size() == 1);
-						return std::visit([&](auto&& func) {return func(params[0]); }, unary);
+						return std::visit([&](auto &&func)
+										  { return func(params[0]); },
+										  unary);
 					},
-					[&](const Binary& binary) {
+					[&](const Binary &binary)
+					{
 						assert(params.size() == 2);
-						return std::visit([&](auto&& func) {return func(params[0], params[1]); }, binary);
+						return std::visit([&](auto &&func)
+										  { return func(params[0], params[1]); },
+										  binary);
 					},
-					[&](const Sharp& sharp) {
+					[&](const Sharp &sharp)
+					{
 						assert(params.size() == 1);
-						return std::visit([&](auto&& func) {return func(params[0], _addr); }, sharp);
+						return std::visit([&](auto &&func)
+										  { return func(params[0], _addr); },
+										  sharp);
 					},
-					[&](const Gcmd& gcmd) {
+					[&](const Gcmd &gcmd)
+					{
 						assert(!params.empty());
-						return std::visit([&](auto&& func) {return func(params, _addr, _pimpl); }, gcmd);
+						return std::visit([&](auto &&func)
+										  { return func(params, _addr, _pimpl); },
+										  gcmd);
 					},
-					[](const auto&)->Value { // default
+					[](const auto &) -> Value { // default
 						throw AbstreeException();
 					},
-				}, node->pred);
+				},
+				node->pred);
 		}
 
 	private:
 		NodePtr _root;
-		Value& _return_val;
-		Address* _addr{ nullptr };
-		Ginterface* _pimpl{ nullptr };
+		Value &_return_val;
+		Address *_addr{nullptr};
+		Ginterface *_pimpl{nullptr};
 	};
 }

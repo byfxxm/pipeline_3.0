@@ -19,4 +19,4 @@
 #include <any>
 #include <cassert>
 
-#endif //PCH_H
+#endif // PCH_H

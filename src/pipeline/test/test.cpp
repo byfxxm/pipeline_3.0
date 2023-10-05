@@ -23,33 +23,38 @@
 #endif
 #endif
 
-using OutputFunc = void(*)(const char*);
-OutputFunc g_outputfunc = [](const char* str) {
+using OutputFunc = void (*)(const char *);
+OutputFunc g_outputfunc = [](const char *str)
+{
 	printf(str);
-	};
+};
 
 std::mutex g_mutex;
 
 template <class T>
-void PrintLine(T&& t) {
+void PrintLine(T &&t)
+{
 	std::unique_lock lock(g_mutex);
 	if (g_outputfunc)
 		g_outputfunc(std::format("{}\n", t).c_str());
 }
 
 template <class T>
-void Print(T&& t) {
+void Print(T &&t)
+{
 	std::unique_lock lock(g_mutex);
 	if (g_outputfunc)
 		g_outputfunc(std::format("{}", t).c_str());
 }
 
-struct TestCode : byfxxm::Code {
+struct TestCode : byfxxm::Code
+{
 	TestCode(size_t n) : _n(n) {}
 	size_t _n;
 };
 
-void TestLexer() {
+void TestLexer()
+{
 	std::string s =
 		R"(
 		#1 = 10
@@ -60,38 +65,46 @@ void TestLexer() {
 	std::vector<byfxxm::token::Token> res;
 	byfxxm::token::Token tok;
 	auto lex = byfxxm::Lexer(std::stringstream(s));
-	while ((tok = lex.Get()).kind != byfxxm::token::Kind::KEOF) {
+	while ((tok = lex.Get()).kind != byfxxm::token::Kind::KEOF)
+	{
 		res.emplace_back(std::move(tok));
 	}
 
-	std::for_each(res.begin(), res.end(), [](const byfxxm::token::Token& tok) {
-		PrintLine(static_cast<int>(tok.kind));
-		});
+	std::for_each(res.begin(), res.end(), [](const byfxxm::token::Token &tok)
+				  { PrintLine(static_cast<int>(tok.kind)); });
 }
 
-class Gpimpl : public byfxxm::Ginterface {
+class Gpimpl : public byfxxm::Ginterface
+{
 public:
-	virtual bool None(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+	virtual bool None(const byfxxm::Gparams &params, const byfxxm::Address *addr) override
+	{
 		return true;
 	}
-	virtual bool G0(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+	virtual bool G0(const byfxxm::Gparams &params, const byfxxm::Address *addr) override
+	{
 		return true;
 	}
-	virtual bool G1(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+	virtual bool G1(const byfxxm::Gparams &params, const byfxxm::Address *addr) override
+	{
 		return true;
 	}
-	virtual bool G2(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+	virtual bool G2(const byfxxm::Gparams &params, const byfxxm::Address *addr) override
+	{
 		return true;
 	}
-	virtual bool G3(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+	virtual bool G3(const byfxxm::Gparams &params, const byfxxm::Address *addr) override
+	{
 		return true;
 	}
-	virtual bool G4(const byfxxm::Gparams& params, const byfxxm::Address* addr) override {
+	virtual bool G4(const byfxxm::Gparams &params, const byfxxm::Address *addr) override
+	{
 		return true;
 	}
 };
 
-void TestParser() {
+void TestParser()
+{
 	std::string s =
 		R"(
 
@@ -119,7 +132,8 @@ void TestParser() {
 	assert(*addr[3] == -0.4);
 }
 
-void TestParser1() {
+void TestParser1()
+{
 	std::string s =
 		R"(
 		#2 = 1
@@ -139,7 +153,8 @@ void TestParser1() {
 	assert(byfxxm::IsNaN(*addr[20]));
 }
 
-void TestParser2() {
+void TestParser2()
+{
 	std::string s =
 		R"(
 		#1 = 1
@@ -170,7 +185,8 @@ void TestParser2() {
 	assert(*addr[5] == 5);
 }
 
-void TestParser3() {
+void TestParser3()
+{
 	std::string s =
 		R"(
 		#1 = 1
@@ -216,7 +232,8 @@ void TestParser3() {
 	assert(*addr[100] == 100);
 }
 
-void TestParser4() {
+void TestParser4()
+{
 	std::string s =
 		R"(
 		#1 = 234.5
@@ -234,7 +251,8 @@ void TestParser4() {
 	assert(*addr[2] == 234.5);
 }
 
-void TestParser5() {
+void TestParser5()
+{
 	std::string s =
 		R"(
 		#10 =[ [1 + 2]] * [3 + 4]
@@ -248,7 +266,8 @@ void TestParser5() {
 	assert(*addr[10] == 21);
 }
 
-void TestParser6() {
+void TestParser6()
+{
 	std::string s =
 		R"(
 		IF 1 LT 2 THEN
@@ -274,7 +293,8 @@ void TestParser6() {
 	assert(*addr[2] == 2);
 }
 
-void TestParser7() {
+void TestParser7()
+{
 	std::string s =
 		R"(
 		#1 = 1
@@ -296,52 +316,58 @@ void TestParser7() {
 	auto parser = byfxxm::Gparser(s);
 	auto pimpl = Gpimpl();
 	byfxxm::Address addr;
-	parser.Run(&addr, &pimpl, [](size_t line) {
-		PrintLine(line);
-		});
+	parser.Run(&addr, &pimpl, [](size_t line)
+			   { PrintLine(line); });
 }
 
-class MyFileStream {
+class MyFileStream
+{
 public:
-	MyFileStream(const std::filesystem::path& pa) {
+	MyFileStream(const std::filesystem::path &pa)
+	{
 		fopen_s(&_file, pa.string().c_str(), "r");
 		assert(_file);
 	}
 
-	~MyFileStream() {
+	~MyFileStream()
+	{
 		if (_file)
 			fclose(_file);
 	}
 
-	MyFileStream(MyFileStream&& rhs) noexcept
-		: _file(std::exchange(rhs._file, nullptr))
-		, _cache(std::move(rhs._cache)) {}
+	MyFileStream(MyFileStream &&rhs) noexcept
+		: _file(std::exchange(rhs._file, nullptr)), _cache(std::move(rhs._cache)) {}
 
-	int get() {
+	int get()
+	{
 		auto ret = peek();
 		_cache.reset();
 		return ret;
 	}
 
-	int peek() {
+	int peek()
+	{
 		if (!_cache)
 			_cache = fgetc(_file);
 
 		return _cache.value();
 	}
 
-	bool eof() {
+	bool eof()
+	{
 		return feof(_file) != 0;
 	}
 
 private:
-	FILE* _file{ nullptr };
+	FILE *_file{nullptr};
 	std::optional<int> _cache;
 };
 
-inline auto perform = [](const std::filesystem::path& pa, int times) {
+inline auto perform = [](const std::filesystem::path &pa, int times)
+{
 	auto t0 = std::chrono::high_resolution_clock::now();
-	for (auto i = 0; i < times; ++i) {
+	for (auto i = 0; i < times; ++i)
+	{
 		auto parser = byfxxm::Gparser(MyFileStream(pa));
 		byfxxm::Address addr;
 		parser.Run(&addr, nullptr);
@@ -357,37 +383,43 @@ inline auto perform = [](const std::filesystem::path& pa, int times) {
 	PrintLine(" s");
 	Print(length / cost);
 	PrintLine(" MB/s");
-	};
+};
 
-void TestPerformance() {
+void TestPerformance()
+{
 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\LTJX.nc)"), 1);
 }
 
-void TestPerformance1() {
+void TestPerformance1()
+{
 	perform(std::filesystem::path(std::filesystem::current_path().string() + R"(\macro1.nc)"), 100);
 }
 
-std::string _Format(const byfxxm::AxesArray& axes) {
+std::string _Format(const byfxxm::AxesArray &axes)
+{
 	std::string ret;
-	std::ranges::for_each(axes, [&](auto&& item) {
+	std::ranges::for_each(axes, [&](auto &&item)
+						  {
 		ret += " ";
-		ret += std::to_string(item);
-		});
+		ret += std::to_string(item); });
 
 	return ret;
 }
 
-class Issuer : public byfxxm::Worker {
+class Issuer : public byfxxm::Worker
+{
 private:
-	virtual bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& writefn) noexcept override {
-		switch (code->tag) {
+	virtual bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc &writefn) noexcept override
+	{
+		switch (code->tag)
+		{
 		case byfxxm::codetag::MOVE:
 			Print("G0");
-			PrintLine(_Format(static_cast<byfxxm::Move*>(code.get())->end));
+			PrintLine(_Format(static_cast<byfxxm::Move *>(code.get())->end));
 			break;
 		case byfxxm::codetag::LINE:
 			Print("G1");
-			PrintLine(_Format(static_cast<byfxxm::Line*>(code.get())->end));
+			PrintLine(_Format(static_cast<byfxxm::Line *>(code.get())->end));
 			break;
 		case byfxxm::codetag::ARC:
 			break;
@@ -399,12 +431,15 @@ private:
 	}
 };
 
-class FirstWorker : public byfxxm::Worker {
+class FirstWorker : public byfxxm::Worker
+{
 public:
 	~FirstWorker() override = default;
 
-	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		for (size_t i = 0; i < 10000; ++i) {
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc &write) noexcept override
+	{
+		for (size_t i = 0; i < 10000; ++i)
+		{
 			write(std::make_unique<TestCode>(i));
 		}
 
@@ -412,12 +447,14 @@ public:
 	}
 };
 
-class TestWorker : public byfxxm::Worker {
+class TestWorker : public byfxxm::Worker
+{
 public:
 	~TestWorker() override = default;
 
-	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		if (static_cast<TestCode*>(code.get())->_n == 1000)
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc &write) noexcept override
+	{
+		if (static_cast<TestCode *>(code.get())->_n == 1000)
 			return false;
 
 		write(std::move(code));
@@ -425,34 +462,40 @@ public:
 	}
 };
 
-class LastWorker : public byfxxm::Worker {
+class LastWorker : public byfxxm::Worker
+{
 public:
 	~LastWorker() override = default;
 
-	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc& write) noexcept override {
-		PrintLine(static_cast<TestCode*>(code.get())->_n);
+	bool Do(std::unique_ptr<byfxxm::Code> code, const byfxxm::WriteFunc &write) noexcept override
+	{
+		PrintLine(static_cast<TestCode *>(code.get())->_n);
 		return true;
 	}
 };
 
-void TestPipeline() {
+void TestPipeline()
+{
 	auto pipeline = byfxxm::MakePipeline();
 	FirstWorker first;
 	pipeline->AddWorker(std::make_unique<FirstWorker>());
-	for (int i = 0; i < 20; ++i) {
+	for (int i = 0; i < 20; ++i)
+	{
 		pipeline->AddWorker(std::make_unique<TestWorker>());
 	}
 
 	pipeline->AddWorker(std::make_unique<LastWorker>());
 	pipeline->Start();
-	std::thread([&]() {
+	std::thread([&]()
+				{
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		pipeline->Stop();
-		}).detach();
-		pipeline->Wait();
+		pipeline->Stop(); })
+		.detach();
+	pipeline->Wait();
 }
 
-void TestPipeline1() {
+void TestPipeline1()
+{
 	auto pipeline = byfxxm::MakePipeline();
 	pipeline->AddWorker(MakeGworker(byfxxm::gworker_t::MEMORY, R"(G0 X0Y0Z0
 G1X100
@@ -465,29 +508,30 @@ Y100
 
 int main()
 {
-	//TestParser();
-	//TestParser1();
-	//TestParser2();
-	//TestParser3();
-	//TestParser4();
-	//TestParser5();
-	//TestParser6();
-	//TestParser7();
+	// TestParser();
+	// TestParser1();
+	// TestParser2();
+	// TestParser3();
+	// TestParser4();
+	// TestParser5();
+	// TestParser6();
+	// TestParser7();
 	TestPipeline();
-	//TestPipeline1();
-	//TestPerformance();
-	//TestPerformance1();
+	// TestPipeline1();
+	// TestPerformance();
+	// TestPerformance1();
 	return 0;
 }
 
-void SetOutput(OutputFunc func) {
+void SetOutput(OutputFunc func)
+{
 	g_outputfunc = func;
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
 // 调试程序: F5 或调试 >“开始调试”菜单
 
-// 入门使用技巧: 
+// 入门使用技巧:
 //   1. 使用解决方案资源管理器窗口添加/管理文件
 //   2. 使用团队资源管理器窗口连接到源代码管理
 //   3. 使用输出窗口查看生成输出和其他消息

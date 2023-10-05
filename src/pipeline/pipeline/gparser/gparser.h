@@ -3,18 +3,22 @@
 #include "syntax.h"
 #include "ginterface.h"
 
-namespace byfxxm {
+namespace byfxxm
+{
 	template <StreamConcept T>
-	class Gparser {
+	class Gparser
+	{
 	public:
-		Gparser(T&& stream) : _syntax(std::move(stream)) {}
-		Gparser(const std::string& str) : _syntax(std::istringstream(str)) {}
-		Gparser(const std::filesystem::path& file) : _syntax(std::ifstream(file)) {}
+		Gparser(T &&stream) : _syntax(std::move(stream)) {}
+		Gparser(const std::string &str) : _syntax(std::istringstream(str)) {}
+		Gparser(const std::filesystem::path &file) : _syntax(std::ifstream(file)) {}
 
-		void Run(Address* addr, Ginterface* pimpl, std::function<void(size_t)> updateline = {}) {
+		void Run(Address *addr, Ginterface *pimpl, std::function<void(size_t)> updateline = {})
+		{
 			_syntax.SetEnv(addr, pimpl);
-			while (auto abs_tree = _syntax.Next()) {
-				auto& [tree, line] = abs_tree.value();
+			while (auto abs_tree = _syntax.Next())
+			{
+				auto &[tree, line] = abs_tree.value();
 				if (updateline)
 					updateline(line);
 
@@ -29,6 +33,6 @@ namespace byfxxm {
 	template <class T>
 	Gparser(T) -> Gparser<T>;
 
-	Gparser(std::string)->Gparser<std::istringstream>;
-	Gparser(std::filesystem::path)->Gparser<std::ifstream>;
+	Gparser(std::string) -> Gparser<std::istringstream>;
+	Gparser(std::filesystem::path) -> Gparser<std::ifstream>;
 }

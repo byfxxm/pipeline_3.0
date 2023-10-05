@@ -4,40 +4,48 @@
 #include <thread>
 #include "ring_buffer.h"
 
-namespace byfxxm {
+namespace byfxxm
+{
 	using Fifo = RingBuffer<std::unique_ptr<Code>, 4>;
-	struct Station {
+	struct Station
+	{
 		std::unique_ptr<Worker> worker;
 		std::unique_ptr<Fifo> fifo = std::make_unique<Fifo>();
-		Station* prev = nullptr;
+		Station *prev = nullptr;
 		bool done = false;
 	};
 
-	struct PipelineException : public std::exception {
+	struct PipelineException : public std::exception
+	{
 	};
 
-	class PipelineImp : public Pipeline {
+	class PipelineImp : public Pipeline
+	{
 	public:
-		void Start() override {
+		void Start() override
+		{
 			if (_station_list.empty())
 				return;
 
-			_thread = std::thread([this]() {
-				_Run(0);
-				_stop = false;
-				});
+			_thread = std::thread([this]()
+								  {
+					_Run(0);
+					_stop = false; });
 		}
 
-		void Stop() override {
+		void Stop() override
+		{
 			_stop = true;
 		}
 
-		void Wait() override {
+		void Wait() override
+		{
 			if (_thread.joinable())
 				_thread.join();
 		}
 
-		void AddWorker(std::unique_ptr<Worker> worker) override {
+		void AddWorker(std::unique_ptr<Worker> worker) override
+		{
 			if (!worker)
 				throw std::exception();
 
@@ -50,13 +58,16 @@ namespace byfxxm {
 		}
 
 	private:
-		void _Run(size_t station_idex) const {
+		void _Run(size_t station_idex) const
+		{
 			if (station_idex == _station_list.size())
 				return;
 
 			auto cur_station = _station_list[station_idex].get();
-			auto finish = [&]() {
-				while (!cur_station->fifo->Write(nullptr)) {
+			auto finish = [&]()
+			{
+				while (!cur_station->fifo->Write(nullptr))
+				{
 					if (_stop)
 						return;
 
@@ -64,31 +75,36 @@ namespace byfxxm {
 				}
 				_Run(station_idex + 1);
 				cur_station->done = true;
-				};
+			};
 
-			for (;;) {
+			for (;;)
+			{
 				std::unique_ptr<Code> code;
-				if (cur_station->prev && !cur_station->prev->done) {
-					while (_stop || !cur_station->prev->fifo->Read(code)) {
+				if (cur_station->prev && !cur_station->prev->done)
+				{
+					while (_stop || !cur_station->prev->fifo->Read(code))
+					{
 						return;
 					}
 
-					if (!code) {
+					if (!code)
+					{
 						finish();
 						return;
 					}
 				}
 
-				auto res = cur_station->worker->Do(std::move(code), [&](std::unique_ptr<Code> code) {
+				auto res = cur_station->worker->Do(std::move(code), [&](std::unique_ptr<Code> code)
+												   {
 					while (!cur_station->fifo->Write(std::move(code))) {
 						if (_stop)
 							return;
 
 						_Run(station_idex + 1);
-					}
-					});
+					} });
 
-				if (station_idex == 0 || !res) {
+				if (station_idex == 0 || !res)
+				{
 					finish();
 					return;
 				}

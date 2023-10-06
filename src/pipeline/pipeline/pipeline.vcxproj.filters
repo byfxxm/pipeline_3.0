@@ -80,6 +80,9 @@
     <ClInclude Include="array_nd.h">
       <Filter>public</Filter>
     </ClInclude>
+    <ClInclude Include="coro.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">

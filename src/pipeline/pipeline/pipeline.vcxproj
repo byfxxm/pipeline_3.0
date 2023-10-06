@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="array_nd.h" />
     <ClInclude Include="code.h" />
+    <ClInclude Include="coro.h" />
     <ClInclude Include="gparser\abstree.h" />
     <ClInclude Include="gparser\address.h" />
     <ClInclude Include="gparser\block.h" />

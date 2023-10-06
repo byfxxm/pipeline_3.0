@@ -454,10 +454,10 @@ void TestPipeline() {
 
   pipeline->AddWorker(std::make_unique<LastWorker>());
   pipeline->Start();
-  std::thread([&]() {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    pipeline->Stop();
-  }).detach();
+  // std::thread([&]() {
+  //   std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  //   pipeline->Stop();
+  // }).detach();
   pipeline->Wait();
 }
 

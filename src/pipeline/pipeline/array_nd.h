@@ -21,14 +21,7 @@ template <class T> struct InitializerList<T, 1> {
 template <class T, size_t N>
 using InitializerList_t = InitializerList<T, N>::type;
 
-/*
- * 多维数组
- * usage:
- *		ArrayNd<char, 3> arr(7, 8, 9); // 构建对象（元素类型为
- *char，维数是 3，第一、第二、第三维度分别是 7、8、9） char c = arr[1][2][3]; //
- *随机访问数组，参数个数等于维数时，返回引用 arr.Memset('z');	 // 内存初始化
- *		ArrayNd<int, 2> arr1{{0, 1}, {2, 3, 4}}; // 支持初始化列表
- */
+// 多维数组
 template <ElementT Ty, size_t Num>
   requires(Num > 0)
 class ArrayNd final {

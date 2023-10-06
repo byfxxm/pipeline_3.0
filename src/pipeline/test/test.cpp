@@ -446,7 +446,6 @@ public:
 
 void TestPipeline() {
   auto pipeline = byfxxm::MakePipeline();
-  FirstWorker first;
   pipeline->AddWorker(std::make_unique<FirstWorker>());
   for (int i = 0; i < 20; ++i) {
     pipeline->AddWorker(std::make_unique<TestWorker>());

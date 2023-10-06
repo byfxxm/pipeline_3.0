@@ -7,7 +7,7 @@ else
 	show_msg=debug
 endif
 
-main: clean test.o pipeline.o
+d: clean test.o pipeline.o
 	g++ test.o pipeline.o -o test $(gcc_config)
 	@echo $(show_msg)
 

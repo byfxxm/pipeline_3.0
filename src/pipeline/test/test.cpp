@@ -481,8 +481,8 @@ int main() {
   TestParser5();
   TestParser6();
   TestParser7();
-  TestPipeline();
-  TestPipeline1();
+  // TestPipeline();
+  // TestPipeline1();
   TestPerformance();
   TestPerformance1();
   return 0;

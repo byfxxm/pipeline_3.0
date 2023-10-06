@@ -8,7 +8,7 @@ else
 endif
 
 d: clean test.o pipeline.o
-	g++ test.o pipeline.o -o test $(gcc_config)
+	g++ test.o pipeline.o -o a $(gcc_config)
 	@echo $(show_msg)
 
 r: d

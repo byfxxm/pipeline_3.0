@@ -11,6 +11,8 @@ main: clean test.o pipeline.o
 	g++ test.o pipeline.o -o test $(gcc_config)
 	@echo $(show_msg)
 
+r: main
+
 test.o: test.cpp
 	g++ test.cpp -c -o test.o $(gcc_config)
 

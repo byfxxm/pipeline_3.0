@@ -1,10 +1,13 @@
 #pragma once
+#include "pipeline.h"
 #include "ring_buffer.h"
 #include <memory>
 #include <thread>
 #include <vector>
 
 namespace byfxxm {
+struct Code;
+class Worker;
 using Fifo = RingBuffer<std::unique_ptr<Code>, 4>;
 struct Station {
   std::unique_ptr<Worker> worker;

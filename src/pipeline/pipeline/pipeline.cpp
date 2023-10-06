@@ -1,6 +1,5 @@
 #include "pipeline.h"
 #include "gworker.h"
-#include "pch.h"
 #include "pipeline_imp.h"
 
 namespace byfxxm {

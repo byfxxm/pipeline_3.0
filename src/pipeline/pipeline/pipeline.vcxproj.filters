@@ -8,10 +8,6 @@
     <Filter Include="core">
       <UniqueIdentifier>{b6832d46-638d-4c48-9f66-ef1c773a85d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="default">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="workers">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -24,12 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h">
-      <Filter>default</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>default</Filter>
-    </ClInclude>
     <ClInclude Include="ring_buffer.h">
       <Filter>core</Filter>
     </ClInclude>
@@ -94,12 +84,6 @@
   <ItemGroup>
     <ClCompile Include="pipeline.cpp">
       <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>default</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>default</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

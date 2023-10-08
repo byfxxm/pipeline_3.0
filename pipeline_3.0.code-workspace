@@ -85,6 +85,7 @@
 		},
 		"editor.formatOnSave": true,
 		"gitlens.currentLine.enabled": false,
-		"gitlens.hovers.currentLine.over": "line"
+		"gitlens.hovers.currentLine.over": "line",
+		"gitlens.codeLens.enabled": false
 	}
 }

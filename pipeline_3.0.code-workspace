@@ -83,6 +83,8 @@
 			"xtr1common": "cpp",
 			"xutility": "cpp"
 		},
-		"editor.formatOnSave": true
+		"editor.formatOnSave": true,
+		"gitlens.currentLine.enabled": false,
+		"gitlens.hovers.currentLine.over": "line"
 	}
 }

@@ -94,12 +94,13 @@ private:
       std::get<_CoPtr>(co) = _CoPtr(fiber, [](void *p) { DeleteFiber(p); });
     }
 
-    auto main_fiber = ConvertThreadToFiber(nullptr);
+    auto main_fiber =
+        std::unique_ptr<void, decltype([](void *) { ConvertFiberToThread(); })>(
+            ConvertThreadToFiberEx(nullptr, FIBER_FLAG_FLOAT_SWITCH));
     CoMainHelper main_helper(_co_subs);
-    std::get<_CoPtr>(_co_main) = _CoPtr(main_fiber, [](void *) {});
+    std::get<_CoPtr>(_co_main) = _CoPtr(main_fiber.get(), [](void *) {});
     std::get<_CoMainFunc>(_co_main)(&main_helper,
                                     std::get<_CoUserPtr>(_co_main));
-    ConvertFiberToThread();
   }
 
 private:

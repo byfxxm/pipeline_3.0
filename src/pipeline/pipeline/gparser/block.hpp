@@ -1,7 +1,7 @@
 #pragma once
-#include "abstree.h"
-#include "memory.h"
-#include "production.h"
+#include "abstree.hpp"
+#include "memory.hpp"
+#include "production.hpp"
 #include <optional>
 #include <tuple>
 

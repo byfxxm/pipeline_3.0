@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "abstree.h"
-#include "block.h"
-#include "memory.h"
-#include "production.h"
-#include "token.h"
+#include "abstree.hpp"
+#include "block.hpp"
+#include "memory.hpp"
+#include "production.hpp"
+#include "token.hpp"
 
 namespace byfxxm {
 namespace grammar {

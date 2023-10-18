@@ -1,5 +1,5 @@
 #pragma once
-#include "array_nd.h"
+#include "array_nd.hpp"
 
 namespace byfxxm {
 using AxesArray = ArrayNd<double, 1>;

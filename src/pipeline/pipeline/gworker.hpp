@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "code.h"
-#include "gparser/gparser.h"
+#include "code.hpp"
+#include "gparser/gparser.hpp"
 #include <format>
 #include <type_traits>
 

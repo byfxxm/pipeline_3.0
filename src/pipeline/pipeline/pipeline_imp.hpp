@@ -1,6 +1,6 @@
 #pragma once
-#include "coro.h"
-#include "ring_buffer.h"
+#include "coro.hpp"
+#include "ring_buffer.hpp"
 #include <memory>
 #include <vector>
 

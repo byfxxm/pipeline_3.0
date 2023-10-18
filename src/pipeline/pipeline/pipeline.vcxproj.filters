@@ -20,67 +20,67 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ring_buffer.h">
+    <ClInclude Include="ring_buffer.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="pipeline_imp.h">
+    <ClInclude Include="pipeline_imp.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="pipeline.h">
+    <ClInclude Include="pipeline.hpp">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="code.h">
+    <ClInclude Include="code.hpp">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="gworker.h">
+    <ClInclude Include="gworker.hpp">
       <Filter>workers</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\abstree.h">
+    <ClInclude Include="gparser\abstree.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\address.h">
+    <ClInclude Include="gparser\address.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\block.h">
+    <ClInclude Include="gparser\block.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\exception.h">
+    <ClInclude Include="gparser\exception.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\ginterface.h">
+    <ClInclude Include="gparser\ginterface.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\gparser.h">
+    <ClInclude Include="gparser\gparser.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\grammar.h">
+    <ClInclude Include="gparser\grammar.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\lexer.h">
+    <ClInclude Include="gparser\lexer.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\memory.h">
+    <ClInclude Include="gparser\memory.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\predicate.h">
+    <ClInclude Include="gparser\predicate.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\production.h">
+    <ClInclude Include="gparser\production.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\syntax.h">
+    <ClInclude Include="gparser\syntax.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\token.h">
+    <ClInclude Include="gparser\token.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\word.h">
+    <ClInclude Include="gparser\word.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="array_nd.h">
+    <ClInclude Include="array_nd.hpp">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="coro.h">
+    <ClInclude Include="coro.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

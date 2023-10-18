@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "address.h"
-#include "block.h"
-#include "grammar.h"
-#include "lexer.h"
-#include "memory.h"
-#include "production.h"
+#include "address.hpp"
+#include "block.hpp"
+#include "grammar.hpp"
+#include "lexer.hpp"
+#include "memory.hpp"
+#include "production.hpp"
 
 namespace byfxxm {
 inline std::optional<Statement> GetStatement(ClonePtr<block::Block> &block) {

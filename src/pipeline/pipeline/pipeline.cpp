@@ -1,6 +1,6 @@
-#include "pipeline.h"
-#include "gworker.h"
-#include "pipeline_imp.h"
+#include "pipeline.hpp"
+#include "gworker.hpp"
+#include "pipeline_imp.hpp"
 
 namespace byfxxm {
 std::unique_ptr<Pipeline> MakePipeline() {

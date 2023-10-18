@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "abstree.h"
-#include "predicate.h"
-#include "token.h"
+#include "abstree.hpp"
+#include "predicate.hpp"
+#include "token.hpp"
 #include <ranges>
 #include <variant>
 #include <vector>

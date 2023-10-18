@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "ginterface.h"
-#include "memory.h"
-#include "predicate.h"
-#include "token.h"
+#include "ginterface.hpp"
+#include "memory.hpp"
+#include "predicate.hpp"
+#include "token.hpp"
 #include <cassert>
 #include <functional>
 #include <future>

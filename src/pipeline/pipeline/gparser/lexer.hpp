@@ -8,9 +8,9 @@
 #include <type_traits>
 #include <variant>
 
-#include "exception.h"
-#include "token.h"
-#include "word.h"
+#include "exception.hpp"
+#include "token.hpp"
+#include "word.hpp"
 
 namespace byfxxm {
 template <StreamConcept T> class Lexer {

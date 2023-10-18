@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "memory.h"
-#include "token.h"
+#include "memory.hpp"
+#include "token.hpp"
 #include <optional>
 #include <string>
 #include <unordered_map>

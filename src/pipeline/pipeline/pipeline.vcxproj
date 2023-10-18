@@ -143,27 +143,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="array_nd.h" />
-    <ClInclude Include="code.h" />
-    <ClInclude Include="coro.h" />
-    <ClInclude Include="gparser\abstree.h" />
-    <ClInclude Include="gparser\address.h" />
-    <ClInclude Include="gparser\block.h" />
-    <ClInclude Include="gparser\exception.h" />
-    <ClInclude Include="gparser\ginterface.h" />
-    <ClInclude Include="gparser\gparser.h" />
-    <ClInclude Include="gparser\grammar.h" />
-    <ClInclude Include="gparser\lexer.h" />
-    <ClInclude Include="gparser\memory.h" />
-    <ClInclude Include="gparser\predicate.h" />
-    <ClInclude Include="gparser\production.h" />
-    <ClInclude Include="gparser\syntax.h" />
-    <ClInclude Include="gparser\token.h" />
-    <ClInclude Include="gparser\word.h" />
-    <ClInclude Include="gworker.h" />
-    <ClInclude Include="pipeline.h" />
-    <ClInclude Include="pipeline_imp.h" />
-    <ClInclude Include="ring_buffer.h" />
+    <ClInclude Include="array_nd.hpp" />
+    <ClInclude Include="code.hpp" />
+    <ClInclude Include="coro.hpp" />
+    <ClInclude Include="gparser\abstree.hpp" />
+    <ClInclude Include="gparser\address.hpp" />
+    <ClInclude Include="gparser\block.hpp" />
+    <ClInclude Include="gparser\exception.hpp" />
+    <ClInclude Include="gparser\ginterface.hpp" />
+    <ClInclude Include="gparser\gparser.hpp" />
+    <ClInclude Include="gparser\grammar.hpp" />
+    <ClInclude Include="gparser\lexer.hpp" />
+    <ClInclude Include="gparser\memory.hpp" />
+    <ClInclude Include="gparser\predicate.hpp" />
+    <ClInclude Include="gparser\production.hpp" />
+    <ClInclude Include="gparser\syntax.hpp" />
+    <ClInclude Include="gparser\token.hpp" />
+    <ClInclude Include="gparser\word.hpp" />
+    <ClInclude Include="gworker.hpp" />
+    <ClInclude Include="pipeline.hpp" />
+    <ClInclude Include="pipeline_imp.hpp" />
+    <ClInclude Include="ring_buffer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pipeline.cpp" />

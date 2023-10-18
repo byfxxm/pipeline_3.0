@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "address.h"
-#include "exception.h"
-#include "ginterface.h"
-#include "memory.h"
-#include "token.h"
+#include "address.hpp"
+#include "exception.hpp"
+#include "ginterface.hpp"
+#include "memory.hpp"
+#include "token.hpp"
 #include <algorithm>
 #include <string>
 #include <variant>

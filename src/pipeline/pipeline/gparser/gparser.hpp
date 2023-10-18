@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "ginterface.h"
-#include "syntax.h"
-#include "token.h"
+#include "ginterface.hpp"
+#include "syntax.hpp"
+#include "token.hpp"
 
 namespace byfxxm {
 template <StreamConcept T> class Gparser {

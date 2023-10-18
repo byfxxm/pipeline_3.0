@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include "exception.hpp"
+#include "token.hpp"
+#include "word.hpp"
 #include <cassert>
 #include <cctype>
 #include <filesystem>
@@ -7,10 +10,6 @@
 #include <sstream>
 #include <type_traits>
 #include <variant>
-
-#include "exception.hpp"
-#include "token.hpp"
-#include "word.hpp"
 
 namespace byfxxm {
 template <StreamConcept T> class Lexer {

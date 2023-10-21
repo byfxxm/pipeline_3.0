@@ -56,6 +56,7 @@ template <class T, class... Args>
 }
 
 template <class T, class... Args>
+  requires std::is_constructible_v<T, Args...>
 [[nodiscard]] auto MakeUnique(std::pmr::memory_resource &mr,
                               Args &&...args) noexcept {
   return UniquePtr<T>(new (mr.allocate(sizeof(T)))

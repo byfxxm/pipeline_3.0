@@ -16,7 +16,8 @@ public:
 
   Address(std::initializer_list<std::pair<_Key, _VType>> list) {
     for (auto &x : list) {
-      _dict.insert(std::make_pair(x.first, MakeUnique<_VType>(mempool, x.second)));
+      _dict.insert(
+          std::make_pair(x.first, MakeUnique<_VType>(mempool, x.second)));
     }
   }
 

@@ -236,9 +236,9 @@ class While : public Grammar {
     if (tok.kind != token::Kind::END)
       throw SyntaxException();
 
-    return Statement(
-        ClonePtr<block::Block>(MakeUnique<block::While>(mempool, std::move(wh))),
-        utils.line());
+    return Statement(ClonePtr<block::Block>(
+                         MakeUnique<block::While>(mempool, std::move(wh))),
+                     utils.line());
   }
 };
 

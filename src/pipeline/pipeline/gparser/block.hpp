@@ -51,17 +51,17 @@ inline std::optional<Statement> GetStatement(Scope &scope, size_t &index) {
 class IfElse : public Block {
   struct If {
     Statement cond;
-    Scope scope{&spr};
+    Scope scope{&mempool};
   };
 
   struct Else {
-    Scope scope{&spr};
+    Scope scope{&mempool};
   };
 
   IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
 
   virtual UniquePtr<Block> Clone() const {
-    return MakeUnique<IfElse>(spr, *this);
+    return MakeUnique<IfElse>(mempool, *this);
   }
 
   virtual std::optional<Statement> Next() override {
@@ -101,7 +101,7 @@ class IfElse : public Block {
     return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
   }
 
-  std::pmr::vector<If> _ifs{&spr};
+  std::pmr::vector<If> _ifs{&mempool};
   Else _else;
   size_t _cur_stmt{0};
   bool _iscond{true};
@@ -114,7 +114,7 @@ class While : public Block {
   While(GetRetVal get_ret) : _get_ret(get_ret) {}
 
   virtual UniquePtr<Block> Clone() const {
-    return MakeUnique<While>(spr, *this);
+    return MakeUnique<While>(mempool, *this);
   }
 
   virtual std::optional<Statement> Next() override {
@@ -155,8 +155,8 @@ class While : public Block {
 
   Statement _cond;
   Statement _cond_backup;
-  Scope _scope{&spr};
-  Scope _scope_backup{&spr};
+  Scope _scope{&mempool};
+  Scope _scope_backup{&mempool};
   bool _iscond{true};
   GetRetVal _get_ret;
   size_t _scope_index{0};

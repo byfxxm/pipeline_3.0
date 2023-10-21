@@ -358,7 +358,7 @@ inline auto Gcmd = [](const std::pmr::vector<Value> &tags, Address *addr,
   if (tags.empty())
     throw AbstreeException();
 
-  Gparams par{&spr};
+  Gparams par{&mempool};
   std::ranges::for_each(tags, [&](const Value &ele) {
     auto tag = std::get<Gtag>(ele);
     if (IsNaN(tag.value) || gtag_to_ginterface.contains(tag))

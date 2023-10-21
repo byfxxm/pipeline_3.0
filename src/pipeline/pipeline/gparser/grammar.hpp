@@ -82,7 +82,7 @@ class Ggram : public Grammar {
 
   virtual std::optional<Statement> Rest(Segment &&seg,
                                         const Utils &utils) const override {
-    Segment gtag{&spr};
+    Segment gtag{&mempool};
     for (;;) {
       auto tok = utils.peek();
       if (NewSegment(tok)) {
@@ -106,7 +106,7 @@ class Ggram : public Grammar {
       }
     }
 
-    Segment ret{&spr};
+    Segment ret{&mempool};
     ret.push_back(gtree(seg));
     return Statement(std::move(ret), utils.line());
   }
@@ -123,7 +123,7 @@ class IfElse : public Grammar {
     using Else = block::IfElse::Else;
 
     auto read_cond = [&]() -> Statement {
-      Segment seg{&spr};
+      Segment seg{&mempool};
       for (;;) {
         auto tok = utils.get();
         if (tok.kind == token::Kind::NEWLINE)
@@ -184,7 +184,7 @@ class IfElse : public Grammar {
       throw SyntaxException();
 
     return Statement(ClonePtr<block::Block>(
-                         MakeUnique<block::IfElse>(spr, std::move(ifelse))),
+                         MakeUnique<block::IfElse>(mempool, std::move(ifelse))),
                      utils.line());
   }
 };
@@ -197,7 +197,7 @@ class While : public Grammar {
   virtual std::optional<Statement> Rest(Segment &&seg,
                                         const Utils &utils) const override {
     auto read_cond = [&]() -> Statement {
-      Segment seg{&spr};
+      Segment seg{&mempool};
       for (;;) {
         auto tok = utils.get();
         if (tok.kind == token::Kind::NEWLINE)
@@ -237,7 +237,7 @@ class While : public Grammar {
       throw SyntaxException();
 
     return Statement(
-        ClonePtr<block::Block>(MakeUnique<block::While>(spr, std::move(wh))),
+        ClonePtr<block::Block>(MakeUnique<block::While>(mempool, std::move(wh))),
         utils.line());
   }
 };
@@ -257,7 +257,7 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
     if (EndOfFile(tok))
       return {};
 
-    Segment seg{&spr};
+    Segment seg{&mempool};
     seg.push_back(utils.get());
 
     auto iter = std::begin(GrammarsList::grammars);

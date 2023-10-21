@@ -79,8 +79,8 @@ private:
   }
 
   Segment _ProcessBracket(_SegSubRng range) const {
-    Segment main{&spr};
-    Segment sub{&spr};
+    Segment main{&mempool};
+    Segment sub{&mempool};
     int level = 0;
     for (auto &node : range) {
       if (std::holds_alternative<Abstree::NodePtr>(node)) {
@@ -136,7 +136,7 @@ private:
   }
 
   Abstree::NodePtr _CurNode(SyntaxNode &node) const {
-    auto ret = ClonePtr(MakeUnique<Abstree::Node>(spr));
+    auto ret = ClonePtr(MakeUnique<Abstree::Node>(mempool));
     if (auto abs = std::get_if<Abstree::NodePtr>(&node)) {
       ret = std::move(*abs);
     } else {
@@ -191,10 +191,10 @@ public:
     if (seg.empty() || seg.size() % 2 != 0)
       throw SyntaxException();
 
-    auto root = MakeUnique<Abstree::Node>(spr);
+    auto root = MakeUnique<Abstree::Node>(mempool);
     root->pred = Gcmd{};
     for (auto iter = seg.begin(); iter != seg.end();) {
-      auto node = MakeUnique<Abstree::Node>(spr);
+      auto node = MakeUnique<Abstree::Node>(mempool);
       node->pred = _TokToPred(std::get<token::Token>(*iter++));
       node->subs.push_back(std::move(std::get<Abstree::NodePtr>(*iter++)));
       root->subs.push_back(std::move(node));

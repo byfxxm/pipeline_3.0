@@ -16,13 +16,13 @@ public:
 
   Address(std::initializer_list<std::pair<_Key, _VType>> list) {
     for (auto &x : list) {
-      _dict.insert(std::make_pair(x.first, MakeUnique<_VType>(spr, x.second)));
+      _dict.insert(std::make_pair(x.first, MakeUnique<_VType>(mempool, x.second)));
     }
   }
 
   _Value &operator[](const _Key &key) {
     if (_dict.find(key) == _dict.end())
-      _dict.insert(std::make_pair(key, MakeUnique<_VType>(spr, nan)));
+      _dict.insert(std::make_pair(key, MakeUnique<_VType>(mempool, nan)));
 
     return _dict.at(key);
   }
@@ -34,6 +34,6 @@ public:
   void Clear() { _dict.clear(); }
 
 private:
-  std::pmr::unordered_map<_Key, _Value> _dict{&spr};
+  std::pmr::unordered_map<_Key, _Value> _dict{&mempool};
 };
 } // namespace byfxxm

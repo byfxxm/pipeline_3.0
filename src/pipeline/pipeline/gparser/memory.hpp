@@ -21,7 +21,7 @@ public:
   template <class T2>
   UniquePtr(UniquePtr<T2> &&rhs) noexcept : _pointer(std::move(rhs._pointer)) {}
 
-  template <class T2> UniquePtr(T2 *rhs) noexcept : _pointer(rhs) {}
+  template <class T2> UniquePtr(T2 *p) noexcept : _pointer(p) {}
 
   explicit operator bool() const noexcept { return _pointer.operator bool(); }
 

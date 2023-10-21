@@ -7,8 +7,8 @@ namespace byfxxm {
 template <class T> struct Deleter {
   Deleter(std::pmr::memory_resource *mr = nullptr) : mr_(mr) {}
 
-  template <std::derived_from<T> T2>
-  Deleter(const Deleter<T2> &d) noexcept : size_(sizeof(T2)), mr_(d.mr_) {}
+  template <std::derived_from<T> T1>
+  Deleter(const Deleter<T1> &del) noexcept : size_(sizeof(T1)), mr_(del.mr_) {}
 
   void operator()(T *p) const {
     if (mr_) {
@@ -27,13 +27,13 @@ template <class T, class D = Deleter<T>> class UniquePtr {
 public:
   UniquePtr() = default;
 
-  template <class T2>
-  UniquePtr(UniquePtr<T2> &&rhs) noexcept : _pointer(std::move(rhs._pointer)) {}
+  template <class T1>
+  UniquePtr(UniquePtr<T1> &&rhs) noexcept : _pointer(std::move(rhs._pointer)) {}
 
-  template <class T2> UniquePtr(T2 *p) noexcept : _pointer(p) {}
+  template <class T1> UniquePtr(T1 *p) noexcept : _pointer(p) {}
 
-  template <class T2, class Dx>
-  UniquePtr(T2 *p, Dx &&dx) noexcept : _pointer(p, std::forward<Dx>(dx)) {}
+  template <class T1, class D1>
+  UniquePtr(T1 *p, D1 &&del) noexcept : _pointer(p, std::forward<D1>(del)) {}
 
   explicit operator bool() const noexcept { return _pointer.operator bool(); }
 
@@ -50,8 +50,8 @@ public:
 private:
   std::unique_ptr<T, D> _pointer;
 
-  template <class T2, class D2> friend class UniquePtr;
-  template <class T2> friend class ClonePtr;
+  template <class T1, class D1> friend class UniquePtr;
+  template <class T1> friend class ClonePtr;
 };
 
 template <class T, class... Args>
@@ -76,8 +76,8 @@ public:
   ClonePtr(ClonePtr &&) noexcept = default;
   ClonePtr &operator=(ClonePtr &&) noexcept = default;
 
-  template <class T2>
-  ClonePtr(UniquePtr<T2> &&rhs) noexcept : _pointer(std::move(rhs)) {}
+  template <class T1>
+  ClonePtr(UniquePtr<T1> &&rhs) noexcept : _pointer(std::move(rhs)) {}
 
   ClonePtr(const UniquePtr<T> &rhs) {
     if constexpr (std::is_abstract_v<T>) {

@@ -4,14 +4,22 @@
 
 namespace byfxxm {
 template <class T> struct Deleter {
-  Deleter() = default;
+  Deleter(std::pmr::memory_resource *mr = nullptr) : mr_(mr) {}
 
   template <std::derived_from<T> T2>
-  Deleter(const Deleter<T2> &) noexcept : size(sizeof(T2)) {}
+  Deleter(const Deleter<T2> &) noexcept : size_(sizeof(T2)) {}
 
-  void operator()(T *p) const { delete p; }
+  void operator()(T *p) const {
+    if (mr_) {
+      p->~T();
+      mr_->deallocate(p, size_);
+    } else {
+      delete p;
+    }
+  }
 
-  size_t size{sizeof(T)};
+  size_t size_{sizeof(T)};
+  std::pmr::memory_resource *mr_{nullptr};
 };
 
 template <class T, class D = Deleter<T>> class UniquePtr {
@@ -42,8 +50,16 @@ private:
 };
 
 template <class T, class... Args>
+  requires std::is_constructible_v<T, Args...>
 [[nodiscard]] auto MakeUnique(Args &&...args) noexcept {
   return UniquePtr<T>(new T(std::forward<Args>(args)...));
+}
+
+template <class T, class... Args>
+[[nodiscard]] auto MakeUnique(std::pmr::memory_resource &mr,
+                              Args &&...args) noexcept {
+  return UniquePtr<T>(new (mr.allocate(sizeof(T)))
+                          T(std::forward<Args>(args)...));
 }
 
 template <class T> class ClonePtr {

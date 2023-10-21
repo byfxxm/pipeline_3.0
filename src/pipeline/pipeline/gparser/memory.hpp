@@ -31,6 +31,9 @@ public:
 
   template <class T2> UniquePtr(T2 *p) noexcept : _pointer(p) {}
 
+  template <class T2, class Dx>
+  UniquePtr(T2 *p, Dx &&dx) noexcept : _pointer(p, std::forward<Dx>(dx)) {}
+
   explicit operator bool() const noexcept { return _pointer.operator bool(); }
 
   decltype(auto) operator->() const noexcept { return _pointer.operator->(); }
@@ -60,7 +63,8 @@ template <class T, class... Args>
 [[nodiscard]] auto MakeUnique(std::pmr::memory_resource &mr,
                               Args &&...args) noexcept {
   return UniquePtr<T>(new (mr.allocate(sizeof(T)))
-                          T(std::forward<Args>(args)...));
+                          T(std::forward<Args>(args)...),
+                      Deleter<T>(&mr));
 }
 
 template <class T> class ClonePtr {
@@ -103,4 +107,6 @@ public:
 private:
   UniquePtr<T> _pointer;
 };
+
+inline std::pmr::synchronized_pool_resource spr;
 } // namespace byfxxm

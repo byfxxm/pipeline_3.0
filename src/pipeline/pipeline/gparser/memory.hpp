@@ -56,14 +56,13 @@ private:
 
 template <class T, class... Args>
   requires std::is_constructible_v<T, Args...>
-[[nodiscard]] auto MakeUnique(Args &&...args) noexcept {
+[[nodiscard]] auto MakeUnique(Args &&...args) {
   return UniquePtr<T>(new T(std::forward<Args>(args)...));
 }
 
 template <class T, class... Args>
   requires std::is_constructible_v<T, Args...>
-[[nodiscard]] auto MakeUnique(std::pmr::memory_resource &mr,
-                              Args &&...args) noexcept {
+[[nodiscard]] auto MakeUnique(std::pmr::memory_resource &mr, Args &&...args) {
   return UniquePtr<T>(new (mr.allocate(sizeof(T)))
                           T(std::forward<Args>(args)...),
                       Deleter<T>(&mr));

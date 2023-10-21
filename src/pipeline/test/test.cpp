@@ -473,18 +473,28 @@ Y100
 }
 
 int main() {
-  TestParser();
-  TestParser1();
-  TestParser2();
-  TestParser3();
-  TestParser4();
-  TestParser5();
-  TestParser6();
-  TestParser7();
-  // TestPipeline();
-  // TestPipeline1();
-  TestPerformance();
-  TestPerformance1();
+  std::thread thr[5];
+  for (auto &t : thr) {
+    t = std::thread([]() {
+      TestParser();
+      TestParser1();
+      TestParser2();
+      TestParser3();
+      TestParser4();
+      TestParser5();
+      TestParser6();
+      TestParser7();
+      // TestPipeline();
+      // TestPipeline1();
+      TestPerformance();
+      TestPerformance1();
+    });
+  }
+
+  for (auto &t : thr) {
+    t.join();
+  }
+
   return 0;
 }
 

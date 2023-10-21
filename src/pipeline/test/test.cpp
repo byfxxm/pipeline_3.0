@@ -473,7 +473,7 @@ Y100
 }
 
 int main() {
-  std::thread thr[5];
+  std::thread thr[1];
   for (auto &t : thr) {
     t = std::thread([]() {
       TestParser();

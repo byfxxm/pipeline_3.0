@@ -8,7 +8,7 @@ template <class T> struct Deleter {
   Deleter(std::pmr::memory_resource *mr = nullptr) : mr_(mr) {}
 
   template <std::derived_from<T> T2>
-  Deleter(const Deleter<T2> &) noexcept : size_(sizeof(T2)) {}
+  Deleter(const Deleter<T2> &d) noexcept : size_(sizeof(T2)), mr_(d.mr_) {}
 
   void operator()(T *p) const {
     if (mr_) {
@@ -51,6 +51,7 @@ private:
   std::unique_ptr<T, D> _pointer;
 
   template <class T2, class D2> friend class UniquePtr;
+  template <class T2> friend class ClonePtr;
 };
 
 template <class T, class... Args>
@@ -79,10 +80,14 @@ public:
   ClonePtr(UniquePtr<T2> &&rhs) noexcept : _pointer(std::move(rhs)) {}
 
   ClonePtr(const UniquePtr<T> &rhs) {
-    if constexpr (std::is_abstract_v<T>)
+    if constexpr (std::is_abstract_v<T>) {
       _pointer = rhs->Clone();
-    else
-      _pointer = MakeUnique<T>(*rhs);
+    } else {
+      if (rhs._pointer.get_deleter().mr_)
+        _pointer = MakeUnique<T>(*rhs._pointer.get_deleter().mr_, *rhs);
+      else
+        _pointer = MakeUnique<T>(*rhs);
+    }
   }
 
   ClonePtr(const ClonePtr &rhs) : ClonePtr(rhs._pointer) {}

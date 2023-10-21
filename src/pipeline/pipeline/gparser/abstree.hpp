@@ -16,7 +16,7 @@ public:
 
   struct Node {
     Predicate pred;
-    std::pmr::vector<NodePtr> subs;
+    std::pmr::vector<NodePtr> subs{&spr};
   };
 
   Abstree(NodePtr &&root, Value &rval, Address *addr,
@@ -41,7 +41,7 @@ private:
     if (std::holds_alternative<Value>(node->pred))
       return std::get<Value>(node->pred);
 
-    std::pmr::vector<Value> params;
+    std::pmr::vector<Value> params{&spr};
     std::ranges::for_each(node->subs,
                           [&](auto &&p) { params.push_back(_Execute(p)); });
 

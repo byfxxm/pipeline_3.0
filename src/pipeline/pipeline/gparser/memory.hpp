@@ -7,11 +7,11 @@ template <class T> struct Deleter {
   Deleter() = default;
 
   template <std::derived_from<T> T2>
-  Deleter(const Deleter<T2> &) noexcept : _size(sizeof(T2)) {}
+  Deleter(const Deleter<T2> &) noexcept : size(sizeof(T2)) {}
 
   void operator()(T *p) const { delete p; }
 
-  size_t _size{sizeof(T)};
+  size_t size{sizeof(T)};
 };
 
 template <class T, class D = Deleter<T>> class UniquePtr {

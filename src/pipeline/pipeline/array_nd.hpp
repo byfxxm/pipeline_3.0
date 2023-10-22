@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <array>
 #include <cassert>
 #include <concepts>
@@ -21,7 +21,7 @@ template <class T> struct InitializerList<T, 1> {
 template <class T, size_t N>
 using InitializerList_t = InitializerList<T, N>::type;
 
-// ¶àÎ¬Êý×é
+// å¤šç»´æ•°ç»„
 template <ElementT Ty, size_t Num>
   requires(Num > 0)
 class ArrayNd final {

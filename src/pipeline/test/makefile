@@ -21,5 +21,5 @@ pipeline.o: pipeline.cpp
 
 .PHONY: clean
 clean:
-	del *.exe
-	del *.o
+	powershell "rm *.exe"
+	powershell "rm *.*o"

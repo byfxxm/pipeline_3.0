@@ -1,4 +1,4 @@
-#include "pipeline.hpp"
+﻿#include "pipeline.hpp"
 #include "gworker.hpp"
 #include "pipeline_imp.hpp"
 

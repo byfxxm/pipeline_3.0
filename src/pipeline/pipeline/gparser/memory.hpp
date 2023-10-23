@@ -115,7 +115,7 @@ private:
   UniquePtr<T> _pointer;
 };
 
-inline std::pmr::synchronized_pool_resource mempool;
+inline thread_local std::pmr::unsynchronized_pool_resource mempool;
 } // namespace byfxxm
 
 #endif

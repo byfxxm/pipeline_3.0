@@ -287,41 +287,41 @@ void TestParser7() {
   parser.Run(&addr, &pimpl, [](size_t line) { PrintLine(line); });
 }
 
- class MyFileStream {
- public:
-   MyFileStream(const std::filesystem::path &pa) {
-     fopen_s(&_file, pa.string().c_str(), "r");
-     assert(_file);
-   }
+class MyFileStream {
+public:
+  MyFileStream(const std::filesystem::path &pa) {
+    fopen_s(&_file, pa.string().c_str(), "r");
+    assert(_file);
+  }
 
-   ~MyFileStream() {
-     if (_file)
-       fclose(_file);
-   }
+  ~MyFileStream() {
+    if (_file)
+      fclose(_file);
+  }
 
-   MyFileStream(MyFileStream &&rhs) noexcept
-       : _file(std::exchange(rhs._file, nullptr)),
-         _cache(std::move(rhs._cache)) {}
+  MyFileStream(MyFileStream &&rhs) noexcept
+      : _file(std::exchange(rhs._file, nullptr)),
+        _cache(std::move(rhs._cache)) {}
 
-   int get() {
-     auto ret = peek();
-     _cache.reset();
-     return ret;
-   }
+  int get() {
+    auto ret = peek();
+    _cache.reset();
+    return ret;
+  }
 
-   int peek() {
-     if (!_cache)
-       _cache = fgetc(_file);
+  int peek() {
+    if (!_cache)
+      _cache = fgetc(_file);
 
-     return _cache.value();
-   }
+    return _cache.value();
+  }
 
-   bool eof() { return feof(_file) != 0; }
+  bool eof() { return feof(_file) != 0; }
 
- private:
-   FILE *_file{nullptr};
-   std::optional<int> _cache;
- };
+private:
+  FILE *_file{nullptr};
+  std::optional<int> _cache;
+};
 
 inline auto perform = [](const std::filesystem::path &pa, int times) {
   auto t0 = std::chrono::high_resolution_clock::now();

@@ -19,4 +19,4 @@ test.o: test.cpp
 .PHONY: clean
 clean:
 	del /f *.exe
-	del /f *.*o
+	del /f *.o

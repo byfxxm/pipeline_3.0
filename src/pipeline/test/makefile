@@ -18,5 +18,5 @@ test.o: test.cpp
 
 .PHONY: clean
 clean:
-	powershell "rm *.exe"
-	powershell "rm *.*o"
+	del /f *.exe
+	del /f *.*o

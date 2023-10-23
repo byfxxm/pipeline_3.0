@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _TOKEN_HPP_
+#define _TOKEN_HPP_
+
 #include <functional>
 #include <limits>
 #include <memory_resource>
@@ -189,3 +191,5 @@ using Value = std::variant<std::monostate, double, double *, std::string, bool,
                            Gtag, Group>;
 using GetRetVal = std::function<Value()>;
 } // namespace byfxxm
+
+#endif

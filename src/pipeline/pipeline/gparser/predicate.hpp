@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _PREDICATE_HPP_
+#define _PREDICATE_HPP_
+
 #include "address.hpp"
 #include "exception.hpp"
 #include "ginterface.hpp"
@@ -414,3 +416,5 @@ using Gcmd = decltype(ToVariant(predicate::Gcmd));
 // 定义谓词
 using Predicate = std::variant<Value, Unary, Binary, Sharp, Gcmd>;
 } // namespace byfxxm
+
+#endif

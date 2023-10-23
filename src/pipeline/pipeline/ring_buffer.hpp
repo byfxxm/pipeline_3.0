@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _RING_BUFFER_HPP_
+#define _RING_BUFFER_HPP_
+
 #include <atomic>
 #include <concepts>
 
@@ -45,3 +47,5 @@ private:
   Ty data_[Num];
 };
 } // namespace byfxxm
+
+#endif

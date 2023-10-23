@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _GWORKER_HPP_
+#define _GWORKER_HPP_
+
 #include "code.hpp"
 #include "gparser/gparser.hpp"
 #include "worker.hpp"
@@ -147,3 +149,5 @@ private:
       _parser;
 };
 } // namespace byfxxm
+
+#endif

@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _GINTERFACE_HPP_
+#define _GINTERFACE_HPP_
+
 #include "token.hpp"
 #include <vector>
 
@@ -17,3 +19,5 @@ public:
   virtual bool G4(const Gparams &, const Address *) = 0;
 };
 } // namespace byfxxm
+
+#endif

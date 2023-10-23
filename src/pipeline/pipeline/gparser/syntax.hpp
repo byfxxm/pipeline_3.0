@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _SYNTAX_HPP_
+#define _SYNTAX_HPP_
+
 #include "address.hpp"
 #include "block.hpp"
 #include "grammar.hpp"
@@ -91,3 +93,5 @@ private:
 
 template <class T> Syntax(T) -> Syntax<T>;
 } // namespace byfxxm
+
+#endif

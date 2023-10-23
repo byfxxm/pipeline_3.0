@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _GPARSER_HPP_
+#define _GPARSER_HPP_
+
 #include "ginterface.hpp"
 #include "syntax.hpp"
 #include "token.hpp"
@@ -31,3 +33,5 @@ template <class T> Gparser(T) -> Gparser<T>;
 Gparser(std::string) -> Gparser<std::istringstream>;
 Gparser(std::filesystem::path) -> Gparser<std::ifstream>;
 } // namespace byfxxm
+
+#endif

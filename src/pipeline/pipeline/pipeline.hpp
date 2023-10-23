@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _PIPELINE_HPP_
+#define _PIPELINE_HPP_
+
 #include "coro.hpp"
 #include "ring_buffer.hpp"
 #include "worker.hpp"
@@ -117,3 +119,5 @@ private:
   std::atomic<bool> _stop = false;
 };
 } // namespace byfxxm
+
+#endif

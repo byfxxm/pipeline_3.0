@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _WORKER_HPP_
+#define _WORKER_HPP_
+
 #include <functional>
 #include <memory>
 
@@ -12,3 +14,5 @@ public:
   virtual bool Do(std::unique_ptr<Code>, const WriteFunc &) noexcept = 0;
 };
 } // namespace byfxxm
+
+#endif

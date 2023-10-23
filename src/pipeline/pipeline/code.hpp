@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _CODE_HPP_
+#define _CODE_HPP_
+
 #include "array_nd.hpp"
 
 namespace byfxxm {
@@ -34,3 +36,5 @@ struct Arc : Code {
   bool ccw{false};
 };
 } // namespace byfxxm
+
+#endif

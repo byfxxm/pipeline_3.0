@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _ADDRESS_HPP_
+#define _ADDRESS_HPP_
+
 #include "memory.hpp"
 #include "token.hpp"
 #include <optional>
@@ -38,3 +40,5 @@ private:
   std::pmr::unordered_map<_Key, _Value> _dict{&mempool};
 };
 } // namespace byfxxm
+
+#endif

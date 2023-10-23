@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _BLOCK_HPP_
+#define _BLOCK_HPP_
+
 #include "abstree.hpp"
 #include "memory.hpp"
 #include "production.hpp"
@@ -164,3 +166,5 @@ class While : public Block {
 };
 } // namespace block
 } // namespace byfxxm
+
+#endif

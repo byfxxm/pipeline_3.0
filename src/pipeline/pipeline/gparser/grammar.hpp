@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _GRAMMAR_HPP_
+#define _GRAMMAR_HPP_
+
 #include "abstree.hpp"
 #include "block.hpp"
 #include "memory.hpp"
@@ -276,3 +278,5 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
 }
 } // namespace grammar
 } // namespace byfxxm
+
+#endif

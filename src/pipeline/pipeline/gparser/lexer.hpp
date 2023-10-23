@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _LEXER_HPP_
+#define _LEXER_HPP_
+
 #include "exception.hpp"
 #include "token.hpp"
 #include "word.hpp"
@@ -74,3 +76,5 @@ private:
 
 template <class T> Lexer(T) -> Lexer<T>;
 } // namespace byfxxm
+
+#endif

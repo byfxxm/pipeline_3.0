@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _PRODUCTION_HPP_
+#define _PRODUCTION_HPP_
+
 #include "abstree.hpp"
 #include "predicate.hpp"
 #include "token.hpp"
@@ -215,3 +217,5 @@ private:
 inline constexpr Expression expr;
 inline constexpr Gtree gtree;
 } // namespace byfxxm
+
+#endif

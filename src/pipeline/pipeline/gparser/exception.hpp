@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _EXCEPTION_HPP_
+#define _EXCEPTION_HPP_
+
 #include <exception>
 #include <string>
 
@@ -29,3 +31,5 @@ public:
   using ParseException::ParseException;
 };
 } // namespace byfxxm
+
+#endif

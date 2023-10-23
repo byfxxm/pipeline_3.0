@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _MEMORY_HPP_
+#define _MEMORY_HPP_
+
 #include <memory>
 #include <memory_resource>
 #include <type_traits>
@@ -115,3 +117,5 @@ private:
 
 inline std::pmr::synchronized_pool_resource mempool;
 } // namespace byfxxm
+
+#endif

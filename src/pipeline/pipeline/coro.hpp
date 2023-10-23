@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef _CORO_HPP_
+#define _CORO_HPP_
+
 #include <Windows.h>
 #include <future>
 #include <memory>
@@ -109,3 +111,5 @@ private:
   std::thread _runtime;
 };
 } // namespace byfxxm
+
+#endif

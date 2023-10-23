@@ -9,22 +9,6 @@
 #include <memory>
 #include <utility>
 
-#ifdef _MSC_VER
-#ifdef _DEBUG
-#ifdef _WIN64
-#pragma comment(lib, "../x64/Debug/pipeline.lib")
-#else
-#pragma comment(lib, "../Debug/pipeline.lib")
-#endif
-#else
-#ifdef _WIN64
-#pragma comment(lib, "../x64/Release/pipeline.lib")
-#else
-#pragma comment(lib, "../Release/pipeline.lib")
-#endif
-#endif
-#endif
-
 using OutputFunc = void (*)(const char *);
 OutputFunc g_outputfunc = [](const char *str) { printf(str); };
 

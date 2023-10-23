@@ -5,9 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="core">
-      <UniqueIdentifier>{b6832d46-638d-4c48-9f66-ef1c773a85d3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="workers">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -18,15 +15,15 @@
     <Filter Include="gparser">
       <UniqueIdentifier>{1138447e-4390-480c-b9eb-9d5589ceb53a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{b6832d46-638d-4c48-9f66-ef1c773a85d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ring_buffer.hpp">
-      <Filter>core</Filter>
+      <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="pipeline_imp.hpp">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="pipeline.hpp">
+    <ClInclude Include="worker.hpp">
       <Filter>public</Filter>
     </ClInclude>
     <ClInclude Include="code.hpp">
@@ -77,16 +74,14 @@
     <ClInclude Include="gparser\word.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="array_nd.hpp">
+    <ClInclude Include="coro.hpp">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="pipeline.hpp">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="coro.hpp">
-      <Filter>core</Filter>
+    <ClInclude Include="array_nd.hpp">
+      <Filter>utils</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="pipeline.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

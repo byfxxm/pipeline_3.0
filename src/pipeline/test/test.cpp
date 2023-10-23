@@ -2,9 +2,11 @@
 //
 #include "../pipeline/code.hpp"
 #include "../pipeline/gparser/gparser.hpp"
+#include "../pipeline/gworker.hpp"
 #include "../pipeline/pipeline.hpp"
 #include <format>
 #include <iostream>
+#include <memory>
 #include <utility>
 
 #ifdef _MSC_VER
@@ -445,31 +447,32 @@ public:
 };
 
 void TestPipeline() {
-  auto pipeline = byfxxm::MakePipeline();
-  pipeline->AddWorker(std::make_unique<FirstWorker>());
+  auto pipeline = byfxxm::Pipeline();
+  pipeline.AddWorker(std::make_unique<FirstWorker>());
   for (int i = 0; i < 20; ++i) {
-    pipeline->AddWorker(std::make_unique<TestWorker>());
+    pipeline.AddWorker(std::make_unique<TestWorker>());
   }
 
-  pipeline->AddWorker(std::make_unique<LastWorker>());
-  pipeline->Start();
+  pipeline.AddWorker(std::make_unique<LastWorker>());
+  pipeline.Start();
   auto t = std::thread([&]() {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    pipeline->Stop();
+    pipeline.Stop();
   });
-  pipeline->Wait();
+  pipeline.Wait();
   t.join();
 }
 
 void TestPipeline1() {
-  auto pipeline = byfxxm::MakePipeline();
-  pipeline->AddWorker(MakeGworker(byfxxm::gworker_t::MEMORY, R"(G0 X0Y0Z0
+  auto pipeline = byfxxm::Pipeline();
+  pipeline.AddWorker(
+      std::make_unique<byfxxm::Gworker>(std::stringstream(R"(G0 X0Y0Z0
 G1X100
 Y100
-)"));
-  pipeline->AddWorker(std::make_unique<Issuer>());
-  pipeline->Start();
-  pipeline->Wait();
+)")));
+  pipeline.AddWorker(std::make_unique<Issuer>());
+  pipeline.Start();
+  pipeline.Wait();
 }
 
 int main() {

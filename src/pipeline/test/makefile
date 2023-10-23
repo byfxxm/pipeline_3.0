@@ -7,17 +7,14 @@ else
 	show_msg=debug
 endif
 
-d: clean test.o pipeline.o
-	g++ test.o pipeline.o -o a $(gcc_config)
+d: clean test.o
+	g++ test.o -o a $(gcc_config)
 	@echo $(show_msg)
 
 r: d
 
 test.o: test.cpp
 	g++ test.cpp -c -o test.o $(gcc_config)
-
-pipeline.o: pipeline.cpp
-	g++ ../pipeline/pipeline.cpp -c -o pipeline.o $(gcc_config)
 
 .PHONY: clean
 clean:

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "code.hpp"
 #include "gparser/gparser.hpp"
+#include "worker.hpp"
 #include <format>
 #include <type_traits>
 

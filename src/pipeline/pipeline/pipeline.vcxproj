@@ -161,12 +161,9 @@
     <ClInclude Include="gparser\token.hpp" />
     <ClInclude Include="gparser\word.hpp" />
     <ClInclude Include="gworker.hpp" />
+    <ClInclude Include="worker.hpp" />
     <ClInclude Include="pipeline.hpp" />
-    <ClInclude Include="pipeline_imp.hpp" />
     <ClInclude Include="ring_buffer.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="pipeline.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,11 +20,11 @@ struct Utils {
   GetRetVal return_val;
 };
 
-constexpr bool NewSegment(const token::Token &tok) {
+inline constexpr bool NewSegment(const token::Token &tok) {
   return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 }
 
-constexpr bool EndOfFile(const token::Token &tok) {
+inline constexpr bool EndOfFile(const token::Token &tok) {
   return tok.kind == token::Kind::KEOF;
 }
 

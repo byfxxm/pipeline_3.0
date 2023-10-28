@@ -9,8 +9,8 @@
 #include <variant>
 
 namespace byfxxm {
-constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-constexpr bool IsNaN(double v) { return v != v; }
+inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+inline constexpr bool IsNaN(double v) { return v != v; }
 
 namespace token {
 enum class Kind {
@@ -75,7 +75,7 @@ struct Token {
 
 using Dictionary = std::pmr::unordered_map<std::string, token::Kind>;
 
-const Dictionary keywords = {
+inline const Dictionary keywords = {
     {"IF", Kind::IF},       {"ELSEIF", Kind::ELSEIF}, {"ELSE", Kind::ELSE},
     {"ENDIF", Kind::ENDIF}, {"THEN", Kind::THEN},     {"WHILE", Kind::WHILE},
     {"DO", Kind::DO},       {"END", Kind::END},       {"GT", Kind::GT},
@@ -84,13 +84,13 @@ const Dictionary keywords = {
     {"MIN", Kind::MIN},     {"NOT", Kind::NOT},
 };
 
-const Dictionary symbols = {
+inline const Dictionary symbols = {
     {"[", Kind::LB},     {"]", Kind::RB},   {"+", Kind::PLUS},
     {"-", Kind::MINUS},  {"*", Kind::MUL},  {"/", Kind::DIV},
     {"=", Kind::ASSIGN}, {";", Kind::SEMI}, {",", Kind::COMMA},
 };
 
-const Dictionary gcodes = {
+inline const Dictionary gcodes = {
     {"G", Kind::G}, {"M", Kind::M}, {"X", Kind::X}, {"Y", Kind::Y},
     {"Z", Kind::Z}, {"A", Kind::A}, {"B", Kind::B}, {"C", Kind::C},
     {"I", Kind::I}, {"J", Kind::J}, {"K", Kind::K}, {"N", Kind::N},
@@ -134,7 +134,7 @@ inline bool IsGcode(const std::string &word) {
   return _IsMapping(token::gcodes, word);
 }
 
-constexpr char spaces[] = {
+inline constexpr char spaces[] = {
     ' ',
     '\t',
 };
@@ -149,11 +149,11 @@ inline void SkipSpaces(auto &&stream) {
   }
 }
 
-constexpr bool IsSharp(char ch) { return ch == '#'; }
+inline constexpr bool IsSharp(char ch) { return ch == '#'; }
 
 inline bool IsSharp(const std::string word) { return word == "#"; }
 
-constexpr char newline[] = {
+inline constexpr char newline[] = {
     '\n',
     '\r',
 };
@@ -182,7 +182,7 @@ struct Gtag {
   double value;
 };
 
-constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
+inline constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
   return lhs.code == rhs.code && lhs.value == rhs.value;
 }
 

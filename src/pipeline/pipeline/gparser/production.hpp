@@ -16,7 +16,7 @@ struct TokenTraits {
   bool left_to_right{false};
 };
 
-const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
+inline const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
     {token::Kind::COMMA, {0, Binary{predicate::Comma}, true}},
     {token::Kind::ASSIGN, {1, Binary{predicate::Assign}}},
     {token::Kind::GT, {2, Binary{predicate::GT}}},

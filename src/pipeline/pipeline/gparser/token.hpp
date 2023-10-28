@@ -9,8 +9,8 @@
 #include <variant>
 
 namespace byfxxm {
-inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-inline bool IsNaN(double v) { return v != v; }
+constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+constexpr bool IsNaN(double v) { return v != v; }
 
 namespace token {
 enum class Kind {

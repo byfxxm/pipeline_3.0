@@ -30,8 +30,7 @@ public:
 
   std::optional<AbstreeWithLineno> Next() {
     try {
-      auto stmt = GetStatement(_remain_block);
-      if (stmt) {
+      if (auto stmt = GetStatement(_remain_block)) {
         assert(std::holds_alternative<Segment>(std::get<0>(stmt.value())));
         return AbstreeWithLineno{
             _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt.value())))),
@@ -47,11 +46,11 @@ public:
       auto peek = [this]() { return _lex.Peek(); };
       auto line = [this]() { return _lineno; };
       auto get_rval = [this]() -> Value { return _return_val; };
-      stmt = GetStatement(grammar::Utils{get, peek, line, get_rval});
-      if (!stmt)
-        return {};
 
-      return _ToAbstree(std::move(stmt.value()));
+      if (auto stmt = GetStatement(grammar::Utils{get, peek, line, get_rval}))
+        return _ToAbstree(std::move(stmt.value()));
+
+      return {};
     } catch (const ParseException &ex) {
       throw SyntaxWithLineException(_lineno, ex.what());
     }

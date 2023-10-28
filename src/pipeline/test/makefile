@@ -7,8 +7,8 @@ else
 	show_msg=debug
 endif
 
-d: clean test.o
-	g++ test.o -o a $(gcc_config)
+d: clean test.o dup.cpp
+	g++ test.o dup.cpp -o a $(gcc_config)
 	@echo $(show_msg)
 
 r: d

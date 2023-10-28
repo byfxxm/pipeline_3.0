@@ -115,7 +115,11 @@ private:
   UniquePtr<T> _pointer;
 };
 
+#ifdef __GNUC__
+inline std::pmr::synchronized_pool_resource mempool;
+#else
 inline thread_local std::pmr::unsynchronized_pool_resource mempool;
+#endif
 } // namespace byfxxm
 
 #endif

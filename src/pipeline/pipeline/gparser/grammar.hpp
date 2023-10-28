@@ -20,7 +20,7 @@ struct Utils {
   GetRetVal return_val;
 };
 
-constexpr bool NewSegment(const token::Token &tok) {
+constexpr bool IsNewSegment(const token::Token &tok) {
   return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 }
 
@@ -66,14 +66,14 @@ class Expr : public Grammar {
   virtual std::optional<Statement> Rest(Segment &&seg,
                                         const Utils &utils) const override {
     for (;;) {
-      auto tok = utils.get();
-      if (NewSegment(tok))
+      auto tok = utils.peek();
+      if (IsNewSegment(tok))
         break;
 
-      seg.push_back(std::move(tok));
+      seg.push_back(utils.get());
     }
 
-    return Statement(std::move(seg), utils.line() - 1);
+    return Statement(std::move(seg), utils.line());
   }
 };
 
@@ -87,22 +87,19 @@ class Ggram : public Grammar {
     Segment gtag{&mempool};
     for (;;) {
       auto tok = utils.peek();
-      if (NewSegment(tok)) {
+      if (IsNewSegment(tok)) {
         if (!gtag.empty())
           seg.push_back(expr(gtag));
-        utils.get();
         break;
       }
 
       if (!IsGcode(tok)) {
-        gtag.push_back(std::move(tok));
-        utils.get();
+        gtag.push_back(utils.get());
         continue;
       }
 
       if (gtag.empty()) {
-        seg.push_back(std::move(tok));
-        utils.get();
+        seg.push_back(utils.get());
       } else {
         seg.push_back(expr(gtag));
         gtag.clear();
@@ -111,7 +108,7 @@ class Ggram : public Grammar {
 
     Segment ret{&mempool};
     ret.push_back(gtree(seg));
-    return Statement(std::move(ret), utils.line() - 1);
+    return Statement(std::move(ret), utils.line());
   }
 };
 

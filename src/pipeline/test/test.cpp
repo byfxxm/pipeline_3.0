@@ -286,7 +286,13 @@ void TestParser7() {
   auto parser = byfxxm::Gparser(s);
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl, [](size_t line) { PrintLine(line); });
+
+  constexpr size_t lines[] = {2, 3, 4, 5, 7, 8, 12, 14};
+  auto iter = std::begin(lines);
+  parser.Run(&addr, &pimpl, [&iter](size_t line) {
+    PrintLine(line);
+    assert(line == (*iter++));
+  });
 }
 
 void TestParser8() {

@@ -11,7 +11,7 @@ public:
   ParseException() = default;
   ParseException(std::string err) : _error(std::move(err)) {}
 
-  char const *what() const override { return _error.c_str(); }
+  char const *what() const noexcept override { return _error.c_str(); }
 
 private:
   std::string _error;

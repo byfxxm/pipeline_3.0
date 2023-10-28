@@ -289,7 +289,7 @@ void TestParser7() {
 
 class MyFileStream {
 public:
-  MyFileStream(const std::filesystem::path &pa) {
+  explicit MyFileStream(const std::filesystem::path &pa) {
     fopen_s(&_file, pa.string().c_str(), "r");
     assert(_file);
   }

@@ -45,10 +45,10 @@ public:
 
 private:
   token::Token _Next() {
+    SkipSpaces(_stream);
     if (_stream.eof())
       return token::Token{token::Kind::KEOF, nan};
 
-    SkipSpaces(_stream);
     std::string word;
     word.push_back(_stream.get());
 

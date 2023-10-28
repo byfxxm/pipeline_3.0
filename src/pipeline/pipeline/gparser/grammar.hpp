@@ -245,7 +245,7 @@ class While : public Grammar {
 };
 
 template <class... _Grams> struct _GrammarsList {
-  static inline const std::unique_ptr<grammar::Grammar>
+  inline static const std::unique_ptr<grammar::Grammar>
       grammars[sizeof...(_Grams)]{std::make_unique<_Grams>()...};
 };
 

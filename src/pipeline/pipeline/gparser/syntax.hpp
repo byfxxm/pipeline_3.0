@@ -25,7 +25,8 @@ using AbstreeWithLineno = std::tuple<Abstree, size_t>;
 
 template <StreamConcept T> class Syntax {
 public:
-  Syntax(T &&stream) : _lex(std::move(stream)) {}
+  Syntax(T &&stream, Address *addr, Ginterface *pimpl)
+      : _lex(std::move(stream)), _addr(addr), _pimpl(pimpl) {}
 
   std::optional<AbstreeWithLineno> Next() {
     auto stmt = GetStatement(_remain_block);
@@ -50,11 +51,6 @@ public:
       return {};
 
     return _ToAbstree(std::move(stmt.value()));
-  }
-
-  void SetEnv(Address *addr, Ginterface *pimpl) {
-    _addr = addr;
-    _pimpl = pimpl;
   }
 
 private:

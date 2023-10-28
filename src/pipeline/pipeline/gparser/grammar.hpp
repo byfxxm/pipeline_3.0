@@ -274,6 +274,8 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
 
     if (iter == std::end(GrammarsList::grammars))
       throw SyntaxException();
+    else
+      assert(dynamic_cast<grammar::Blank *>((*iter).get()));
   }
 }
 } // namespace grammar

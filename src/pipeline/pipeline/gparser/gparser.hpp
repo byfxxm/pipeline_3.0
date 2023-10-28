@@ -12,16 +12,23 @@ public:
   Gparser(const std::string &str) : _stream(std::istringstream(str)) {}
   Gparser(const std::filesystem::path &file) : _stream(std::ifstream(file)) {}
 
-  void Run(Address *addr, Ginterface *pimpl,
-           std::function<void(size_t)> updateline = {}) {
-    Syntax<T> syn(std::move(_stream), addr, pimpl);
-    while (auto abs_tree = syn.Next()) {
-      auto &[tree, line] = abs_tree.value();
-      if (updateline)
-        updateline(line);
+  std::optional<std::string> Run(Address *addr, Ginterface *pimpl,
+                                 std::function<void(size_t)> updateline = {}) {
+    std::optional<std::string> ret;
+    try {
+      Syntax<T> syn(std::move(_stream), addr, pimpl);
+      while (auto abs_tree = syn.Next()) {
+        auto &[tree, line] = abs_tree.value();
+        if (updateline)
+          updateline(line);
 
-      tree.Execute();
+        tree.Execute();
+      }
+    } catch (const ParseException &ex) {
+      ret = std::format("parse error: {}", ex.what());
     }
+
+    return ret;
   }
 
 private:

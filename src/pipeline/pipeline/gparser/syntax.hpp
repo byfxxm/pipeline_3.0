@@ -29,28 +29,32 @@ public:
       : _lex(std::move(stream)), _addr(addr), _pimpl(pimpl) {}
 
   std::optional<AbstreeWithLineno> Next() {
-    auto stmt = GetStatement(_remain_block);
-    if (stmt) {
-      assert(std::holds_alternative<Segment>(std::get<0>(stmt.value())));
-      return AbstreeWithLineno{
-          _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt.value())))),
-          std::get<1>(stmt.value())};
+    try {
+      auto stmt = GetStatement(_remain_block);
+      if (stmt) {
+        assert(std::holds_alternative<Segment>(std::get<0>(stmt.value())));
+        return AbstreeWithLineno{
+            _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt.value())))),
+            std::get<1>(stmt.value())};
+      }
+
+      auto get = [this]() {
+        auto tok = _lex.Get();
+        if (tok.kind == token::Kind::NEWLINE)
+          ++_lineno;
+        return tok;
+      };
+      auto peek = [this]() { return _lex.Peek(); };
+      auto line = [this]() { return _lineno; };
+      auto get_rval = [this]() -> Value { return _return_val; };
+      stmt = GetStatement(grammar::Utils{get, peek, line, get_rval});
+      if (!stmt)
+        return {};
+
+      return _ToAbstree(std::move(stmt.value()));
+    } catch (const ParseException &ex) {
+      throw SyntaxWithLineException(_lineno, ex.what());
     }
-
-    auto get = [this]() {
-      auto tok = _lex.Get();
-      if (tok.kind == token::Kind::NEWLINE)
-        ++_lineno;
-      return tok;
-    };
-    auto peek = [this]() { return _lex.Peek(); };
-    auto line = [this]() { return _lineno; };
-    auto get_rval = [this]() -> Value { return _return_val; };
-    stmt = GetStatement(grammar::Utils{get, peek, line, get_rval});
-    if (!stmt)
-      return {};
-
-    return _ToAbstree(std::move(stmt.value()));
   }
 
 private:

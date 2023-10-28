@@ -289,6 +289,24 @@ void TestParser7() {
   parser.Run(&addr, &pimpl, [](size_t line) { PrintLine(line); });
 }
 
+void TestParser8() {
+  std::string s =
+      R"(
+		#1 ==
+		#2 = 2
+		IF #1 LT #2 THEN
+			#3 = 3
+			
+			IF #2 LT #3 THEN
+)";
+  auto parser = byfxxm::Gparser(s);
+  auto pimpl = Gpimpl();
+  byfxxm::Address addr;
+  auto res = parser.Run(&addr, &pimpl);
+  assert(res);
+  puts(res.value().c_str());
+}
+
 class MyFileStream {
 public:
   explicit MyFileStream(const std::filesystem::path &pa) {
@@ -473,6 +491,7 @@ int main() {
       TestParser5();
       TestParser6();
       TestParser7();
+      TestParser8();
       // TestPipeline();
       // TestPipeline1();
       TestPerformance();

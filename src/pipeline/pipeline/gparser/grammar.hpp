@@ -90,6 +90,7 @@ class Ggram : public Grammar {
       if (NewSegment(tok)) {
         if (!gtag.empty())
           seg.push_back(expr(gtag));
+        utils.get();
         break;
       }
 
@@ -110,7 +111,7 @@ class Ggram : public Grammar {
 
     Segment ret{&mempool};
     ret.push_back(gtree(seg));
-    return Statement(std::move(ret), utils.line());
+    return Statement(std::move(ret), utils.line() - 1);
   }
 };
 

@@ -276,6 +276,8 @@ void TestParser7() {
 				#7=7
 			ENDIF
 			#5=5
+
+			G0 X#5
 		ELSE
 			#4 = 4
 		ENDIF

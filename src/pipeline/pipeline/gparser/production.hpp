@@ -190,7 +190,7 @@ private:
 class Gtree {
 public:
   Abstree::NodePtr operator()(Segment &seg) const {
-    if (seg.empty() || seg.size() % 2 != 0)
+    if (seg.empty() || (seg.size() & 0x1) != 0)
       throw SyntaxException();
 
     auto root = MakeUnique<Abstree::Node>(mempool);

@@ -14,8 +14,8 @@ public:
 
   void Run(Address *addr, Ginterface *pimpl,
            std::function<void(size_t)> updateline = {}) {
-    Syntax<T> syntax(std::move(_stream), addr, pimpl);
-    while (auto abs_tree = syntax.Next()) {
+    Syntax<T> syn(std::move(_stream), addr, pimpl);
+    while (auto abs_tree = syn.Next()) {
       auto &[tree, line] = abs_tree.value();
       if (updateline)
         updateline(line);

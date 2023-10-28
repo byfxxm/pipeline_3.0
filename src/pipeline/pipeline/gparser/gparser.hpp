@@ -29,7 +29,6 @@ private:
 };
 
 template <class T> Gparser(T) -> Gparser<T>;
-
 Gparser(std::string) -> Gparser<std::istringstream>;
 Gparser(std::filesystem::path) -> Gparser<std::ifstream>;
 } // namespace byfxxm

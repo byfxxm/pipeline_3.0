@@ -214,8 +214,8 @@ private:
   }
 };
 
-constexpr Expression expr;
-constexpr Gtree gtree;
+inline constexpr Expression expr;
+inline constexpr Gtree gtree;
 } // namespace byfxxm
 
 #endif

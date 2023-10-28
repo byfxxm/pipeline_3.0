@@ -386,8 +386,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
 } // namespace predicate
 
 template <class... Ts>
-inline consteval std::variant<std::decay_t<Ts>...>
-ToVariant(Ts &&...) noexcept {
+consteval std::variant<std::decay_t<Ts>...> ToVariant(Ts &&...) noexcept {
   return {};
 }
 

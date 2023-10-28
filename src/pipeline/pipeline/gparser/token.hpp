@@ -10,7 +10,7 @@
 
 namespace byfxxm {
 inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-inline constexpr bool IsNaN(double v) { return v != v; }
+constexpr bool IsNaN(double v) { return v != v; }
 
 namespace token {
 enum class Kind {
@@ -149,7 +149,7 @@ inline void SkipSpaces(auto &&stream) {
   }
 }
 
-inline constexpr bool IsSharp(char ch) { return ch == '#'; }
+constexpr bool IsSharp(char ch) { return ch == '#'; }
 
 inline bool IsSharp(const std::string word) { return word == "#"; }
 
@@ -182,7 +182,7 @@ struct Gtag {
   double value;
 };
 
-inline constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
+constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
   return lhs.code == rhs.code && lhs.value == rhs.value;
 }
 

@@ -16,7 +16,7 @@ struct TokenTraits {
   bool left_to_right{false};
 };
 
-inline const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
+const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
     {token::Kind::COMMA, {0, Binary{predicate::Comma}, true}},
     {token::Kind::ASSIGN, {1, Binary{predicate::Assign}}},
     {token::Kind::GT, {2, Binary{predicate::GT}}},
@@ -214,8 +214,8 @@ private:
   }
 };
 
-inline constexpr Expression expr;
-inline constexpr Gtree gtree;
+constexpr Expression expr;
+constexpr Gtree gtree;
 } // namespace byfxxm
 
 #endif

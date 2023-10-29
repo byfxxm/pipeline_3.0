@@ -2,9 +2,6 @@
 #define _GPARSER_ADDRESS_HPP_
 
 #include "memory.hpp"
-#include "token.hpp"
-#include <optional>
-#include <string>
 #include <unordered_map>
 
 namespace byfxxm {

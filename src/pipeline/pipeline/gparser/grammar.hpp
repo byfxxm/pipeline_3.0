@@ -125,14 +125,16 @@ class IfElse : public Grammar {
     auto read_cond = [&]() -> Statement {
       Segment seg{&mempool};
       for (;;) {
-        auto tok = utils.get();
+        auto tok = utils.peek();
         if (tok.kind == token::Kind::NEWLINE)
           throw SyntaxException();
 
-        if (tok.kind == token::Kind::THEN)
+        if (tok.kind == token::Kind::THEN) {
+          utils.get();
           break;
+        }
 
-        seg.push_back(std::move(tok));
+        seg.push_back(utils.get());
       }
 
       return {std::move(seg), utils.line()};

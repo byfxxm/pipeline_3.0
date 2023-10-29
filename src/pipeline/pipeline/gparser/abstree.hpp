@@ -1,16 +1,14 @@
 ﻿#ifndef _GPARSER_ABSTREE_HPP_
 #define _GPARSER_ABSTREE_HPP_
 
-#include "ginterface.hpp"
 #include "memory.hpp"
 #include "predicate.hpp"
 #include "token.hpp"
 #include <cassert>
-#include <functional>
-#include <future>
 #include <variant>
 
 namespace byfxxm {
+class Ginterface;
 class Abstree {
 public:
   struct Node;

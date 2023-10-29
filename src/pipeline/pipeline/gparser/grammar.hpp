@@ -1,7 +1,6 @@
 ﻿#ifndef _GPARSER_GRAMMAR_HPP_
 #define _GPARSER_GRAMMAR_HPP_
 
-#include "abstree.hpp"
 #include "block.hpp"
 #include "memory.hpp"
 #include "production.hpp"

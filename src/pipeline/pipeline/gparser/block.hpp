@@ -1,7 +1,6 @@
 ﻿#ifndef _GPARSER_BLOCK_HPP_
 #define _GPARSER_BLOCK_HPP_
 
-#include "abstree.hpp"
 #include "memory.hpp"
 #include "production.hpp"
 #include <optional>

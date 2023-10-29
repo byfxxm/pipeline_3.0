@@ -4,6 +4,7 @@
 #include "../pipeline/gparser/gparser.hpp"
 #include "../pipeline/gworker.hpp"
 #include "../pipeline/pipeline.hpp"
+#include <filesystem>
 #include <format>
 #include <iostream>
 #include <memory>

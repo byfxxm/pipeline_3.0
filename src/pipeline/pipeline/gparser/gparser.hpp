@@ -4,6 +4,8 @@
 #include "ginterface.hpp"
 #include "syntax.hpp"
 #include "token.hpp"
+#include <fstream>
+#include <sstream>
 
 namespace byfxxm {
 template <StreamConcept T> class Gparser {

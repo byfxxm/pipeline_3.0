@@ -25,7 +25,7 @@ public:
         tree.Execute();
       }
     } catch (const ParseException &ex) {
-      ret = std::format("parse error: {}", ex.what());
+      ret = std::format("error: {}", ex.what());
     }
 
     return ret;

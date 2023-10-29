@@ -112,6 +112,9 @@ private:
         throw SyntaxException();
     }
 
+    if (level != 0)
+        throw SyntaxException();
+
     return main;
   }
 

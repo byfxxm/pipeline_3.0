@@ -52,6 +52,7 @@ private:
     auto last = [this]() -> const std::optional<token::Token> & {
       return _lasttok;
     };
+
     for (const auto &p : word::WordsList::words) {
       std::optional<token::Token> tok;
       if (p->First(word.front()) &&

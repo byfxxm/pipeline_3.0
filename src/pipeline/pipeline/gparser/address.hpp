@@ -1,5 +1,5 @@
-﻿#ifndef _ADDRESS_HPP_
-#define _ADDRESS_HPP_
+﻿#ifndef _GPARSER_ADDRESS_HPP_
+#define _GPARSER_ADDRESS_HPP_
 
 #include "memory.hpp"
 #include "token.hpp"

@@ -1,5 +1,5 @@
-﻿#ifndef _GPARSER_HPP_
-#define _GPARSER_HPP_
+﻿#ifndef _GPARSER_GPARSER_HPP_
+#define _GPARSER_GPARSER_HPP_
 
 #include "ginterface.hpp"
 #include "syntax.hpp"

@@ -1,5 +1,5 @@
-﻿#ifndef _PRODUCTION_HPP_
-#define _PRODUCTION_HPP_
+﻿#ifndef _GPARSER_PRODUCTION_HPP_
+#define _GPARSER_PRODUCTION_HPP_
 
 #include "abstree.hpp"
 #include "predicate.hpp"

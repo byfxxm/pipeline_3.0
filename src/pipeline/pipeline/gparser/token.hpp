@@ -1,5 +1,5 @@
-﻿#ifndef _TOKEN_HPP_
-#define _TOKEN_HPP_
+﻿#ifndef _GPARSER_TOKEN_HPP_
+#define _GPARSER_TOKEN_HPP_
 
 #include <functional>
 #include <limits>

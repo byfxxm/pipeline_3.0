@@ -1,5 +1,5 @@
-﻿#ifndef _ABSTREE_HPP_
-#define _ABSTREE_HPP_
+﻿#ifndef _GPARSER_ABSTREE_HPP_
+#define _GPARSER_ABSTREE_HPP_
 
 #include "ginterface.hpp"
 #include "memory.hpp"

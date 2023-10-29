@@ -1,5 +1,5 @@
-﻿#ifndef _SYNTAX_HPP_
-#define _SYNTAX_HPP_
+﻿#ifndef _GPARSER_SYNTAX_HPP_
+#define _GPARSER_SYNTAX_HPP_
 
 #include "address.hpp"
 #include "block.hpp"

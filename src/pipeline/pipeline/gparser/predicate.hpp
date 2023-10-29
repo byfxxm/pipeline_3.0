@@ -1,5 +1,5 @@
-﻿#ifndef _PREDICATE_HPP_
-#define _PREDICATE_HPP_
+﻿#ifndef _GPARSER_PREDICATE_HPP_
+#define _GPARSER_PREDICATE_HPP_
 
 #include "address.hpp"
 #include "exception.hpp"

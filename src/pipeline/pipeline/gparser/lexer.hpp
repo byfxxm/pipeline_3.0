@@ -1,5 +1,5 @@
-﻿#ifndef _LEXER_HPP_
-#define _LEXER_HPP_
+﻿#ifndef _GPARSER_LEXER_HPP_
+#define _GPARSER_LEXER_HPP_
 
 #include "exception.hpp"
 #include "token.hpp"

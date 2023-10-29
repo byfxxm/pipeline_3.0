@@ -1,5 +1,5 @@
-﻿#ifndef _BLOCK_HPP_
-#define _BLOCK_HPP_
+﻿#ifndef _GPARSER_BLOCK_HPP_
+#define _GPARSER_BLOCK_HPP_
 
 #include "abstree.hpp"
 #include "memory.hpp"

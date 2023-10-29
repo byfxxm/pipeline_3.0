@@ -32,26 +32,6 @@ struct TestCode : byfxxm::Code {
   size_t _n;
 };
 
-void TestLexer() {
-  std::string s =
-      R"(
-		#1 = 10
-		#2 = 20
-		#3=[#1+ #2]*30
-)";
-
-  std::vector<byfxxm::token::Token> res;
-  byfxxm::token::Token tok;
-  auto lex = byfxxm::Lexer(std::stringstream(s));
-  while ((tok = lex.Get()).kind != byfxxm::token::Kind::KEOF) {
-    res.emplace_back(std::move(tok));
-  }
-
-  std::for_each(res.begin(), res.end(), [](const byfxxm::token::Token &tok) {
-    PrintLine(static_cast<int>(tok.kind));
-  });
-}
-
 class Gpimpl : public byfxxm::Ginterface {
 public:
   virtual bool None(const byfxxm::Gparams &params,
@@ -81,21 +61,8 @@ public:
 };
 
 void TestParser() {
-  std::string s =
-      R"(
-
-
-		#1 = -10
-		#2 = 20
-		#30 = 5
-		#10 =#1+#30*#2-3
-		#-174 = -2 ; #3=+#-[2*#[#1+ #2]]/5
-		#3 LT #2
-
-
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   parser.Run(&addr, &pimpl);
@@ -109,15 +76,8 @@ void TestParser() {
 }
 
 void TestParser1() {
-  std::string s =
-      R"(
-		#2 = 1
-		#3=2
-		#20=#4
-		G#2X-#3Y#20Z10
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test1.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   parser.Run(&addr, &pimpl);
@@ -129,25 +89,8 @@ void TestParser1() {
 }
 
 void TestParser2() {
-  std::string s =
-      R"(
-		#1 = 1
-		#2 = 2
-		IF #1 LT #2 THEN
-			#3 = 3
-			
-			IF #2 LT #3 THEN
-				#6 = 6
-			ELSE
-				#7=7
-			ENDIF
-			#5=5
-		ELSE
-			#4 = 4
-		ENDIF
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test2.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   parser.Run(&addr, &pimpl);
@@ -160,37 +103,8 @@ void TestParser2() {
 }
 
 void TestParser3() {
-  std::string s =
-      R"(
-		#1 = 1
-		#2 = 20
-		IF NOT [#1 GE #2] THEN
-			#3 = 3
-			
-			WHILE [#1 LT #2] DO
-				#1 = #1 +1
-				#3 = #3 + 1
-				IF #1 LT #3 THEN
-					#10 = 234.5
-					#20 = MAX[#MIN[1,2,3], 3.5, 10]
-					WHILE [#20 LT 25] DO
-						#20 = 1 + #20
-					END
-					#100 = 100
-					IF #20 EQ 25 THEN
-						#[#20 ]= #100
-					ENDIF
-				ENDIF
-
-				G1 X#3
-			END
-			#5=5
-		ELSE
-			#4 = 4
-		ENDIF
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test3.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   parser.Run(&addr, &pimpl);
@@ -206,14 +120,8 @@ void TestParser3() {
 }
 
 void TestParser4() {
-  std::string s =
-      R"(
-		#1 = 234.5
-		#2 = MAX[#MIN[1,2,3], 3.5, 2]
-		#3 = MIN[2]
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test4.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   parser.Run(&addr, &pimpl);
@@ -224,12 +132,8 @@ void TestParser4() {
 }
 
 void TestParser5() {
-  std::string s =
-      R"(
-		#10 =[ [1 + 2]] * [3 + 4]
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test5.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   parser.Run(&addr, &pimpl);
@@ -238,23 +142,8 @@ void TestParser5() {
 }
 
 void TestParser6() {
-  std::string s =
-      R"(
-		IF 1 LT 2 THEN
-		IF 1 LT 2 THEN
-		IF 1 LT 2 THEN
-		IF 1 LT 2 THEN
-		IF 1 LT 2 THEN
-		#1=1
-		#2=2
-		ENDIF
-		ENDIF
-		ENDIF
-		ENDIF
-		ENDIF
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test6.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   parser.Run(&addr, &pimpl);
@@ -264,27 +153,8 @@ void TestParser6() {
 }
 
 void TestParser7() {
-  std::string s =
-      R"(
-		#1 = 1
-		#2 = 2
-		IF #1 LT #2 THEN
-			#3 = 3
-			
-			IF #2 LT #3 THEN
-				#6 = 6
-			ELSE
-				#7=7
-			ENDIF
-			#5=5
-
-			G0 X#5
-		ELSE
-			#4 = 4
-		ENDIF
-)";
-
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test7.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
 
@@ -297,16 +167,8 @@ void TestParser7() {
 }
 
 void TestParser8() {
-  std::string s =
-      R"(
-		#1 = 1
-		#2 = 2
-		IF #1 LT #2
-			#3 = 3
-			
-			IF #2 LT #3 THEN
-)";
-  auto parser = byfxxm::Gparser(s);
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test8.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
   auto res = parser.Run(&addr, &pimpl);
@@ -375,13 +237,13 @@ inline auto perform = [](const std::filesystem::path &pa, int times) {
 
 void TestPerformance() {
   perform(std::filesystem::path(std::filesystem::current_path().string() +
-                                R"(\LTJX.nc)"),
+                                R"(\ncfiles\LTJX.nc)"),
           1);
 }
 
 void TestPerformance1() {
   perform(std::filesystem::path(std::filesystem::current_path().string() +
-                                R"(\macro1.nc)"),
+                                R"(\ncfiles\macro1.nc)"),
           100);
 }
 

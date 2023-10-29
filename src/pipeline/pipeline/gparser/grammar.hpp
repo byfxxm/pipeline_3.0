@@ -24,7 +24,7 @@ constexpr bool IsNewSegment(const token::Token &tok) {
   return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 }
 
-constexpr bool EndOfFile(const token::Token &tok) {
+constexpr bool IsEndOfFile(const token::Token &tok) {
   return tok.kind == token::Kind::KEOF;
 }
 
@@ -254,7 +254,7 @@ using GrammarsList =
 inline std::optional<Statement> GetStatement(const Utils &utils) {
   for (;;) {
     auto tok = utils.peek();
-    if (EndOfFile(tok))
+    if (IsEndOfFile(tok))
       return {};
 
     Segment seg{&mempool};

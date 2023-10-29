@@ -65,7 +65,10 @@ void TestParser() {
       std::filesystem::current_path().string() + "/ncfiles/test.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl);
+  if (auto res = parser.Run(&addr, &pimpl)) {
+    PrintLine(res.value());
+    return;
+  }
 
   assert(*addr[1] == -10);
   assert(*addr[2] == 20);
@@ -80,7 +83,10 @@ void TestParser1() {
       std::filesystem::current_path().string() + "/ncfiles/test1.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl);
+  if (auto res = parser.Run(&addr, &pimpl)) {
+    PrintLine(res.value());
+    return;
+  }
 
   assert(byfxxm::IsNaN(*addr[4]));
   assert(*addr[3] == 2);
@@ -93,7 +99,10 @@ void TestParser2() {
       std::filesystem::current_path().string() + "/ncfiles/test2.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl);
+  if (auto res = parser.Run(&addr, &pimpl)) {
+    PrintLine(res.value());
+    return;
+  }
 
   assert(*addr[1] == 1);
   assert(*addr[6] == 6);
@@ -107,7 +116,10 @@ void TestParser3() {
       std::filesystem::current_path().string() + "/ncfiles/test3.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl);
+  if (auto res = parser.Run(&addr, &pimpl)) {
+    PrintLine(res.value());
+    return;
+  }
 
   assert(*addr[1] == 20);
   assert(*addr[3] == 22);
@@ -124,7 +136,10 @@ void TestParser4() {
       std::filesystem::current_path().string() + "/ncfiles/test4.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl);
+  if (auto res = parser.Run(&addr, &pimpl)) {
+    PrintLine(res.value());
+    return;
+  }
 
   assert(*addr[1] == 234.5);
   assert(*addr[3] == 2);
@@ -136,7 +151,10 @@ void TestParser5() {
       std::filesystem::current_path().string() + "/ncfiles/test5.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl);
+  if (auto res = parser.Run(&addr, &pimpl)) {
+    PrintLine(res.value());
+    return;
+  }
 
   assert(*addr[10] == 21);
 }
@@ -146,7 +164,10 @@ void TestParser6() {
       std::filesystem::current_path().string() + "/ncfiles/test6.nc"));
   auto pimpl = Gpimpl();
   byfxxm::Address addr;
-  parser.Run(&addr, &pimpl);
+  if (auto res = parser.Run(&addr, &pimpl)) {
+    PrintLine(res.value());
+    return;
+  }
 
   assert(*addr[1] == 1);
   assert(*addr[2] == 2);
@@ -160,10 +181,13 @@ void TestParser7() {
 
   constexpr size_t lines[] = {2, 3, 4, 5, 7, 8, 12, 14};
   auto iter = std::begin(lines);
-  parser.Run(&addr, &pimpl, [&iter](size_t line) {
-    PrintLine(line);
-    assert(line == (*iter++));
-  });
+  if (auto res = parser.Run(&addr, &pimpl, [&iter](size_t line) {
+        PrintLine(line);
+        assert(line == (*iter++));
+      })) {
+    PrintLine(res.value());
+    return;
+  }
 }
 
 void TestParser8() {

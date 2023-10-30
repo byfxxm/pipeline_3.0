@@ -81,6 +81,9 @@ public:
   ClonePtr(UniquePtr<T1> &&rhs) noexcept : _pointer(std::move(rhs)) {}
 
   ClonePtr(const UniquePtr<T> &rhs) {
+    if (!rhs)
+      return;
+
     if constexpr (std::is_abstract_v<T>) {
       _pointer = rhs->Clone();
     } else {

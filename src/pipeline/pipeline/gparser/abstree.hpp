@@ -22,7 +22,7 @@ public:
 
   Abstree(NodePtr &&root, Value &rval, Address *addr,
           Ginterface *pimpl) noexcept
-      : _root(std::move(root)), _return_val(rval), _addr(addr), _pimpl(pimpl) {
+      : _root(std::move(root)), _return_val(&rval), _addr(addr), _pimpl(pimpl) {
     assert(_root);
   }
 
@@ -33,8 +33,8 @@ public:
   Abstree &operator=(Abstree &&) noexcept = default;
 
   Value Execute() {
-    _return_val = _Execute(_root);
-    return _return_val;
+    *_return_val = _Execute(_root);
+    return *_return_val;
   }
 
 private:
@@ -80,7 +80,7 @@ private:
 
 private:
   NodePtr _root;
-  Value &_return_val;
+  Value *_return_val{nullptr};
   Address *_addr{nullptr};
   Ginterface *_pimpl{nullptr};
 };

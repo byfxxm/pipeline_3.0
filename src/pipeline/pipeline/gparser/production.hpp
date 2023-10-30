@@ -54,35 +54,35 @@ inline const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
 };
 
 using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
-using Segment = std::pmr::vector<SyntaxNode>;
+using SyntaxNodeList = std::pmr::vector<SyntaxNode>;
 
 class Expression {
 public:
-  Abstree::NodePtr operator()(Segment &seg) const { return _Expression(seg); }
+  Abstree::NodePtr operator()(SyntaxNodeList &snlist) const { return _Expression(snlist); }
 
 private:
-  using _SegSubRng = decltype(std::ranges::subrange(std::declval<Segment &>()));
+  using _SyntaxNodeListRng = decltype(std::ranges::subrange(std::declval<SyntaxNodeList &>()));
 
-  Abstree::NodePtr _Expression(_SegSubRng range) const {
+  Abstree::NodePtr _Expression(_SyntaxNodeListRng range) const {
     if (range.empty())
       return {};
 
-    Segment seg = _ProcessBracket(range);
-    auto min_pri = _FindMinPriority(seg);
+    SyntaxNodeList snlist = _ProcessBracket(range);
+    auto min_pri = _FindMinPriority(snlist);
 
     auto node = _CurNode(*min_pri);
-    if (auto first = _Expression(_SegSubRng(seg.begin(), min_pri)))
+    if (auto first = _Expression(_SyntaxNodeListRng(snlist.begin(), min_pri)))
       node->subs.push_back(std::move(first));
-    if (auto second = _Expression(_SegSubRng(min_pri + 1, seg.end())))
+    if (auto second = _Expression(_SyntaxNodeListRng(min_pri + 1, snlist.end())))
       node->subs.push_back(std::move(second));
 
     _CheckError(node);
     return node;
   }
 
-  Segment _ProcessBracket(_SegSubRng range) const {
-    Segment main{&mempool};
-    Segment sub{&mempool};
+  SyntaxNodeList _ProcessBracket(_SyntaxNodeListRng range) const {
+    SyntaxNodeList main{&mempool};
+    SyntaxNodeList sub{&mempool};
     int level = 0;
     for (auto &node : range) {
       if (std::holds_alternative<Abstree::NodePtr>(node)) {
@@ -118,7 +118,7 @@ private:
     return main;
   }
 
-  Segment::iterator _FindMinPriority(_SegSubRng range) const {
+  SyntaxNodeList::iterator _FindMinPriority(_SyntaxNodeListRng range) const {
     auto less = [](const SyntaxNode &lhs, const SyntaxNode &rhs) {
       size_t lhs_pri = TokenTraits::default_priority;
       size_t rhs_pri = TokenTraits::default_priority;
@@ -192,13 +192,13 @@ private:
 
 class Gtree {
 public:
-  Abstree::NodePtr operator()(Segment &seg) const {
-    if (seg.empty() || (seg.size() & 0x1) != 0)
+  Abstree::NodePtr operator()(SyntaxNodeList &snlist) const {
+    if (snlist.empty() || (snlist.size() & 0x1) != 0)
       throw SyntaxException();
 
     auto root = MakeUnique<Abstree::Node>(mempool);
     root->pred = Gcmd{};
-    for (auto iter = seg.begin(); iter != seg.end();) {
+    for (auto iter = snlist.begin(); iter != snlist.end();) {
       auto node = MakeUnique<Abstree::Node>(mempool);
       node->pred = _TokToPred(std::get<token::Token>(*iter++));
       node->subs.push_back(std::move(std::get<Abstree::NodePtr>(*iter++)));

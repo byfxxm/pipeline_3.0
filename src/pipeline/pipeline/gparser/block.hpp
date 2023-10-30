@@ -17,7 +17,7 @@ class Block;
 }
 
 using Statement =
-    std::tuple<std::variant<Segment, ClonePtr<block::Block>>, size_t>;
+    std::tuple<std::variant<Abstree::NodePtr, ClonePtr<block::Block>>, size_t>;
 using Scope = std::pmr::vector<Statement>;
 
 namespace block {
@@ -34,7 +34,7 @@ inline std::optional<Statement> GetStatement(Scope &scope, size_t &index) {
 
   std::optional<Statement> ret;
   auto &stmt = scope[index];
-  if (std::holds_alternative<Segment>(std::get<0>(stmt))) {
+  if (std::holds_alternative<Abstree::NodePtr>(std::get<0>(stmt))) {
     ret = std::move(stmt);
     ++index;
   } else if (std::holds_alternative<ClonePtr<Block>>(std::get<0>(stmt))) {

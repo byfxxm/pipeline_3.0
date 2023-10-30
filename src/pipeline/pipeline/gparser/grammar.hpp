@@ -43,7 +43,8 @@ class Grammar {
 public:
   virtual ~Grammar() = default;
   virtual bool First(const token::Token &) const = 0;
-  virtual std::optional<Statement> Rest(Segment &&, const Utils &) const = 0;
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&,
+                                        const Utils &) const = 0;
 };
 
 class Blank : public Grammar {
@@ -51,7 +52,7 @@ class Blank : public Grammar {
     return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
   }
 
-  virtual std::optional<Statement> Rest(Segment &&,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&,
                                         const Utils &) const override {
     return {};
   }
@@ -62,17 +63,17 @@ class Expr : public Grammar {
     return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
   }
 
-  virtual std::optional<Statement> Rest(Segment &&seg,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
                                         const Utils &utils) const override {
     for (;;) {
       auto tok = utils.peek();
       if (IsNewSegment(tok))
         break;
 
-      seg.push_back(utils.get());
+      snlist.push_back(utils.get());
     }
 
-    return Statement(std::move(seg), utils.line());
+    return Statement(expr(snlist), utils.line());
   }
 };
 
@@ -81,14 +82,14 @@ class Ggram : public Grammar {
     return IsGcode(tok);
   }
 
-  virtual std::optional<Statement> Rest(Segment &&seg,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
                                         const Utils &utils) const override {
-    Segment gtag{&mempool};
+    SyntaxNodeList gtag{&mempool};
     for (;;) {
       auto tok = utils.peek();
       if (IsNewSegment(tok)) {
         if (!gtag.empty())
-          seg.push_back(expr(gtag));
+          snlist.push_back(expr(gtag));
         break;
       }
 
@@ -98,16 +99,16 @@ class Ggram : public Grammar {
       }
 
       if (gtag.empty()) {
-        seg.push_back(utils.get());
+        snlist.push_back(utils.get());
       } else {
-        seg.push_back(expr(gtag));
+        snlist.push_back(expr(gtag));
         gtag.clear();
       }
     }
 
-    Segment ret{&mempool};
-    ret.push_back(gtree(seg));
-    return Statement(std::move(ret), utils.line());
+    SyntaxNodeList res{&mempool};
+    res.push_back(gtree(snlist));
+    return Statement(expr(res), utils.line());
   }
 };
 
@@ -116,13 +117,13 @@ class IfElse : public Grammar {
     return tok.kind == token::Kind::IF;
   }
 
-  virtual std::optional<Statement> Rest(Segment &&seg,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
                                         const Utils &utils) const override {
     using If = block::IfElse::If;
     using Else = block::IfElse::Else;
 
     auto read_cond = [&]() -> Statement {
-      Segment seg{&mempool};
+      SyntaxNodeList snlist{&mempool};
       for (;;) {
         auto tok = utils.peek();
         if (tok.kind == token::Kind::NEWLINE)
@@ -133,10 +134,10 @@ class IfElse : public Grammar {
           break;
         }
 
-        seg.push_back(utils.get());
+        snlist.push_back(utils.get());
       }
 
-      return {std::move(seg), utils.line()};
+      return {expr(snlist), utils.line()};
     };
 
     auto read_scope = [&](Scope &scope) {
@@ -195,10 +196,10 @@ class While : public Grammar {
     return tok.kind == token::Kind::WHILE;
   }
 
-  virtual std::optional<Statement> Rest(Segment &&seg,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
                                         const Utils &utils) const override {
     auto read_cond = [&]() -> Statement {
-      Segment seg{&mempool};
+      SyntaxNodeList snlist{&mempool};
       for (;;) {
         auto tok = utils.get();
         if (tok.kind == token::Kind::NEWLINE)
@@ -207,10 +208,10 @@ class While : public Grammar {
         if (tok.kind == token::Kind::DO)
           break;
 
-        seg.push_back(std::move(tok));
+        snlist.push_back(std::move(tok));
       }
 
-      return {std::move(seg), utils.line()};
+      return {expr(snlist), utils.line()};
     };
 
     auto read_scope = [&](Scope &scope) {
@@ -258,14 +259,14 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
     if (IsEndOfFile(tok))
       return {};
 
-    Segment seg{&mempool};
-    seg.push_back(utils.get());
+    SyntaxNodeList snlist{&mempool};
+    snlist.push_back(utils.get());
 
     auto iter = std::begin(GrammarsList::grammars);
     for (; iter != std::end(GrammarsList::grammars); ++iter) {
       if ((*iter)->First(tok)) {
         std::optional<Statement> sub;
-        if (!(sub = (*iter)->Rest(std::move(seg), utils)).has_value())
+        if (!(sub = (*iter)->Rest(std::move(snlist), utils)).has_value())
           break;
         return std::move(sub.value());
       }

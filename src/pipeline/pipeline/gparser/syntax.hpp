@@ -31,10 +31,11 @@ public:
   std::optional<AbstreeWithLineno> Next() {
     try {
       if (auto stmt = GetStatement(_remain_block)) {
-        assert(std::holds_alternative<Segment>(std::get<0>(stmt.value())));
-        return AbstreeWithLineno{
-            _ToAbstree(std::get<Segment>(std::move(std::get<0>(stmt.value())))),
-            std::get<1>(stmt.value())};
+        assert(std::holds_alternative<Abstree::NodePtr>(
+            std::get<0>(stmt.value())));
+        return AbstreeWithLineno{_ToAbstree(std::get<Abstree::NodePtr>(
+                                     std::move(std::get<0>(stmt.value())))),
+                                 std::get<1>(stmt.value())};
       }
 
       auto get = [this]() {
@@ -57,23 +58,23 @@ public:
   }
 
 private:
-  Abstree _ToAbstree(Segment &&seg) {
-    return Abstree(expr(seg), _return_val, _addr, _pimpl);
+  Abstree _ToAbstree(Abstree::NodePtr &&nodeptr) {
+    return Abstree(std::move(nodeptr), _return_val, _addr, _pimpl);
   }
 
   AbstreeWithLineno _ToAbstree(Statement &&stmt) {
     return std::visit(
         Overloaded{
-            [this,
-             line = std::get<1>(stmt)](Segment &&seg) -> AbstreeWithLineno {
-              return {_ToAbstree(std::move(seg)), line};
+            [this, line = std::get<1>(stmt)](
+                Abstree::NodePtr &&nodeptr) -> AbstreeWithLineno {
+              return {_ToAbstree(std::move(nodeptr)), line};
             },
             [this](ClonePtr<block::Block> &&block_) -> AbstreeWithLineno {
               _remain_block = std::move(block_);
               auto stmt_ = GetStatement(_remain_block);
-              assert(
-                  std::holds_alternative<Segment>(std::get<0>(stmt_.value())));
-              return {_ToAbstree(std::get<Segment>(
+              assert(std::holds_alternative<Abstree::NodePtr>(
+                  std::get<0>(stmt_.value())));
+              return {_ToAbstree(std::get<Abstree::NodePtr>(
                           std::move(std::get<0>(stmt_.value())))),
                       std::get<1>(stmt_.value())};
             },

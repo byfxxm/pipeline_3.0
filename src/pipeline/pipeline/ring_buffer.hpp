@@ -2,7 +2,6 @@
 #define _RING_BUFFER_HPP_
 
 #include <atomic>
-#include <concepts>
 
 namespace byfxxm {
 template <class Ty, size_t Num>
@@ -42,8 +41,8 @@ private:
   }
 
 private:
-  volatile size_t read_index_{0};
-  volatile size_t write_index_{0};
+  std::atomic<size_t> read_index_{0};
+  std::atomic<size_t> write_index_{0};
   Ty data_[Num];
 };
 } // namespace byfxxm

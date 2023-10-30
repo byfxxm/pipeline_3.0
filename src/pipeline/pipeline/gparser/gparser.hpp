@@ -19,12 +19,12 @@ public:
     std::optional<std::string> ret;
     try {
       Syntax<T> syn(std::move(_stream), addr, pimpl);
-      while (auto abs_tree = syn.Next()) {
-        auto &[tree, line] = abs_tree.value();
+      while (auto abstree = syn.Next()) {
+        auto &[tree, line] = abstree.value();
         if (updateline)
           updateline(line);
 
-        tree.Execute();
+        tree();
       }
     } catch (const ParseException &ex) {
       ret = std::format("error: {}", ex.what());

@@ -32,7 +32,7 @@ public:
   Abstree &operator=(const Abstree &) = delete;
   Abstree &operator=(Abstree &&) noexcept = default;
 
-  Value Execute() {
+  Value operator()() {
     *_return_val = _Execute(_root);
     return *_return_val;
   }

@@ -19,7 +19,7 @@ struct Utils {
   GetRetVal return_val;
 };
 
-constexpr bool IsNewSegment(const token::Token &tok) {
+constexpr bool IsNewStatement(const token::Token &tok) {
   return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
 }
 
@@ -67,7 +67,7 @@ class Expr : public Grammar {
                                         const Utils &utils) const override {
     for (;;) {
       auto tok = utils.peek();
-      if (IsNewSegment(tok))
+      if (IsNewStatement(tok))
         break;
 
       snlist.push_back(utils.get());
@@ -87,7 +87,7 @@ class Ggram : public Grammar {
     SyntaxNodeList gtag{&mempool};
     for (;;) {
       auto tok = utils.peek();
-      if (IsNewSegment(tok)) {
+      if (IsNewStatement(tok)) {
         if (!gtag.empty())
           snlist.push_back(expr(gtag));
         break;

@@ -71,13 +71,13 @@ private:
       return {};
 
     SyntaxNodeList synlist = _ProcessBracket(range);
-    auto min_pri = _FindMinPriority(synlist);
+    auto minpri = _FindMinPriority(synlist);
 
-    auto node = _CurNode(*min_pri);
-    if (auto first = _Expression(_SyntaxNodeListRng(synlist.begin(), min_pri)))
+    auto node = _CurNode(*minpri);
+    if (auto first = _Expression(_SyntaxNodeListRng(synlist.begin(), minpri)))
       node->subs.push_back(std::move(first));
     if (auto second =
-            _Expression(_SyntaxNodeListRng(min_pri + 1, synlist.end())))
+            _Expression(_SyntaxNodeListRng(minpri + 1, synlist.end())))
       node->subs.push_back(std::move(second));
 
     _CheckError(node);

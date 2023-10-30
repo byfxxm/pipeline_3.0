@@ -49,7 +49,7 @@ public:
       auto get_rval = [this]() -> Value { return _return_val; };
 
       if (auto stmt = GetStatement(grammar::Utils{get, peek, line, get_rval}))
-        return _ToAbstree(std::move(stmt.value()));
+        return _ToAbstreeWithLineno(std::move(stmt.value()));
 
       return {};
     } catch (const ParseException &ex) {
@@ -62,7 +62,7 @@ private:
     return Abstree(std::move(nodeptr), _return_val, _addr, _pimpl);
   }
 
-  AbstreeWithLineno _ToAbstree(Statement &&stmt) {
+  AbstreeWithLineno _ToAbstreeWithLineno(Statement &&stmt) {
     return std::visit(
         Overloaded{
             [this, line = std::get<1>(stmt)](

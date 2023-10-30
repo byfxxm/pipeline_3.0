@@ -58,10 +58,13 @@ using SyntaxNodeList = std::pmr::vector<SyntaxNode>;
 
 class Expression {
 public:
-  Abstree::NodePtr operator()(SyntaxNodeList &snlist) const { return _Expression(snlist); }
+  Abstree::NodePtr operator()(SyntaxNodeList &snlist) const {
+    return _Expression(snlist);
+  }
 
 private:
-  using _SyntaxNodeListRng = decltype(std::ranges::subrange(std::declval<SyntaxNodeList &>()));
+  using _SyntaxNodeListRng =
+      decltype(std::ranges::subrange(std::declval<SyntaxNodeList &>()));
 
   Abstree::NodePtr _Expression(_SyntaxNodeListRng range) const {
     if (range.empty())
@@ -73,7 +76,8 @@ private:
     auto node = _CurNode(*min_pri);
     if (auto first = _Expression(_SyntaxNodeListRng(snlist.begin(), min_pri)))
       node->subs.push_back(std::move(first));
-    if (auto second = _Expression(_SyntaxNodeListRng(min_pri + 1, snlist.end())))
+    if (auto second =
+            _Expression(_SyntaxNodeListRng(min_pri + 1, snlist.end())))
       node->subs.push_back(std::move(second));
 
     _CheckError(node);
@@ -113,7 +117,7 @@ private:
     }
 
     if (level != 0)
-        throw SyntaxException();
+      throw SyntaxException();
 
     return main;
   }

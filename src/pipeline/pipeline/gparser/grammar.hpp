@@ -63,17 +63,17 @@ class Expr : public Grammar {
     return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&synlist,
                                         const Utils &utils) const override {
     for (;;) {
       auto tok = utils.peek();
       if (IsNewStatement(tok))
         break;
 
-      snlist.push_back(utils.get());
+      synlist.push_back(utils.get());
     }
 
-    return Statement(expr(snlist), utils.line());
+    return Statement(expr(synlist), utils.line());
   }
 };
 
@@ -82,14 +82,14 @@ class Ggram : public Grammar {
     return IsGcode(tok);
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&synlist,
                                         const Utils &utils) const override {
     SyntaxNodeList gtag{&mempool};
     for (;;) {
       auto tok = utils.peek();
       if (IsNewStatement(tok)) {
         if (!gtag.empty())
-          snlist.push_back(expr(gtag));
+          synlist.push_back(expr(gtag));
         break;
       }
 
@@ -99,15 +99,15 @@ class Ggram : public Grammar {
       }
 
       if (gtag.empty()) {
-        snlist.push_back(utils.get());
+        synlist.push_back(utils.get());
       } else {
-        snlist.push_back(expr(gtag));
+        synlist.push_back(expr(gtag));
         gtag.clear();
       }
     }
 
     SyntaxNodeList res{&mempool};
-    res.push_back(gtree(snlist));
+    res.push_back(gtree(synlist));
     return Statement(expr(res), utils.line());
   }
 };
@@ -117,13 +117,13 @@ class IfElse : public Grammar {
     return tok.kind == token::Kind::IF;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&synlist,
                                         const Utils &utils) const override {
     using If = block::IfElse::If;
     using Else = block::IfElse::Else;
 
     auto read_cond = [&]() -> Statement {
-      SyntaxNodeList snlist{&mempool};
+      SyntaxNodeList synlist{&mempool};
       for (;;) {
         auto tok = utils.peek();
         if (tok.kind == token::Kind::NEWLINE)
@@ -134,10 +134,10 @@ class IfElse : public Grammar {
           break;
         }
 
-        snlist.push_back(utils.get());
+        synlist.push_back(utils.get());
       }
 
-      return {expr(snlist), utils.line()};
+      return {expr(synlist), utils.line()};
     };
 
     auto read_scope = [&](Scope &scope) {
@@ -196,10 +196,10 @@ class While : public Grammar {
     return tok.kind == token::Kind::WHILE;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&snlist,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &&synlist,
                                         const Utils &utils) const override {
     auto read_cond = [&]() -> Statement {
-      SyntaxNodeList snlist{&mempool};
+      SyntaxNodeList synlist{&mempool};
       for (;;) {
         auto tok = utils.get();
         if (tok.kind == token::Kind::NEWLINE)
@@ -208,10 +208,10 @@ class While : public Grammar {
         if (tok.kind == token::Kind::DO)
           break;
 
-        snlist.push_back(std::move(tok));
+        synlist.push_back(std::move(tok));
       }
 
-      return {expr(snlist), utils.line()};
+      return {expr(synlist), utils.line()};
     };
 
     auto read_scope = [&](Scope &scope) {
@@ -259,14 +259,14 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
     if (IsEndOfFile(tok))
       return {};
 
-    SyntaxNodeList snlist{&mempool};
-    snlist.push_back(utils.get());
+    SyntaxNodeList synlist{&mempool};
+    synlist.push_back(utils.get());
 
     auto iter = std::begin(GrammarsList::grammars);
     for (; iter != std::end(GrammarsList::grammars); ++iter) {
       if ((*iter)->First(tok)) {
         std::optional<Statement> sub;
-        if (!(sub = (*iter)->Rest(std::move(snlist), utils)).has_value())
+        if (!(sub = (*iter)->Rest(std::move(synlist), utils)).has_value())
           break;
         return std::move(sub.value());
       }

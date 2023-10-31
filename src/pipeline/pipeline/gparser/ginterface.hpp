@@ -1,5 +1,5 @@
-﻿#ifndef _GPARSER_GINTERFACE_HPP_
-#define _GPARSER_GINTERFACE_HPP_
+﻿#ifndef _BYFXXM_GINTERFACE_HPP_
+#define _BYFXXM_GINTERFACE_HPP_
 
 #include "token.hpp"
 #include <vector>

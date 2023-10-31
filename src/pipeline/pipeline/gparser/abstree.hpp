@@ -1,5 +1,5 @@
-﻿#ifndef _GPARSER_ABSTREE_HPP_
-#define _GPARSER_ABSTREE_HPP_
+﻿#ifndef _BYFXXM_ABSTREE_HPP_
+#define _BYFXXM_ABSTREE_HPP_
 
 #include "memory.hpp"
 #include "predicate.hpp"

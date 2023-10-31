@@ -1,5 +1,5 @@
-﻿#ifndef _GPARSER_GRAMMAR_HPP_
-#define _GPARSER_GRAMMAR_HPP_
+﻿#ifndef _BYFXXM_GRAMMAR_HPP_
+#define _BYFXXM_GRAMMAR_HPP_
 
 #include "block.hpp"
 #include "memory.hpp"

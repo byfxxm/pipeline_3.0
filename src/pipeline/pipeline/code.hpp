@@ -1,5 +1,5 @@
-﻿#ifndef _CODE_HPP_
-#define _CODE_HPP_
+﻿#ifndef _BYFXXM_CODE_HPP_
+#define _BYFXXM_CODE_HPP_
 
 #include "array_nd.hpp"
 

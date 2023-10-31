@@ -1,5 +1,5 @@
-﻿#ifndef _GPARSER_MEMORY_HPP_
-#define _GPARSER_MEMORY_HPP_
+﻿#ifndef _BYFXXM_MEMORY_HPP_
+#define _BYFXXM_MEMORY_HPP_
 
 #include <memory>
 #include <memory_resource>

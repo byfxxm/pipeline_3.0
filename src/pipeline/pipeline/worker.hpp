@@ -1,5 +1,5 @@
-﻿#ifndef _WORKER_HPP_
-#define _WORKER_HPP_
+﻿#ifndef _BYFXXM_WORKER_HPP_
+#define _BYFXXM_WORKER_HPP_
 
 #include <functional>
 #include <memory>

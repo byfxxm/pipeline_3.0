@@ -1,5 +1,5 @@
-﻿#ifndef _GPARSER_BLOCK_HPP_
-#define _GPARSER_BLOCK_HPP_
+﻿#ifndef _BYFXXM_BLOCK_HPP_
+#define _BYFXXM_BLOCK_HPP_
 
 #include "memory.hpp"
 #include "production.hpp"

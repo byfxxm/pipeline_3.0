@@ -1,5 +1,5 @@
-﻿#ifndef _PIPELINE_HPP_
-#define _PIPELINE_HPP_
+﻿#ifndef _BYFXXM_PIPELINE_HPP_
+#define _BYFXXM_PIPELINE_HPP_
 
 #include "coro.hpp"
 #include "ring_buffer.hpp"

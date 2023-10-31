@@ -1,5 +1,5 @@
-﻿#ifndef _GPARSER_WORD_HPP_
-#define _GPARSER_WORD_HPP_
+﻿#ifndef _BYFXXM_WORD_HPP_
+#define _BYFXXM_WORD_HPP_
 
 #include <functional>
 

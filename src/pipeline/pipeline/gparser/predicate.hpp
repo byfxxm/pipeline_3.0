@@ -4,7 +4,6 @@
 #include "address.hpp"
 #include "exception.hpp"
 #include "ginterface.hpp"
-#include "memory.hpp"
 #include "token.hpp"
 #include <algorithm>
 #include <string>

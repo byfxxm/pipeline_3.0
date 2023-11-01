@@ -136,6 +136,19 @@
     <ClCompile Include="dup.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ncfiles\LTJX.nc" />
+    <None Include="ncfiles\macro1.nc" />
+    <None Include="ncfiles\test.nc" />
+    <None Include="ncfiles\test1.nc" />
+    <None Include="ncfiles\test2.nc" />
+    <None Include="ncfiles\test3.nc" />
+    <None Include="ncfiles\test4.nc" />
+    <None Include="ncfiles\test5.nc" />
+    <None Include="ncfiles\test6.nc" />
+    <None Include="ncfiles\test7.nc" />
+    <None Include="ncfiles\test8.nc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

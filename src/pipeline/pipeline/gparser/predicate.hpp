@@ -7,6 +7,7 @@
 #include "token.hpp"
 #include <algorithm>
 #include <string>
+#include <type_traits>
 #include <variant>
 
 #define byfxxm_IsType(v, type)                                                 \

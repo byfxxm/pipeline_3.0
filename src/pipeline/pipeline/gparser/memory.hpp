@@ -30,16 +30,25 @@ public:
   UniquePtr() = default;
 
   template <class T1>
+    requires std::is_convertible_v<T1 *, T *>
   UniquePtr(UniquePtr<T1> &&rhs) noexcept : _pointer(std::move(rhs._pointer)) {}
 
-  template <class T1> UniquePtr(T1 *p) noexcept : _pointer(p) {}
+  template <class T1>
+    requires std::is_convertible_v<T1 *, T *>
+  UniquePtr(T1 *p) noexcept : _pointer(p) {}
 
   template <class T1, class D1>
+    requires std::is_convertible_v<T1 *, T *>
   UniquePtr(T1 *p, D1 &&del) noexcept : _pointer(p, std::forward<D1>(del)) {}
 
   explicit operator bool() const noexcept { return _pointer.operator bool(); }
 
   decltype(auto) operator->() const noexcept { return _pointer.operator->(); }
+
+  UniquePtr &operator=(UniquePtr &&rhs) noexcept {
+    _pointer = std::move(rhs._pointer);
+    return *this;
+  }
 
   decltype(auto) Reset(auto &&...pars) noexcept {
     return _pointer.reset(std::forward<decltype(pars)>(pars)...);
@@ -53,7 +62,6 @@ private:
   std::unique_ptr<T, D> _pointer;
 
   template <class T1, class D1> friend class UniquePtr;
-  template <class T1> friend class ClonePtr;
 };
 
 template <class T, class... Args>
@@ -69,54 +77,6 @@ template <class T, class... Args>
                           T(std::forward<Args>(args)...),
                       Deleter<T>(&mr));
 }
-
-template <class T> class ClonePtr {
-public:
-  ClonePtr() = default;
-  ~ClonePtr() = default;
-  ClonePtr(ClonePtr &&) noexcept = default;
-  ClonePtr &operator=(ClonePtr &&) noexcept = default;
-
-  template <class T1>
-  ClonePtr(UniquePtr<T1> &&rhs) noexcept : _pointer(std::move(rhs)) {}
-
-  ClonePtr(const UniquePtr<T> &rhs) {
-    if (!rhs)
-      return;
-
-    if constexpr (std::is_abstract_v<T>) {
-      _pointer = rhs->Clone();
-    } else {
-      if (rhs._pointer.get_deleter().mr_)
-        _pointer = MakeUnique<T>(*rhs._pointer.get_deleter().mr_, *rhs);
-      else
-        _pointer = MakeUnique<T>(*rhs);
-    }
-  }
-
-  ClonePtr(const ClonePtr &rhs) : ClonePtr(rhs._pointer) {}
-
-  // copy and swap
-  ClonePtr &operator=(const ClonePtr &rhs) {
-    using std::swap;
-    ClonePtr copy(rhs);
-    swap(*this, copy);
-    return *this;
-  }
-
-  explicit operator bool() const noexcept { return _pointer.operator bool(); }
-
-  decltype(auto) operator->() const noexcept { return _pointer.operator->(); }
-
-  decltype(auto) Reset(auto &&...pars) noexcept {
-    return _pointer.Reset(std::forward<decltype(pars)>(pars)...);
-  }
-
-  decltype(auto) Get() const noexcept { return _pointer.Get(); }
-
-private:
-  UniquePtr<T> _pointer;
-};
 
 #ifdef __GNUC__
 inline std::pmr::synchronized_pool_resource mempool;

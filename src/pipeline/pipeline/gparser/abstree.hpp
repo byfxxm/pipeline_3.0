@@ -13,12 +13,17 @@ class Ginterface;
 class Abstree {
 public:
   struct Node;
-  using NodePtr = ClonePtr<Node>;
+  using NodePtr = UniquePtr<Node>;
 
   struct Node {
     Predicate pred;
     std::pmr::vector<NodePtr> subs{&mempool};
   };
+
+  Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *pimpl) noexcept
+      : _root(&root), _return_val(&rval), _addr(addr), _pimpl(pimpl) {
+    assert(*std::get<NodePtr *>(_root));
+  }
 
   Abstree(NodePtr &&root, Value &rval, Address *addr,
           Ginterface *pimpl) noexcept
@@ -33,7 +38,11 @@ public:
   Abstree &operator=(Abstree &&) noexcept = default;
 
   Value operator()() {
-    *_return_val = _Execute(_root);
+    std::visit(
+        Overloaded{[this](NodePtr &root) { *_return_val = _Execute(root); },
+                   [this](NodePtr *root) { *_return_val = _Execute(*root); }},
+        _root);
+
     return *_return_val;
   }
 
@@ -79,7 +88,7 @@ private:
   }
 
 private:
-  NodePtr _root;
+  std::variant<NodePtr, NodePtr *> _root;
   Value *_return_val{nullptr};
   Address *_addr{nullptr};
   Ginterface *_pimpl{nullptr};

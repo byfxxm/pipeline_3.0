@@ -145,7 +145,7 @@ private:
   }
 
   Abstree::NodePtr _CurNode(SyntaxNode &node) const {
-    auto ret = ClonePtr(MakeUnique<Abstree::Node>(mempool));
+    auto ret = MakeUnique<Abstree::Node>(mempool);
     if (auto abs = std::get_if<Abstree::NodePtr>(&node)) {
       ret = std::move(*abs);
     } else {

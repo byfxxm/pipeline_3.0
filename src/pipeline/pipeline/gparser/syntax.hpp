@@ -9,11 +9,11 @@
 #include "production.hpp"
 
 namespace byfxxm {
-inline std::optional<Statement> GetStatement(ClonePtr<block::Block> &block) {
+inline Statement *GetStatement(UniquePtr<block::Block> &block) {
   if (block) {
     auto tree = block->Next();
-    if (tree.has_value())
-      return std::move(tree.value());
+    if (tree)
+      return tree;
     else
       block.Reset();
   }
@@ -31,11 +31,10 @@ public:
   std::optional<AbstreeWithLineno> Next() {
     try {
       if (auto stmt = GetStatement(_remain_block)) {
-        assert(std::holds_alternative<Abstree::NodePtr>(
-            std::get<0>(stmt.value())));
-        return AbstreeWithLineno{_ToAbstree(std::get<Abstree::NodePtr>(
-                                     std::move(std::get<0>(stmt.value())))),
-                                 std::get<1>(stmt.value())};
+        assert(std::holds_alternative<Abstree::NodePtr>(std::get<0>(*stmt)));
+        return AbstreeWithLineno{
+            _ToAbstree(std::get<Abstree::NodePtr>(std::get<0>(*stmt))),
+            std::get<1>(*stmt)};
       }
 
       auto get = [this]() {
@@ -58,8 +57,8 @@ public:
   }
 
 private:
-  Abstree _ToAbstree(Abstree::NodePtr &&nodeptr) {
-    return Abstree(std::move(nodeptr), _return_val, _addr, _pimpl);
+  template <class T> Abstree _ToAbstree(T &&nodeptr) {
+    return Abstree(std::forward<T>(nodeptr), _return_val, _addr, _pimpl);
   }
 
   AbstreeWithLineno _ToAbstreeWithLineno(Statement &&stmt) {
@@ -69,14 +68,14 @@ private:
                 Abstree::NodePtr &&nodeptr) -> AbstreeWithLineno {
               return {_ToAbstree(std::move(nodeptr)), line};
             },
-            [this](ClonePtr<block::Block> &&block_) -> AbstreeWithLineno {
+            [this](UniquePtr<block::Block> &&block_) -> AbstreeWithLineno {
               _remain_block = std::move(block_);
               auto stmt_ = GetStatement(_remain_block);
               assert(std::holds_alternative<Abstree::NodePtr>(
-                  std::get<0>(stmt_.value())));
-              return {_ToAbstree(std::get<Abstree::NodePtr>(
-                          std::move(std::get<0>(stmt_.value())))),
-                      std::get<1>(stmt_.value())};
+                  std::get<0>(*stmt_)));
+              return {
+                  _ToAbstree(std::get<Abstree::NodePtr>(std::get<0>(*stmt_))),
+                  std::get<1>(*stmt_)};
             },
         },
         std::move(std::get<0>(stmt)));
@@ -88,7 +87,7 @@ private:
   Value _return_val;
   Address *_addr{nullptr};
   Ginterface *_pimpl{nullptr};
-  ClonePtr<block::Block> _remain_block;
+  UniquePtr<block::Block> _remain_block;
 };
 
 template <class T> Syntax(T) -> Syntax<T>;

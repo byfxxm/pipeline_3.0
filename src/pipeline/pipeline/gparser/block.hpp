@@ -17,30 +17,28 @@ class Block;
 }
 
 using Statement =
-    std::tuple<std::variant<Abstree::NodePtr, ClonePtr<block::Block>>, size_t>;
+    std::tuple<std::variant<Abstree::NodePtr, UniquePtr<block::Block>>, size_t>;
 using Scope = std::pmr::vector<Statement>;
 
 namespace block {
 class Block {
 public:
   virtual ~Block() = default;
-  virtual UniquePtr<Block> Clone() const = 0;
-  virtual std::optional<Statement> Next() = 0;
+  virtual Statement *Next() = 0;
 };
 
-inline std::optional<Statement> GetStatement(Scope &scope, size_t &index) {
+inline Statement *GetStatement(Scope &scope, size_t &index) {
   if (index == scope.size())
     return {};
 
-  std::optional<Statement> ret;
+  Statement *ret{nullptr};
   auto &stmt = scope[index];
   if (std::holds_alternative<Abstree::NodePtr>(std::get<0>(stmt))) {
-    ret = std::move(stmt);
+    ret = &stmt;
     ++index;
-  } else if (std::holds_alternative<ClonePtr<Block>>(std::get<0>(stmt))) {
-    auto &block = std::get<ClonePtr<Block>>(std::get<0>(stmt));
-    auto next = block->Next();
-    ret = next ? std::move(next.value()) : std::optional<Statement>();
+  } else if (std::holds_alternative<UniquePtr<Block>>(std::get<0>(stmt))) {
+    auto &block = std::get<UniquePtr<Block>>(std::get<0>(stmt));
+    ret = block->Next();
     if (!ret) {
       ret = GetStatement(scope, ++index);
     }
@@ -61,11 +59,7 @@ class IfElse : public Block {
 
   IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
 
-  virtual UniquePtr<Block> Clone() const {
-    return MakeUnique<IfElse>(mempool, *this);
-  }
-
-  virtual std::optional<Statement> Next() override {
+  virtual Statement *Next() override {
     if (_iscond) {
       if (_cur_stmt > 0 && std::get<bool>(_get_ret())) {
         --_cur_stmt;
@@ -74,7 +68,7 @@ class IfElse : public Block {
       }
 
       if (_cur_stmt == 0)
-        return std::move(_ifs[_cur_stmt++].cond);
+        return &_ifs[_cur_stmt++].cond;
 
       if (_cur_stmt == _ifs.size()) {
         _iscond = false;
@@ -90,7 +84,7 @@ class IfElse : public Block {
         return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
       }
 
-      return std::move(_ifs[_cur_stmt++].cond);
+      return &_ifs[_cur_stmt++].cond;
     }
 
     if (_cur_stmt == _ifs.size())
@@ -114,21 +108,15 @@ class IfElse : public Block {
 class While : public Block {
   While(GetRetVal get_ret) : _get_ret(get_ret) {}
 
-  virtual UniquePtr<Block> Clone() const {
-    return MakeUnique<While>(mempool, *this);
-  }
-
-  virtual std::optional<Statement> Next() override {
+  virtual Statement *Next() override {
     if (_iscond) {
       _iscond = false;
-      _Store();
-      return std::move(_cond);
+      return &_cond;
     }
 
     if (_scope_index == _scope.size()) {
       _scope_index = 0;
-      _Restore();
-      return std::move(_cond);
+      return &_cond;
     }
 
     if (_scope_index == 0) {
@@ -142,16 +130,6 @@ class While : public Block {
 
     _iscond = false;
     return GetStatement(_scope, _scope_index);
-  }
-
-  void _Store() {
-    _scope_backup = _scope;
-    _cond_backup = _cond;
-  }
-
-  void _Restore() {
-    _scope = _scope_backup;
-    _cond = _cond_backup;
   }
 
   Statement _cond;

@@ -57,8 +57,10 @@ public:
   }
 
 private:
-  template <class T> Abstree _ToAbstree(T &&nodeptr) {
-    return Abstree(std::forward<T>(nodeptr), _return_val, _addr, _pimpl);
+  template <class T1>
+    requires std::is_same_v<std::decay_t<T1>, Abstree::NodePtr>
+  Abstree _ToAbstree(T1 &&nodeptr) {
+    return Abstree(std::forward<T1>(nodeptr), _return_val, _addr, _pimpl);
   }
 
   AbstreeWithLineno _ToAbstreeWithLineno(Statement &&stmt) {

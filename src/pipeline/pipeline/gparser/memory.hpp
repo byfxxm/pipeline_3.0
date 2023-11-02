@@ -41,10 +41,6 @@ public:
     requires std::is_convertible_v<T1 *, T *>
   UniquePtr(T1 *p, D1 &&del) noexcept : _pointer(p, std::forward<D1>(del)) {}
 
-  explicit operator bool() const noexcept { return _pointer.operator bool(); }
-
-  decltype(auto) operator->() const noexcept { return _pointer.operator->(); }
-
   UniquePtr &operator=(UniquePtr &&rhs) noexcept {
     _pointer = std::move(rhs._pointer);
     return *this;
@@ -56,11 +52,14 @@ public:
 
   decltype(auto) Get() const noexcept { return _pointer.get(); }
 
+  explicit operator bool() const noexcept { return _pointer.operator bool(); }
+
+  decltype(auto) operator->() const noexcept { return _pointer.operator->(); }
+
   decltype(auto) operator*() const noexcept { return _pointer.operator*(); }
 
 private:
   std::unique_ptr<T, D> _pointer;
-
   template <class T1, class D1> friend class UniquePtr;
 };
 

@@ -28,7 +28,7 @@ public:
   Abstree(NodePtr &&root, Value &rval, Address *addr,
           Ginterface *pimpl) noexcept
       : _root(std::move(root)), _return_val(&rval), _addr(addr), _pimpl(pimpl) {
-    assert(_root);
+    assert(std::get<NodePtr>(_root));
   }
 
   ~Abstree() = default;

@@ -37,17 +37,18 @@ public:
   Abstree &operator=(const Abstree &) = delete;
   Abstree &operator=(Abstree &&) noexcept = default;
 
-  Value operator()() {
+  Value operator()() const {
     std::visit(
-        Overloaded{[this](NodePtr &root) { *_return_val = _Execute(root); },
-                   [this](NodePtr *root) { *_return_val = _Execute(*root); }},
+        Overloaded{
+            [this](const NodePtr &root) { *_return_val = _Execute(root); },
+            [this](const NodePtr *root) { *_return_val = _Execute(*root); }},
         _root);
 
     return *_return_val;
   }
 
 private:
-  Value _Execute(const NodePtr &node) {
+  Value _Execute(const NodePtr &node) const {
     if (std::holds_alternative<Value>(node->pred))
       return std::get<Value>(node->pred);
 

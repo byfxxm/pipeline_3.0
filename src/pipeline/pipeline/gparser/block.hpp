@@ -16,40 +16,38 @@ namespace block {
 class Block;
 }
 
-using Statement =
-    std::tuple<std::variant<Abstree::NodePtr, UniquePtr<block::Block>>, size_t>;
+using Segment = std::tuple<Abstree::NodePtr, size_t>;
+using Statement = std::variant<Segment, UniquePtr<block::Block>>;
 using Scope = std::pmr::vector<Statement>;
 
 namespace block {
 class Block {
 public:
   virtual ~Block() = default;
-  virtual Statement *Next() = 0;
+  virtual Segment *Next() = 0;
 };
 
-inline Statement *GetStatement(Scope &scope, size_t &index) {
+inline Segment *GetStatement(Scope &scope, size_t &index) {
   if (index == scope.size())
-    return {};
+    return nullptr;
 
-  Statement *ret{nullptr};
-  auto &stmt = scope[index];
-  if (std::holds_alternative<Abstree::NodePtr>(std::get<0>(stmt))) {
-    ret = &stmt;
-    ++index;
-  } else if (std::holds_alternative<UniquePtr<Block>>(std::get<0>(stmt))) {
-    auto &block = std::get<UniquePtr<Block>>(std::get<0>(stmt));
-    ret = block->Next();
-    if (!ret) {
-      ret = GetStatement(scope, ++index);
-    }
-  }
-
-  return ret;
+  return std::visit(Overloaded{[&](Segment &seg) {
+                                 ++index;
+                                 return &seg;
+                               },
+                               [&](UniquePtr<Block> &block) {
+                                 auto seg = block->Next();
+                                 if (!seg) {
+                                   seg = GetStatement(scope, ++index);
+                                 }
+                                 return seg;
+                               }},
+                    scope[index]);
 };
 
 class IfElse : public Block {
   struct If {
-    Statement cond;
+    Segment cond;
     Scope scope{&mempool};
   };
 
@@ -59,7 +57,7 @@ class IfElse : public Block {
 
   IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
 
-  virtual Statement *Next() override {
+  virtual Segment *Next() override {
     if (_iscond) {
       if (_cur_stmt > 0 && std::get<bool>(_get_ret())) {
         --_cur_stmt;
@@ -108,7 +106,7 @@ class IfElse : public Block {
 class While : public Block {
   While(GetRetVal get_ret) : _get_ret(get_ret) {}
 
-  virtual Statement *Next() override {
+  virtual Segment *Next() override {
     if (_iscond) {
       _iscond = false;
       return &_cond;
@@ -132,10 +130,8 @@ class While : public Block {
     return GetStatement(_scope, _scope_index);
   }
 
-  Statement _cond;
-  Statement _cond_backup;
+  Segment _cond;
   Scope _scope{&mempool};
-  Scope _scope_backup{&mempool};
   bool _iscond{true};
   GetRetVal _get_ret;
   size_t _scope_index{0};

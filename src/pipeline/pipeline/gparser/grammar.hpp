@@ -73,7 +73,7 @@ class Expr : public Grammar {
       synlist.push_back(utils.get());
     }
 
-    return Statement(expr(synlist), utils.line());
+    return Statement(Segment(expr(synlist), utils.line()));
   }
 };
 
@@ -108,7 +108,7 @@ class Ggram : public Grammar {
 
     SyntaxNodeList res{&mempool};
     res.push_back(gtree(synlist));
-    return Statement(expr(res), utils.line());
+    return Statement(Segment(expr(res), utils.line()));
   }
 };
 
@@ -122,7 +122,7 @@ class IfElse : public Grammar {
     using If = block::IfElse::If;
     using Else = block::IfElse::Else;
 
-    auto read_cond = [&]() -> Statement {
+    auto read_cond = [&]() -> Segment {
       SyntaxNodeList synlist{&mempool};
       for (;;) {
         auto tok = utils.peek();
@@ -137,7 +137,7 @@ class IfElse : public Grammar {
         synlist.push_back(utils.get());
       }
 
-      return {expr(synlist), utils.line()};
+      return Segment(expr(synlist), utils.line());
     };
 
     auto read_scope = [&](Scope &scope) {
@@ -186,8 +186,7 @@ class IfElse : public Grammar {
       throw SyntaxException();
 
     return Statement(UniquePtr<block::Block>(
-                         MakeUnique<block::IfElse>(mempool, std::move(ifelse))),
-                     utils.line());
+        MakeUnique<block::IfElse>(mempool, std::move(ifelse))));
   }
 };
 
@@ -198,7 +197,7 @@ class While : public Grammar {
 
   virtual std::optional<Statement> Rest(SyntaxNodeList &&synlist,
                                         const Utils &utils) const override {
-    auto read_cond = [&]() -> Statement {
+    auto read_cond = [&]() -> Segment {
       SyntaxNodeList synlist{&mempool};
       for (;;) {
         auto tok = utils.get();
@@ -211,7 +210,7 @@ class While : public Grammar {
         synlist.push_back(std::move(tok));
       }
 
-      return {expr(synlist), utils.line()};
+      return Segment(expr(synlist), utils.line());
     };
 
     auto read_scope = [&](Scope &scope) {
@@ -239,8 +238,7 @@ class While : public Grammar {
       throw SyntaxException();
 
     return Statement(UniquePtr<block::Block>(
-                         MakeUnique<block::While>(mempool, std::move(wh))),
-                     utils.line());
+        MakeUnique<block::While>(mempool, std::move(wh))));
   }
 };
 

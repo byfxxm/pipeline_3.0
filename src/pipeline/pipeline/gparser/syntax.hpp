@@ -9,7 +9,7 @@
 #include "production.hpp"
 
 namespace byfxxm {
-inline Statement *GetStatement(UniquePtr<block::Block> &block) {
+inline Segment *GetStatement(UniquePtr<block::Block> &block) {
   if (block) {
     auto tree = block->Next();
     if (tree)
@@ -30,11 +30,9 @@ public:
 
   std::optional<AbstreeWithLineno> Next() {
     try {
-      if (auto stmt = GetStatement(_remain_block)) {
-        assert(std::holds_alternative<Abstree::NodePtr>(std::get<0>(*stmt)));
-        return AbstreeWithLineno{
-            _ToAbstree(std::get<Abstree::NodePtr>(std::get<0>(*stmt))),
-            std::get<1>(*stmt)};
+      if (auto seg = GetStatement(_remain_block)) {
+        auto &[nodeptr, line] = *seg;
+        return AbstreeWithLineno(_ToAbstree(nodeptr), line);
       }
 
       auto get = [this]() {
@@ -66,21 +64,18 @@ private:
   AbstreeWithLineno _ToAbstreeWithLineno(Statement &&stmt) {
     return std::visit(
         Overloaded{
-            [this, line = std::get<1>(stmt)](
-                Abstree::NodePtr &&nodeptr) -> AbstreeWithLineno {
+            [this](Segment &&seg) -> AbstreeWithLineno {
+              auto &[nodeptr, line] = seg;
               return {_ToAbstree(std::move(nodeptr)), line};
             },
             [this](UniquePtr<block::Block> &&block_) -> AbstreeWithLineno {
               _remain_block = std::move(block_);
-              auto stmt_ = GetStatement(_remain_block);
-              assert(std::holds_alternative<Abstree::NodePtr>(
-                  std::get<0>(*stmt_)));
-              return {
-                  _ToAbstree(std::get<Abstree::NodePtr>(std::get<0>(*stmt_))),
-                  std::get<1>(*stmt_)};
+              auto seg = GetStatement(_remain_block);
+              auto &[nodeptr, line] = *seg;
+              return {_ToAbstree(nodeptr), line};
             },
         },
-        std::move(std::get<0>(stmt)));
+        std::move(stmt));
   }
 
 private:

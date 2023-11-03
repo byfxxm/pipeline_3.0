@@ -27,7 +27,7 @@ public:
   virtual Segment *Next() = 0;
 };
 
-inline Segment *GetStatement(Scope &scope, size_t &index) {
+inline Segment *GetSegment(Scope &scope, size_t &index) {
   if (index == scope.size())
     return nullptr;
 
@@ -38,7 +38,7 @@ inline Segment *GetStatement(Scope &scope, size_t &index) {
                                [&](UniquePtr<Block> &block) {
                                  auto seg = block->Next();
                                  if (!seg) {
-                                   seg = GetStatement(scope, ++index);
+                                   seg = GetSegment(scope, ++index);
                                  }
 
                                  return seg;
@@ -63,7 +63,7 @@ class IfElse : public Block {
       if (_cur_if > 0 && std::get<bool>(_get_ret())) {
         --_cur_if;
         _iscond = false;
-        return GetStatement(_ifs[_cur_if].scope, _scope_index);
+        return GetSegment(_ifs[_cur_if].scope, _scope_index);
       }
 
       if (_cur_if == 0)
@@ -71,7 +71,7 @@ class IfElse : public Block {
 
       if (_cur_if == _ifs.size()) {
         _iscond = false;
-        return GetStatement(_else.scope, _scope_index);
+        return GetSegment(_else.scope, _scope_index);
       }
 
       if (!std::holds_alternative<bool>(_get_ret()))
@@ -80,19 +80,19 @@ class IfElse : public Block {
       auto cond = std::get<bool>(_get_ret());
       if (cond) {
         _iscond = false;
-        return GetStatement(_ifs[_cur_if].scope, _scope_index);
+        return GetSegment(_ifs[_cur_if].scope, _scope_index);
       }
 
       return &_ifs[_cur_if++].cond;
     }
 
     if (_cur_if == _ifs.size())
-      return GetStatement(_else.scope, _scope_index);
+      return GetSegment(_else.scope, _scope_index);
 
     if (_scope_index == _ifs[_cur_if].scope.size())
       return {};
 
-    return GetStatement(_ifs[_cur_if].scope, _scope_index);
+    return GetSegment(_ifs[_cur_if].scope, _scope_index);
   }
 
   std::pmr::vector<If> _ifs{&mempool};
@@ -128,7 +128,7 @@ class While : public Block {
     }
 
     _iscond = false;
-    return GetStatement(_scope, _scope_index);
+    return GetSegment(_scope, _scope_index);
   }
 
   Segment _cond;

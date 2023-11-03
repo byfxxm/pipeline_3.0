@@ -40,6 +40,7 @@ inline Segment *GetStatement(Scope &scope, size_t &index) {
                                  if (!seg) {
                                    seg = GetStatement(scope, ++index);
                                  }
+
                                  return seg;
                                }},
                     scope[index]);

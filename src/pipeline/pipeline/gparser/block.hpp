@@ -59,16 +59,16 @@ class IfElse : public Block {
 
   virtual Segment *Next() override {
     if (_iscond) {
-      if (_cur_stmt > 0 && std::get<bool>(_get_ret())) {
-        --_cur_stmt;
+      if (_cur_if > 0 && std::get<bool>(_get_ret())) {
+        --_cur_if;
         _iscond = false;
-        return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
+        return GetStatement(_ifs[_cur_if].scope, _scope_index);
       }
 
-      if (_cur_stmt == 0)
-        return &_ifs[_cur_stmt++].cond;
+      if (_cur_if == 0)
+        return &_ifs[_cur_if++].cond;
 
-      if (_cur_stmt == _ifs.size()) {
+      if (_cur_if == _ifs.size()) {
         _iscond = false;
         return GetStatement(_else.scope, _scope_index);
       }
@@ -79,24 +79,24 @@ class IfElse : public Block {
       auto cond = std::get<bool>(_get_ret());
       if (cond) {
         _iscond = false;
-        return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
+        return GetStatement(_ifs[_cur_if].scope, _scope_index);
       }
 
-      return &_ifs[_cur_stmt++].cond;
+      return &_ifs[_cur_if++].cond;
     }
 
-    if (_cur_stmt == _ifs.size())
+    if (_cur_if == _ifs.size())
       return GetStatement(_else.scope, _scope_index);
 
-    if (_scope_index == _ifs[_cur_stmt].scope.size())
+    if (_scope_index == _ifs[_cur_if].scope.size())
       return {};
 
-    return GetStatement(_ifs[_cur_stmt].scope, _scope_index);
+    return GetStatement(_ifs[_cur_if].scope, _scope_index);
   }
 
   std::pmr::vector<If> _ifs{&mempool};
   Else _else;
-  size_t _cur_stmt{0};
+  size_t _cur_if{0};
   bool _iscond{true};
   GetRetVal _get_ret;
   size_t _scope_index{0};

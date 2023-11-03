@@ -71,6 +71,7 @@ private:
             [this](UniquePtr<block::Block> &&block_) -> AbstreeWithLineno {
               _remain_block = std::move(block_);
               auto seg = GetStatement(_remain_block);
+              assert(seg);
               auto &[nodeptr, line] = *seg;
               return {_ToAbstree(nodeptr), line};
             },

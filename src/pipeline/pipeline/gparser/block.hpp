@@ -124,7 +124,7 @@ class While : public Block {
 
       auto cond = std::get<bool>(_get_ret());
       if (!cond)
-        return {};
+        return nullptr;
     }
 
     _iscond = false;

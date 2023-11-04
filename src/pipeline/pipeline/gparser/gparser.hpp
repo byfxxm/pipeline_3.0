@@ -27,7 +27,7 @@ public:
         tree();
       }
     } catch (const ParseException &ex) {
-      ret = std::format("error: {}", ex.what());
+      ret = std::format("#error: {}", ex.what());
     }
 
     return ret;

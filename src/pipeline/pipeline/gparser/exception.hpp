@@ -30,7 +30,7 @@ public:
 class SyntaxWithLineException : public ParseException {
 public:
   SyntaxWithLineException(size_t line, const char *err)
-      : ParseException(std::format("line {} : {}", line, err)) {}
+      : ParseException(std::format("line {}: {}", line, err)) {}
 };
 
 class AbstreeException : public ParseException {

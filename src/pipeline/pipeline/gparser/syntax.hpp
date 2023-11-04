@@ -21,18 +21,18 @@ inline Segment *GetSegment(UniquePtr<block::Block> &block) {
   return nullptr;
 }
 
-using AbstreeWithLineno = std::tuple<Abstree, size_t>;
+using AbstreeTuple = std::tuple<Abstree, size_t>;
 
 template <StreamConcept T> class Syntax {
 public:
   Syntax(T &&stream, Address *addr, Ginterface *pimpl)
       : _lex(std::move(stream)), _addr(addr), _pimpl(pimpl) {}
 
-  std::optional<AbstreeWithLineno> Next() {
+  std::optional<AbstreeTuple> Next() {
     try {
       if (auto seg = GetSegment(_remain_block)) {
         auto &[nodeptr, line] = *seg;
-        return AbstreeWithLineno(_ToAbstree(nodeptr), line);
+        return _ToAbstree(*seg);
       }
 
       auto get = [this]() {
@@ -46,7 +46,7 @@ public:
       auto get_rval = [this]() -> Value { return _return_val; };
 
       if (auto stmt = GetStatement(grammar::Utils{get, peek, line, get_rval}))
-        return _ToAbstreeWithLineno(std::move(stmt.value()));
+        return _ToAbstree(std::move(stmt.value()));
 
       return {};
     } catch (const ParseException &ex) {
@@ -55,25 +55,27 @@ public:
   }
 
 private:
-  template <class T1>
-    requires std::is_same_v<std::decay_t<T1>, Abstree::NodePtr>
-  Abstree _ToAbstree(T1 &&nodeptr) {
-    return Abstree(std::forward<T1>(nodeptr), _return_val, _addr, _pimpl);
+  AbstreeTuple _ToAbstree(Segment &seg) {
+    auto &[nodeptr, line] = seg;
+    return {Abstree(nodeptr, _return_val, _addr, _pimpl), line};
   }
 
-  AbstreeWithLineno _ToAbstreeWithLineno(Statement &&stmt) {
+  AbstreeTuple _ToAbstree(Segment &&seg) {
+    auto &[nodeptr, line] = seg;
+    return {Abstree(std::move(nodeptr), _return_val, _addr, _pimpl), line};
+  }
+
+  AbstreeTuple _ToAbstree(Statement &&stmt) {
     return std::visit(
         Overloaded{
-            [this](Segment &&seg) -> AbstreeWithLineno {
-              auto &[nodeptr, line] = seg;
-              return {_ToAbstree(std::move(nodeptr)), line};
+            [this](Segment &&seg) -> AbstreeTuple {
+              return _ToAbstree(std::move(seg));
             },
-            [this](UniquePtr<block::Block> &&block_) -> AbstreeWithLineno {
+            [this](UniquePtr<block::Block> &&block_) -> AbstreeTuple {
               _remain_block = std::move(block_);
               auto seg = GetSegment(_remain_block);
               assert(seg);
-              auto &[nodeptr, line] = *seg;
-              return {_ToAbstree(nodeptr), line};
+              return _ToAbstree(*seg);
             },
         },
         std::move(stmt));

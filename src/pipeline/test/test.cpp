@@ -8,6 +8,8 @@
 #include <format>
 #include <iostream>
 #include <memory>
+#include <mutex>
+#include <thread>
 #include <utility>
 
 using OutputFunc = void (*)(const char *);

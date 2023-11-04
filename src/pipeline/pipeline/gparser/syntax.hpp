@@ -31,7 +31,6 @@ public:
   std::optional<AbstreeTuple> Next() {
     try {
       if (auto seg = GetSegment(_remain_block)) {
-        auto &[nodeptr, line] = *seg;
         return _ToAbstreeTuple(*seg);
       }
 

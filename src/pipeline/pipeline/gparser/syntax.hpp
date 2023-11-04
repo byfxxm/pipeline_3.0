@@ -32,7 +32,7 @@ public:
     try {
       if (auto seg = GetSegment(_remain_block)) {
         auto &[nodeptr, line] = *seg;
-        return _ToAbstree(*seg);
+        return _ToAbstreeTuple(*seg);
       }
 
       auto get = [this]() {
@@ -46,7 +46,7 @@ public:
       auto get_rval = [this]() -> Value { return _return_val; };
 
       if (auto stmt = GetStatement(grammar::Utils{get, peek, line, get_rval}))
-        return _ToAbstree(std::move(stmt.value()));
+        return _ToAbstreeTuple(std::move(stmt.value()));
 
       return {};
     } catch (const ParseException &ex) {
@@ -55,27 +55,27 @@ public:
   }
 
 private:
-  AbstreeTuple _ToAbstree(Segment &seg) {
+  AbstreeTuple _ToAbstreeTuple(Segment &seg) {
     auto &[nodeptr, line] = seg;
     return {Abstree(nodeptr, _return_val, _addr, _pimpl), line};
   }
 
-  AbstreeTuple _ToAbstree(Segment &&seg) {
+  AbstreeTuple _ToAbstreeTuple(Segment &&seg) {
     auto &[nodeptr, line] = seg;
     return {Abstree(std::move(nodeptr), _return_val, _addr, _pimpl), line};
   }
 
-  AbstreeTuple _ToAbstree(Statement &&stmt) {
+  AbstreeTuple _ToAbstreeTuple(Statement &&stmt) {
     return std::visit(
         Overloaded{
             [this](Segment &&seg) -> AbstreeTuple {
-              return _ToAbstree(std::move(seg));
+              return _ToAbstreeTuple(std::move(seg));
             },
             [this](UniquePtr<block::Block> &&block_) -> AbstreeTuple {
               _remain_block = std::move(block_);
               auto seg = GetSegment(_remain_block);
               assert(seg);
-              return _ToAbstree(*seg);
+              return _ToAbstreeTuple(*seg);
             },
         },
         std::move(stmt));

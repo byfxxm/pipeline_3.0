@@ -12,18 +12,15 @@ class While;
 } // namespace grammar
 
 namespace block {
-class Block;
-}
-
-using Statement = std::variant<Segment, UniquePtr<block::Block>>;
-using Scope = std::pmr::vector<Statement>;
-
-namespace block {
 class Block {
 public:
   virtual ~Block() = default;
   virtual Segment *Next() = 0;
 };
+} // namespace block
+
+using Statement = std::variant<Segment, UniquePtr<block::Block>>;
+using Scope = std::pmr::vector<Statement>;
 
 inline Segment *GetSegment(Scope &scope, size_t &index) {
   if (index == scope.size())
@@ -33,7 +30,7 @@ inline Segment *GetSegment(Scope &scope, size_t &index) {
                                  ++index;
                                  return &seg;
                                },
-                               [&](UniquePtr<Block> &block) {
+                               [&](UniquePtr<block::Block> &block) {
                                  auto seg = block->Next();
                                  if (!seg) {
                                    seg = GetSegment(scope, ++index);
@@ -44,6 +41,7 @@ inline Segment *GetSegment(Scope &scope, size_t &index) {
                     scope[index]);
 };
 
+namespace block {
 class IfElse : public Block {
   struct If {
     Segment cond;

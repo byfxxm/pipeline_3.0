@@ -3,6 +3,8 @@
 
 #include "token.hpp"
 #include <concepts>
+#include <limits>
+#include <variant>
 
 namespace byfxxm {
 template <class T>
@@ -30,7 +32,7 @@ using Value = std::variant<std::monostate, double, double *, std::string, bool,
                            Gtag, Group>;
 using GetRetVal = std::function<Value()>;
 
-inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+constexpr double nan = std::numeric_limits<double>::quiet_NaN();
 constexpr bool IsNaN(double v) { return v != v; }
 } // namespace byfxxm
 

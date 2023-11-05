@@ -2,9 +2,8 @@
 #define _BYFXXM_TOKEN_HPP_
 
 #include <functional>
-#include <limits>
-#include <memory_resource>
 #include <optional>
+#include <string>
 #include <unordered_map>
 #include <variant>
 
@@ -130,7 +129,7 @@ inline bool IsGcode(const std::string &word) {
   return _IsMapping(gcodes, word);
 }
 
-inline constexpr char spaces[] = {
+constexpr char spaces[] = {
     ' ',
     '\t',
 };
@@ -143,7 +142,7 @@ constexpr bool IsSharp(char ch) { return ch == '#'; }
 
 inline bool IsSharp(const std::string word) { return word == "#"; }
 
-inline constexpr char newline[] = {
+constexpr char newline[] = {
     '\n',
     '\r',
 };

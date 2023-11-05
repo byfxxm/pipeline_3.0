@@ -23,7 +23,7 @@ struct Gtag {
   double value;
 };
 
-constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
+inline constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
   return lhs.code == rhs.code && lhs.value == rhs.value;
 }
 
@@ -32,8 +32,8 @@ using Value = std::variant<std::monostate, double, double *, std::string, bool,
                            Gtag, Group>;
 using GetRetVal = std::function<Value()>;
 
-constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-constexpr bool IsNaN(double v) { return v != v; }
+inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+inline constexpr bool IsNaN(double v) { return v != v; }
 } // namespace byfxxm
 
 #endif

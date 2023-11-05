@@ -129,7 +129,7 @@ inline bool IsGcode(const std::string &word) {
   return _IsMapping(gcodes, word);
 }
 
-constexpr char spaces[] = {
+inline constexpr char spaces[] = {
     ' ',
     '\t',
 };
@@ -138,11 +138,11 @@ inline bool IsSpace(char ch) {
   return std::ranges::find(spaces, ch) != std::end(spaces);
 }
 
-constexpr bool IsSharp(char ch) { return ch == '#'; }
+inline constexpr bool IsSharp(char ch) { return ch == '#'; }
 
 inline bool IsSharp(const std::string word) { return word == "#"; }
 
-constexpr char newline[] = {
+inline constexpr char newline[] = {
     '\n',
     '\r',
 };
@@ -155,11 +155,13 @@ inline bool IsNewline(char ch) {
   return std::ranges::find(newline, ch) != std::end(newline);
 }
 
-constexpr bool IsNewStatement(const Token &tok) {
+inline constexpr bool IsNewStatement(const Token &tok) {
   return tok.kind == Kind::NEWLINE || tok.kind == Kind::SEMI;
 }
 
-constexpr bool IsEndOfFile(const Token &tok) { return tok.kind == Kind::KEOF; }
+inline constexpr bool IsEndOfFile(const Token &tok) {
+  return tok.kind == Kind::KEOF;
+}
 } // namespace token
 } // namespace byfxxm
 

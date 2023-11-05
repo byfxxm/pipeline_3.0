@@ -20,7 +20,7 @@
 
 namespace byfxxm {
 namespace predicate {
-constexpr auto Plus = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto Plus = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -39,7 +39,7 @@ constexpr auto Plus = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto Minus = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto Minus = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -56,7 +56,7 @@ constexpr auto Minus = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto Multi = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto Multi = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -73,7 +73,7 @@ constexpr auto Multi = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto Div = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto Div = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -90,7 +90,7 @@ constexpr auto Div = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto Assign = [](Value &lhs, const Value &rhs) {
+inline constexpr auto Assign = [](Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -105,7 +105,7 @@ constexpr auto Assign = [](Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto Neg = [](const Value &value) {
+inline constexpr auto Neg = [](const Value &value) {
   return std::visit(
       [](auto &&v) -> Value {
         if constexpr (byfxxm_IsDouble(v))
@@ -118,7 +118,7 @@ constexpr auto Neg = [](const Value &value) {
       value);
 };
 
-constexpr auto Pos = [](const Value &value) {
+inline constexpr auto Pos = [](const Value &value) {
   return std::visit(
       [](auto &&v) -> Value {
         if constexpr (byfxxm_IsDouble(v))
@@ -131,7 +131,7 @@ constexpr auto Pos = [](const Value &value) {
       value);
 };
 
-constexpr auto Sharp = [](const Value &value, Address *addr) {
+inline constexpr auto Sharp = [](const Value &value, Address *addr) {
   if (!addr)
     throw AbstreeException();
 
@@ -147,7 +147,7 @@ constexpr auto Sharp = [](const Value &value, Address *addr) {
       value);
 };
 
-constexpr auto GT = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto GT = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -164,7 +164,7 @@ constexpr auto GT = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto GE = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto GE = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -181,7 +181,7 @@ constexpr auto GE = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto LT = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto LT = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -198,7 +198,7 @@ constexpr auto LT = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto LE = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto LE = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -215,7 +215,7 @@ constexpr auto LE = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto EQ = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto EQ = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -232,7 +232,7 @@ constexpr auto EQ = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto NE = [](const Value &lhs, const Value &rhs) {
+inline constexpr auto NE = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsDoublePtr(l) && byfxxm_IsDoublePtr(r))
@@ -250,7 +250,7 @@ constexpr auto NE = [](const Value &lhs, const Value &rhs) {
 };
 
 template <token::Kind K>
-constexpr auto Gcode = [](const Value &value) {
+inline constexpr auto Gcode = [](const Value &value) {
   return std::visit(
       [&](auto &&v) -> Value {
         if constexpr (byfxxm_IsDoublePtr(v))
@@ -263,7 +263,7 @@ constexpr auto Gcode = [](const Value &value) {
       value);
 };
 
-constexpr auto Comma = [](Value &lhs, const Value &rhs) {
+inline constexpr auto Comma = [](Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsGroup(l) && byfxxm_IsDouble(r)) {
@@ -286,7 +286,7 @@ constexpr auto Comma = [](Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-constexpr auto Max = [](Value &value) -> Value {
+inline constexpr auto Max = [](Value &value) -> Value {
   return std::visit(
       [](auto &&v) -> Value {
         if constexpr (byfxxm_IsGroup(v)) {
@@ -302,7 +302,7 @@ constexpr auto Max = [](Value &value) -> Value {
       value);
 };
 
-constexpr auto Min = [](Value &value) {
+inline constexpr auto Min = [](Value &value) {
   return std::visit(
       [](auto &&v) -> Value {
         if constexpr (byfxxm_IsGroup(v)) {
@@ -318,7 +318,7 @@ constexpr auto Min = [](Value &value) {
       value);
 };
 
-constexpr auto Not = [](const Value &value) {
+inline constexpr auto Not = [](const Value &value) {
   return std::visit(
       [](auto &&v) -> Value {
         if constexpr (byfxxm_IsBool(v))
@@ -352,8 +352,8 @@ inline const std::pmr::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual>
         {{token::Kind::G, 4}, &Ginterface::G4},
 };
 
-constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags, Address *addr,
-                         Ginterface *gimpl) -> Value {
+inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
+                                Address *addr, Ginterface *gimpl) -> Value {
   if (!gimpl)
     return {};
 

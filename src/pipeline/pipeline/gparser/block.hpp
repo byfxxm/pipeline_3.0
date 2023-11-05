@@ -24,7 +24,7 @@ using Scope = std::pmr::vector<Statement>;
 
 inline Segment *GetSegment(Scope &scope, size_t &index) {
   if (index == scope.size())
-    return nullptr;
+    return {};
 
   return std::visit(Overloaded{[&](Segment &seg) {
                                  ++index;
@@ -120,7 +120,7 @@ class While : public Block {
 
       auto cond = std::get<bool>(_get_ret());
       if (!cond)
-        return nullptr;
+        return {};
     }
 
     _iscond = false;

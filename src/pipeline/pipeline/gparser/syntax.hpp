@@ -18,7 +18,7 @@ inline Segment *GetSegment(UniquePtr<block::Block> &block) {
       block.Reset();
   }
 
-  return nullptr;
+  return {};
 }
 
 using AbstreeTuple = std::tuple<Abstree, size_t>;

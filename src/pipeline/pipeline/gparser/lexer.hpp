@@ -9,6 +9,12 @@
 #include <string>
 
 namespace byfxxm {
+inline void SkipSpaces(auto &&stream) {
+  while (token::IsSpace(stream.peek())) {
+    stream.get();
+  }
+}
+
 template <StreamConcept T> class Lexer {
 public:
   Lexer(T &&stream) : _stream(std::move(stream)) {}

@@ -24,7 +24,7 @@ public:
 };
 
 class Sharp : public Word {
-  virtual bool First(char ch) const override { return IsSharp(ch); }
+  virtual bool First(char ch) const override { return token::IsSharp(ch); }
 
   virtual std::optional<token::Token> Rest(std::string &word,
                                            const Utils &utils) const override {
@@ -50,7 +50,7 @@ class Constant : public Word {
 };
 
 class Key : public Word {
-  virtual bool First(char ch) const override { return IsKeyword(ch); }
+  virtual bool First(char ch) const override { return token::IsKeyword(ch); }
 
   virtual std::optional<token::Token> Rest(std::string &word,
                                            const Utils &utils) const override {
@@ -61,7 +61,7 @@ class Key : public Word {
       word.push_back(utils.get());
     }
 
-    if (!IsKeyword(word))
+    if (!token::IsKeyword(word))
       return {};
 
     return token::Token{token::keywords.at(word), {}};
@@ -69,7 +69,7 @@ class Key : public Word {
 };
 
 class Symbol : public Word {
-  virtual bool First(char ch) const override { return IsSymbol(ch); }
+  virtual bool First(char ch) const override { return token::IsSymbol(ch); }
 
   virtual std::optional<token::Token> Rest(std::string &word,
                                            const Utils &utils) const override {
@@ -92,7 +92,7 @@ class Symbol : public Word {
 };
 
 class Gcode : public Word {
-  virtual bool First(char ch) const override { return IsGcode(ch); }
+  virtual bool First(char ch) const override { return token::IsGcode(ch); }
 
   virtual std::optional<token::Token> Rest(std::string &word,
                                            const Utils &utils) const override {
@@ -101,7 +101,7 @@ class Gcode : public Word {
 };
 
 class Newline : public Word {
-  virtual bool First(char ch) const override { return IsNewline(ch); }
+  virtual bool First(char ch) const override { return token::IsNewline(ch); }
 
   virtual std::optional<token::Token> Rest(std::string &word,
                                            const Utils &utils) const override {

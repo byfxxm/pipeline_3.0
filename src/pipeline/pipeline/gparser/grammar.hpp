@@ -4,7 +4,7 @@
 #include "block.hpp"
 #include "memory.hpp"
 #include "production.hpp"
-#include "token.hpp"
+#include "typedefs.hpp"
 
 namespace byfxxm {
 namespace grammar {

@@ -159,6 +159,7 @@
     <ClInclude Include="gparser\production.hpp" />
     <ClInclude Include="gparser\syntax.hpp" />
     <ClInclude Include="gparser\token.hpp" />
+    <ClInclude Include="gparser\typedefs.hpp" />
     <ClInclude Include="gparser\word.hpp" />
     <ClInclude Include="gworker.hpp" />
     <ClInclude Include="worker.hpp" />

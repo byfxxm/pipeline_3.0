@@ -96,13 +96,12 @@ inline const Dictionary gcodes = {
     {"I", Kind::I}, {"J", Kind::J}, {"K", Kind::K}, {"N", Kind::N},
     {"F", Kind::F}, {"S", Kind::S}, {"O", Kind::O},
 };
-} // namespace token
 
-inline bool _IsMapping(const token::Dictionary &dict, const std::string &word) {
+inline bool _IsMapping(const Dictionary &dict, const std::string &word) {
   return dict.contains(word);
 }
 
-inline bool _IsMapping(const token::Dictionary &dict, char ch) {
+inline bool _IsMapping(const Dictionary &dict, char ch) {
   return std::ranges::find_if(dict, [&](auto &&ele) {
            return ch == ele.first[0];
          }) != dict.end();
@@ -143,12 +142,6 @@ inline bool IsSpace(char ch) {
   return std::ranges::find(spaces, ch) != std::end(spaces);
 }
 
-inline void SkipSpaces(auto &&stream) {
-  while (IsSpace(stream.peek())) {
-    stream.get();
-  }
-}
-
 constexpr bool IsSharp(char ch) { return ch == '#'; }
 
 inline bool IsSharp(const std::string word) { return word == "#"; }
@@ -165,31 +158,7 @@ inline bool IsNewline(const std::string word) {
 inline bool IsNewline(char ch) {
   return std::ranges::find(newline, ch) != std::end(newline);
 }
-
-template <class T>
-concept StreamConcept = requires(T t) {
-  { t.get() } -> std::integral;
-  { t.peek() } -> std::integral;
-  { t.eof() } -> std::same_as<bool>;
-};
-
-template <class... Ts> struct Overloaded : Ts... {
-  using Ts::operator()...;
-};
-
-struct Gtag {
-  token::Kind code;
-  double value;
-};
-
-constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
-  return lhs.code == rhs.code && lhs.value == rhs.value;
-}
-
-using Group = std::pmr::vector<double>;
-using Value = std::variant<std::monostate, double, double *, std::string, bool,
-                           Gtag, Group>;
-using GetRetVal = std::function<Value()>;
+} // namespace token
 } // namespace byfxxm
 
 #endif

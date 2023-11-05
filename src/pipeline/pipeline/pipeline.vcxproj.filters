@@ -83,5 +83,8 @@
     <ClInclude Include="array_nd.hpp">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="gparser\typedefs.hpp">
+      <Filter>gparser</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

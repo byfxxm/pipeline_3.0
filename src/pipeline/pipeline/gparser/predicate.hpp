@@ -5,6 +5,7 @@
 #include "exception.hpp"
 #include "ginterface.hpp"
 #include "token.hpp"
+#include "typedefs.hpp"
 #include <algorithm>
 #include <string>
 #include <type_traits>

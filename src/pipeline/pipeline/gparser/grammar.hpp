@@ -2,9 +2,9 @@
 #define _BYFXXM_GRAMMAR_HPP_
 
 #include "block.hpp"
+#include "common.hpp"
 #include "memory.hpp"
 #include "production.hpp"
-#include "common.hpp"
 
 namespace byfxxm {
 namespace grammar {

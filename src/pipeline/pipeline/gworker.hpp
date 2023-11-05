@@ -65,9 +65,9 @@ inline AxesArray GparamsToCenter(const Gparams &params) {
   return ret;
 }
 
-class Gpimpl : public Ginterface {
+class Gimpl : public Ginterface {
 public:
-  Gpimpl(const WriteFunc &writefn) : _writefn(writefn) {}
+  Gimpl(const WriteFunc &writefn) : _writefn(writefn) {}
 
   virtual bool None(const Gparams &params, const Address *addr) override {
     if (_last == Gtag{token::Kind::G, 0})
@@ -135,8 +135,8 @@ private:
             assert(0);
           else {
             Address addr;
-            Gpimpl gpimpl(writefn);
-            parser.Run(&addr, &gpimpl);
+            Gimpl gimpl(writefn);
+            parser.Run(&addr, &gimpl);
           }
         },
         _parser);

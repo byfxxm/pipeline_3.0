@@ -34,7 +34,7 @@ struct TestCode : byfxxm::Code {
   size_t _n;
 };
 
-class Gpimpl : public byfxxm::Ginterface {
+class Gimpl : public byfxxm::Ginterface {
 public:
   virtual bool None(const byfxxm::Gparams &params,
                     const byfxxm::Address *addr) override {
@@ -65,9 +65,9 @@ public:
 void TestParser() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  if (auto res = parser.Run(&addr, &pimpl)) {
+  if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
   }
@@ -83,9 +83,9 @@ void TestParser() {
 void TestParser1() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test1.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  if (auto res = parser.Run(&addr, &pimpl)) {
+  if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
   }
@@ -99,9 +99,9 @@ void TestParser1() {
 void TestParser2() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test2.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  if (auto res = parser.Run(&addr, &pimpl)) {
+  if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
   }
@@ -116,9 +116,9 @@ void TestParser2() {
 void TestParser3() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test3.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  if (auto res = parser.Run(&addr, &pimpl)) {
+  if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
   }
@@ -136,9 +136,9 @@ void TestParser3() {
 void TestParser4() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test4.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  if (auto res = parser.Run(&addr, &pimpl)) {
+  if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
   }
@@ -151,9 +151,9 @@ void TestParser4() {
 void TestParser5() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test5.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  if (auto res = parser.Run(&addr, &pimpl)) {
+  if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
   }
@@ -164,9 +164,9 @@ void TestParser5() {
 void TestParser6() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test6.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  if (auto res = parser.Run(&addr, &pimpl)) {
+  if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
   }
@@ -178,12 +178,12 @@ void TestParser6() {
 void TestParser7() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test7.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
 
   constexpr size_t lines[] = {2, 3, 4, 5, 7, 8, 12, 14};
   auto iter = std::begin(lines);
-  if (auto res = parser.Run(&addr, &pimpl, [&iter](size_t line) {
+  if (auto res = parser.Run(&addr, &gimpl, [&iter](size_t line) {
         PrintLine(line);
         assert(line == (*iter++));
       })) {
@@ -195,9 +195,9 @@ void TestParser7() {
 void TestParser8() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test8.nc"));
-  auto pimpl = Gpimpl();
+  auto gimpl = Gimpl();
   byfxxm::Address addr;
-  auto res = parser.Run(&addr, &pimpl);
+  auto res = parser.Run(&addr, &gimpl);
   assert(res);
   puts(res.value().c_str());
 }

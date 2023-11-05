@@ -25,8 +25,8 @@ using AbstreeTuple = std::tuple<Abstree, size_t>;
 
 template <StreamConcept T> class Syntax {
 public:
-  Syntax(T &&stream, Address *addr, Ginterface *pimpl)
-      : _lex(std::move(stream)), _addr(addr), _pimpl(pimpl) {}
+  Syntax(T &&stream, Address *addr, Ginterface *gimpl)
+      : _lex(std::move(stream)), _addr(addr), _gimpl(gimpl) {}
 
   std::optional<AbstreeTuple> Next() {
     try {
@@ -56,12 +56,12 @@ public:
 private:
   AbstreeTuple _ToAbstreeTuple(Segment &seg) {
     auto &[nodeptr, line] = seg;
-    return {Abstree(nodeptr, _return_val, _addr, _pimpl), line};
+    return {Abstree(nodeptr, _return_val, _addr, _gimpl), line};
   }
 
   AbstreeTuple _ToAbstreeTuple(Segment &&seg) {
     auto &[nodeptr, line] = seg;
-    return {Abstree(std::move(nodeptr), _return_val, _addr, _pimpl), line};
+    return {Abstree(std::move(nodeptr), _return_val, _addr, _gimpl), line};
   }
 
   AbstreeTuple _ToAbstreeTuple(Statement &&stmt) {
@@ -85,7 +85,7 @@ private:
   size_t _lineno{1};
   Value _return_val;
   Address *_addr{nullptr};
-  Ginterface *_pimpl{nullptr};
+  Ginterface *_gimpl{nullptr};
   UniquePtr<block::Block> _remain_block;
 };
 

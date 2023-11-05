@@ -20,14 +20,14 @@ public:
     std::pmr::vector<NodePtr> subs{&mempool};
   };
 
-  Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *pimpl) noexcept
-      : _root(&root), _return_val(&rval), _addr(addr), _pimpl(pimpl) {
+  Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *gimpl) noexcept
+      : _root(&root), _return_val(&rval), _addr(addr), _gimpl(gimpl) {
     assert(*std::get<NodePtr *>(_root));
   }
 
   Abstree(NodePtr &&root, Value &rval, Address *addr,
-          Ginterface *pimpl) noexcept
-      : _root(std::move(root)), _return_val(&rval), _addr(addr), _pimpl(pimpl) {
+          Ginterface *gimpl) noexcept
+      : _root(std::move(root)), _return_val(&rval), _addr(addr), _gimpl(gimpl) {
     assert(std::get<NodePtr>(_root));
   }
 
@@ -78,7 +78,7 @@ private:
             [&](const Gcmd &gcmd) {
               assert(!params.empty());
               return std::visit(
-                  [&](auto &&func) { return func(params, _addr, _pimpl); },
+                  [&](auto &&func) { return func(params, _addr, _gimpl); },
                   gcmd);
             },
             [](const auto &) -> Value { // default
@@ -92,7 +92,7 @@ private:
   std::variant<NodePtr, NodePtr *> _root;
   Value *_return_val{nullptr};
   Address *_addr{nullptr};
-  Ginterface *_pimpl{nullptr};
+  Ginterface *_gimpl{nullptr};
 };
 } // namespace byfxxm
 

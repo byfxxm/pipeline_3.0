@@ -353,8 +353,8 @@ inline const std::pmr::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual>
 };
 
 inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
-                                Address *addr, Ginterface *pimpl) -> Value {
-  if (!pimpl)
+                                Address *addr, Ginterface *gimpl) -> Value {
+  if (!gimpl)
     return {};
 
   if (tags.empty())
@@ -378,7 +378,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
 
   auto func = iter == tags.end() ? &Ginterface::None
                                  : gtag_to_ginterface.at(std::get<Gtag>(*iter));
-  if (!(pimpl->*func)(par, addr))
+  if (!(gimpl->*func)(par, addr))
     throw AbstreeException();
 
   return std::monostate{};

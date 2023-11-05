@@ -30,9 +30,8 @@ public:
 
   std::optional<AbstreeTuple> Next() {
     try {
-      if (auto seg = GetSegment(_remain_block)) {
+      if (auto seg = GetSegment(_remain_block))
         return _ToAbstreeTuple(*seg);
-      }
 
       auto get = [this]() {
         auto tok = _lex.Get();

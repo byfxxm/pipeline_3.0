@@ -1,7 +1,7 @@
 ﻿#ifndef _BYFXXM_GINTERFACE_HPP_
 #define _BYFXXM_GINTERFACE_HPP_
 
-#include "typedefs.hpp"
+#include "common.hpp"
 #include <vector>
 
 namespace byfxxm {

@@ -3,8 +3,8 @@
 
 #include "memory.hpp"
 #include "predicate.hpp"
-#include "token.hpp"
 #include <cassert>
+#include <tuple>
 #include <variant>
 
 namespace byfxxm {

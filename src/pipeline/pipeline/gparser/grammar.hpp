@@ -4,7 +4,7 @@
 #include "block.hpp"
 #include "memory.hpp"
 #include "production.hpp"
-#include "typedefs.hpp"
+#include "common.hpp"
 
 namespace byfxxm {
 namespace grammar {
@@ -18,14 +18,6 @@ struct Utils {
   Line line;
   GetRetVal return_val;
 };
-
-constexpr bool IsNewStatement(const token::Token &tok) {
-  return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
-}
-
-constexpr bool IsEndOfFile(const token::Token &tok) {
-  return tok.kind == token::Kind::KEOF;
-}
 
 inline void SkipNewlines(const Utils &utils) {
   for (;;) {

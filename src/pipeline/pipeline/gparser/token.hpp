@@ -9,9 +9,6 @@
 #include <variant>
 
 namespace byfxxm {
-inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-constexpr bool IsNaN(double v) { return v != v; }
-
 namespace token {
 enum class Kind {
   CON,     // 常量
@@ -73,7 +70,7 @@ struct Token {
   std::optional<std::variant<double, std::string>> value;
 };
 
-using Dictionary = std::pmr::unordered_map<std::string, token::Kind>;
+using Dictionary = std::pmr::unordered_map<std::string, Kind>;
 
 inline const Dictionary keywords = {
     {"IF", Kind::IF},       {"ELSEIF", Kind::ELSEIF}, {"ELSE", Kind::ELSE},
@@ -107,30 +104,30 @@ inline bool _IsMapping(const Dictionary &dict, char ch) {
          }) != dict.end();
 }
 
-inline bool IsKeyword(char ch) { return _IsMapping(token::keywords, ch); }
+inline bool IsKeyword(char ch) { return _IsMapping(keywords, ch); }
 
 inline bool IsKeyword(const std::string &word) {
-  return _IsMapping(token::keywords, word);
+  return _IsMapping(keywords, word);
 }
 
-inline bool IsSymbol(char ch) { return _IsMapping(token::symbols, ch); }
+inline bool IsSymbol(char ch) { return _IsMapping(symbols, ch); }
 
 inline bool IsSymbol(const std::string &word) {
-  return _IsMapping(token::symbols, word);
+  return _IsMapping(symbols, word);
 }
 
-inline bool IsGcode(char ch) { return _IsMapping(token::gcodes, ch); }
+inline bool IsGcode(char ch) { return _IsMapping(gcodes, ch); }
 
-inline bool IsGcode(token::Kind kind) {
-  return std::ranges::find_if(token::gcodes, [&](auto &&pair) {
+inline bool IsGcode(Kind kind) {
+  return std::ranges::find_if(gcodes, [&](auto &&pair) {
            return pair.second == kind;
-         }) != token::gcodes.end();
+         }) != gcodes.end();
 }
 
-inline bool IsGcode(token::Token tok) { return IsGcode(tok.kind); }
+inline bool IsGcode(Token tok) { return IsGcode(tok.kind); }
 
 inline bool IsGcode(const std::string &word) {
-  return _IsMapping(token::gcodes, word);
+  return _IsMapping(gcodes, word);
 }
 
 inline constexpr char spaces[] = {
@@ -158,6 +155,12 @@ inline bool IsNewline(const std::string word) {
 inline bool IsNewline(char ch) {
   return std::ranges::find(newline, ch) != std::end(newline);
 }
+
+constexpr bool IsNewStatement(const Token &tok) {
+  return tok.kind == Kind::NEWLINE || tok.kind == Kind::SEMI;
+}
+
+constexpr bool IsEndOfFile(const Token &tok) { return tok.kind == Kind::KEOF; }
 } // namespace token
 } // namespace byfxxm
 

@@ -1,9 +1,9 @@
 ﻿#ifndef _BYFXXM_GPARSER_HPP_
 #define _BYFXXM_GPARSER_HPP_
 
+#include "address.hpp"
 #include "ginterface.hpp"
 #include "syntax.hpp"
-#include "token.hpp"
 #include <fstream>
 #include <sstream>
 

@@ -2,10 +2,9 @@
 #define _BYFXXM_PREDICATE_HPP_
 
 #include "address.hpp"
+#include "common.hpp"
 #include "exception.hpp"
 #include "ginterface.hpp"
-#include "token.hpp"
-#include "typedefs.hpp"
 #include <algorithm>
 #include <string>
 #include <type_traits>

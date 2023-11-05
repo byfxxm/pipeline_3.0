@@ -29,6 +29,9 @@ using Group = std::pmr::vector<double>;
 using Value = std::variant<std::monostate, double, double *, std::string, bool,
                            Gtag, Group>;
 using GetRetVal = std::function<Value()>;
+
+inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+constexpr bool IsNaN(double v) { return v != v; }
 } // namespace byfxxm
 
 #endif

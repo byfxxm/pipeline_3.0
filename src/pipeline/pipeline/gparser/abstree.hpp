@@ -94,6 +94,8 @@ private:
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
 };
+
+using Segment = std::tuple<Abstree::NodePtr, size_t>;
 } // namespace byfxxm
 
 #endif

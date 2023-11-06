@@ -258,6 +258,7 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
         std::optional<Statement> sub;
         if (!(sub = (*iter)->Rest(std::move(synlist), utils)).has_value())
           break;
+
         return std::move(sub.value());
       }
     }

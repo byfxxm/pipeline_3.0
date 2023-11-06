@@ -19,7 +19,6 @@ public:
 };
 } // namespace block
 
-using Segment = std::tuple<Abstree::NodePtr, size_t>;
 using Statement = std::variant<Segment, UniquePtr<block::Block>>;
 using Scope = std::pmr::vector<Statement>;
 

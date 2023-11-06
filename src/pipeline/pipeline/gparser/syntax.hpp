@@ -50,7 +50,7 @@ public:
 
       return {};
     } catch (const ParseException &ex) {
-      throw SyntaxWithLineException(_lineno, ex.what());
+      throw SyntaxException(_lineno, ex.what());
     }
   }
 

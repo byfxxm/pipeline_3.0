@@ -25,11 +25,7 @@ public:
 class SyntaxException : public ParseException {
 public:
   using ParseException::ParseException;
-};
-
-class SyntaxWithLineException : public ParseException {
-public:
-  SyntaxWithLineException(size_t line, const char *err)
+  SyntaxException(size_t line, const char *err)
       : ParseException(std::format("line {}: {}", line, err)) {}
 };
 

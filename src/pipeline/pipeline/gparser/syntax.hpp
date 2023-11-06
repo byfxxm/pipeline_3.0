@@ -43,7 +43,7 @@ public:
 
       auto peek = [this]() { return _lex.Peek(); };
       auto line = [this]() { return _lineno; };
-      auto get_rval = [this]() -> Value { return _return_val; };
+      auto get_rval = [this]() { return _return_val; };
 
       if (auto stmt = GetStatement(grammar::Utils{get, peek, line, get_rval}))
         return _ToAbstreeTuple(std::move(stmt.value()));

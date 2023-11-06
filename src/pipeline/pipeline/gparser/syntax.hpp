@@ -37,8 +37,10 @@ public:
         auto tok = _lex.Get();
         if (tok.kind == token::Kind::NEWLINE)
           ++_lineno;
+
         return tok;
       };
+
       auto peek = [this]() { return _lex.Peek(); };
       auto line = [this]() { return _lineno; };
       auto get_rval = [this]() -> Value { return _return_val; };

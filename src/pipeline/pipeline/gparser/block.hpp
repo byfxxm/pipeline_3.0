@@ -32,9 +32,8 @@ inline Segment *GetSegment(Scope &scope, size_t &index) {
                                },
                                [&](UniquePtr<block::Block> &block) {
                                  auto seg = block->Next();
-                                 if (!seg) {
+                                 if (!seg)
                                    seg = GetSegment(scope, ++index);
-                                 }
 
                                  return seg;
                                }},

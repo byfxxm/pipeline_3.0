@@ -54,13 +54,13 @@ public:
 
 private:
   AbstreeTuple _ToAbstreeTuple(Segment &seg) {
-    auto &[nodeptr, line] = seg;
-    return {Abstree(nodeptr, _return_val, _addr, _gimpl), line};
+    auto &[root, line] = seg;
+    return {Abstree(root, _return_val, _addr, _gimpl), line};
   }
 
   AbstreeTuple _ToAbstreeTuple(Segment &&seg) {
-    auto &[nodeptr, line] = seg;
-    return {Abstree(std::move(nodeptr), _return_val, _addr, _gimpl), line};
+    auto &[root, line] = seg;
+    return {Abstree(std::move(root), _return_val, _addr, _gimpl), line};
   }
 
   AbstreeTuple _ToAbstreeTuple(Statement &&stmt) {

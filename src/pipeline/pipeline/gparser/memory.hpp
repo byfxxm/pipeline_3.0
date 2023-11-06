@@ -31,7 +31,8 @@ public:
 
   template <class T1>
     requires std::is_convertible_v<T1 *, T *>
-  UniquePtr(UniquePtr<T1> &&rhs) noexcept : _pointer(std::move(rhs._pointer)) {}
+  explicit UniquePtr(UniquePtr<T1> &&rhs) noexcept
+      : _pointer(std::move(rhs._pointer)) {}
 
   template <class T1>
     requires std::is_convertible_v<T1 *, T *>

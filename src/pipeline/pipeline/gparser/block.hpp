@@ -52,11 +52,11 @@ class IfElse : public Block {
     Scope scope{&mempool};
   };
 
-  IfElse(GetRetVal get_ret) : _get_ret(get_ret) {}
+  IfElse(GetRetVal func) : _get_ret_val_func(std::move(func)) {}
 
   virtual Segment *Next() override {
     if (_iscond) {
-      if (_cur_if > 0 && std::get<bool>(_get_ret())) {
+      if (_cur_if > 0 && std::get<bool>(_get_ret_val_func())) {
         --_cur_if;
         _iscond = false;
         return GetSegment(_ifs[_cur_if].scope, _scope_index);
@@ -70,10 +70,10 @@ class IfElse : public Block {
         return GetSegment(_else.scope, _scope_index);
       }
 
-      if (!std::holds_alternative<bool>(_get_ret()))
+      if (!std::holds_alternative<bool>(_get_ret_val_func()))
         throw SyntaxException();
 
-      auto cond = std::get<bool>(_get_ret());
+      auto cond = std::get<bool>(_get_ret_val_func());
       if (cond) {
         _iscond = false;
         return GetSegment(_ifs[_cur_if].scope, _scope_index);
@@ -95,13 +95,13 @@ class IfElse : public Block {
   Else _else;
   size_t _cur_if{0};
   bool _iscond{true};
-  GetRetVal _get_ret;
+  GetRetVal _get_ret_val_func;
   size_t _scope_index{0};
   friend class grammar::IfElse;
 };
 
 class While : public Block {
-  While(GetRetVal get_ret) : _get_ret(get_ret) {}
+  While(GetRetVal func) : _get_ret_val_func(std::move(func)) {}
 
   virtual Segment *Next() override {
     if (_iscond) {
@@ -115,10 +115,10 @@ class While : public Block {
     }
 
     if (_scope_index == 0) {
-      if (!std::holds_alternative<bool>(_get_ret()))
+      if (!std::holds_alternative<bool>(_get_ret_val_func()))
         throw SyntaxException();
 
-      auto cond = std::get<bool>(_get_ret());
+      auto cond = std::get<bool>(_get_ret_val_func());
       if (!cond)
         return {};
     }
@@ -130,7 +130,7 @@ class While : public Block {
   Segment _cond;
   Scope _scope{&mempool};
   bool _iscond{true};
-  GetRetVal _get_ret;
+  GetRetVal _get_ret_val_func;
   size_t _scope_index{0};
   friend class grammar::While;
 };

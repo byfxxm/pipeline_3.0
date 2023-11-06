@@ -408,8 +408,10 @@ using Binary = decltype(ToVariant(
     predicate::Assign, predicate::GT, predicate::GE, predicate::LT,
     predicate::LE, predicate::EQ, predicate::NE, predicate::Comma));
 
+// #变量
 using Sharp = decltype(ToVariant(predicate::Sharp));
 
+// G指令
 using Gcmd = decltype(ToVariant(predicate::Gcmd));
 
 // 定义谓词

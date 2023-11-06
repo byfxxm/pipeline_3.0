@@ -6,8 +6,8 @@
 
 namespace byfxxm {
 using Gparams = std::pmr::vector<Gtag>;
-
 class Address;
+
 class Ginterface {
 public:
   virtual ~Ginterface() = default;

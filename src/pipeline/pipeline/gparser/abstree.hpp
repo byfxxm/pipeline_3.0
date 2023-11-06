@@ -9,6 +9,7 @@
 
 namespace byfxxm {
 class Ginterface;
+
 class Abstree {
 public:
   struct Node;

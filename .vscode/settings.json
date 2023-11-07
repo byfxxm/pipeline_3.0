@@ -80,5 +80,5 @@
     "C_Cpp.errorSquiggles": "disabled",
     "editor.formatOnSave": true,
     "C_Cpp.clang_format_fallbackStyle": "LLVM",
-    "editor.fontFamily": "Verdana, 'Courier New', monospace"
+    "editor.fontFamily": "Cascadia Code, 'Courier New', monospace"
 }

@@ -45,7 +45,6 @@ enum class Kind {
   MIN,     // MIN
   STRING,  // "..."
   NOT,     // NOT
-
   G,
   M,
   X,

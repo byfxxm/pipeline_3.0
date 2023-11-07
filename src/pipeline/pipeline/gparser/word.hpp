@@ -28,7 +28,6 @@ class Sharp : public Word {
 
   virtual std::optional<token::Token> Rest(std::string &word,
                                            const Utils &utils) const override {
-    assert(token::IsSharp(word));
     return token::Token{token::Kind::SHARP, {}};
   }
 };
@@ -105,18 +104,6 @@ class Newline : public Word {
 
   virtual std::optional<token::Token> Rest(std::string &word,
                                            const Utils &utils) const override {
-    auto ch = utils.peek();
-    switch (word[0]) {
-    case '\r':
-      if (ch == '\n')
-        word.push_back(utils.get());
-      break;
-
-    default:
-      break;
-    }
-
-    assert(token::IsNewline(word));
     return token::Token{token::Kind::NEWLINE, {}};
   }
 };

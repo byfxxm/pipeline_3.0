@@ -140,20 +140,7 @@ inline bool IsSpace(char ch) {
 
 inline constexpr bool IsSharp(char ch) { return ch == '#'; }
 
-inline bool IsSharp(const std::string word) { return word == "#"; }
-
-inline constexpr char newline[] = {
-    '\n',
-    '\r',
-};
-
-inline bool IsNewline(const std::string word) {
-  return word == "\n" || word == "\r\n" || word == "\r";
-}
-
-inline bool IsNewline(char ch) {
-  return std::ranges::find(newline, ch) != std::end(newline);
-}
+inline constexpr bool IsNewline(char ch) { return ch == '\n'; }
 
 inline constexpr bool IsNewStatement(const Token &tok) {
   return tok.kind == Kind::NEWLINE || tok.kind == Kind::SEMI;

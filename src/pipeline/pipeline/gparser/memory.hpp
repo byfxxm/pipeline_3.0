@@ -36,7 +36,7 @@ public:
 
   template <class T1>
     requires std::is_convertible_v<T1 *, T *>
-  UniquePtr(T1 *p) noexcept : _pointer(p) {}
+  explicit UniquePtr(T1 *p) noexcept : _pointer(p) {}
 
   template <class T1, class D1>
     requires std::is_convertible_v<T1 *, T *>

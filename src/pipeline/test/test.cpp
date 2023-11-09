@@ -67,6 +67,8 @@ void TestParser() {
       std::filesystem::current_path().string() + "/ncfiles/test.nc"));
   auto gimpl = Gimpl();
   byfxxm::Address addr;
+  double x = 5;
+  addr.Insert(10000, &x);
   if (auto res = parser.Run(&addr, &gimpl)) {
     PrintLine(res.value());
     return;
@@ -78,6 +80,7 @@ void TestParser() {
   assert(*addr[10] == 87);
   assert(*addr[-174] == -2);
   assert(*addr[3] == -0.4);
+  assert(*addr[10000] == 5);
 }
 
 void TestParser1() {

@@ -138,9 +138,9 @@ inline constexpr auto Sharp = [](const Value &value, Address *addr) {
   return std::visit(
       [&](auto &&v) -> Value {
         if constexpr (byfxxm_IsDouble(v))
-          return (*addr)[v].Get();
+          return (*addr)[v];
         else if constexpr (byfxxm_IsDoublePtr(v))
-          return (*addr)[*v].Get();
+          return (*addr)[*v];
         else
           throw AbstreeException("sharp error");
       },

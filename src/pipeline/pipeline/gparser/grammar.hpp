@@ -16,7 +16,7 @@ struct Utils {
   Get get;
   Peek peek;
   Line line;
-  GetRetVal return_val;
+  GetRetVal get_ret_val;
 };
 
 inline void SkipNewlines(const Utils &utils) {
@@ -149,7 +149,7 @@ class IfElse : public Grammar {
     };
 
     // read if
-    block::IfElse ifelse(utils.return_val);
+    block::IfElse ifelse(utils.get_ret_val);
     ifelse._ifs.push_back(If(read_cond()));
     read_scope(ifelse._ifs.back().scope);
 
@@ -220,7 +220,7 @@ class While : public Grammar {
       }
     };
 
-    block::While wh(utils.return_val);
+    block::While wh(utils.get_ret_val);
     wh._cond = read_cond();
     read_scope(wh._scope);
 

@@ -38,7 +38,7 @@ enum class Kind {
   THEN,    // THEN
   DO,      // DO
   END,     // END
-  NEWLINE, // \r | \n | \r\n
+  NEWLINE, // \n
   SEMI,    // ;
   COMMA,   // ,
   MAX,     // MAX

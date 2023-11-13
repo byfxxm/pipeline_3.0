@@ -10,8 +10,7 @@
 #include <type_traits>
 #include <variant>
 
-#define byfxxm_IsType(v, type)                                                 \
-  (std::is_same_v<std::remove_cvref_t<decltype(v)>, type>)
+#define byfxxm_IsType(v, type) (std::is_same_v<std::decay_t<decltype(v)>, type>)
 #define byfxxm_IsDouble(v) byfxxm_IsType(v, double)
 #define byfxxm_IsDoublePtr(v) byfxxm_IsType(v, double *)
 #define byfxxm_IsString(v) byfxxm_IsType(v, std::string)

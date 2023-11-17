@@ -199,13 +199,17 @@ void TestParser8() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test8.nc"));
   auto gimpl = Gimpl();
-  byfxxm::Address addr;
   double x = 5;
-  addr.Insert(2, {[&]() { return x; }, [&](double v) { x = v; }});
+  double y = 6;
+  byfxxm::Address addr = {
+      {1, &y},
+      {2, byfxxm::GetSetSharp{[&]() { return x; }, [&](double v) { x = v; }}},
+  };
   auto res = parser.Run(&addr, &gimpl);
   assert(res);
   puts(res.value().c_str());
   assert(x == 2);
+  assert(y == 1);
 }
 
 class MyFileStream {

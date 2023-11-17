@@ -39,8 +39,8 @@ public:
   }
 
 private:
-  std::pmr::unordered_map<double, SharpValue> _dict{&mempool};
-  std::pmr::vector<std::unique_ptr<double>> _buffer{&mempool};
+  std::unordered_map<double, SharpValue> _dict;
+  std::vector<std::unique_ptr<double>> _buffer;
 };
 } // namespace byfxxm
 

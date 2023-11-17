@@ -27,9 +27,9 @@ inline constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
   return lhs.code == rhs.code && lhs.value == rhs.value;
 }
 
-using GetSharpValue = std::function<double()>;
-using SetSharpValue = std::function<void(double)>;
-using GetSetSharp = std::tuple<GetSharpValue, SetSharpValue>;
+using GetSharp = std::function<double()>;
+using SetSharp = std::function<void(double)>;
+using GetSetSharp = std::tuple<GetSharp, SetSharp>;
 using SharpValue = std::variant<double *, GetSetSharp>;
 
 using Group = std::pmr::vector<double>;
@@ -44,20 +44,19 @@ inline double Get(const SharpValue &key) {
   return std::visit(Overloaded{
                         [](double *p) { return *p; },
                         [](const GetSetSharp &getset) {
-                          return std::get<GetSharpValue>(getset)();
+                          return std::get<GetSharp>(getset)();
                         },
                     },
                     key);
 }
 
 inline void Set(const SharpValue &key, double val) {
-  std::visit(Overloaded{
-                 [&](double *p) { *p = val; },
-                 [&](const GetSetSharp &getset) {
-                   std::get<SetSharpValue>(getset)(val);
-                 },
-             },
-             key);
+  std::visit(
+      Overloaded{
+          [&](double *p) { *p = val; },
+          [&](const GetSetSharp &getset) { std::get<SetSharp>(getset)(val); },
+      },
+      key);
 }
 } // namespace byfxxm
 

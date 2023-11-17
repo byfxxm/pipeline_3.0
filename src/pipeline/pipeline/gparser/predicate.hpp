@@ -248,14 +248,14 @@ inline constexpr auto NE = [](const Value &lhs, const Value &rhs) {
       lhs, rhs);
 };
 
-template <token::Kind K>
+template <token::Kind Tok>
 inline constexpr auto Gcode = [](const Value &value) {
   return std::visit(
       [&](auto &&v) -> Value {
         if constexpr (byfxxm_IsSharpValue(v))
-          return Gtag{K, Get(v)};
+          return Gtag{Tok, Get(v)};
         else if constexpr (byfxxm_IsDouble(v))
-          return Gtag{K, v};
+          return Gtag{Tok, v};
         else
           throw AbstreeException("gcode error");
       },

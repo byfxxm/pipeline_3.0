@@ -51,13 +51,13 @@ inline double Get(const SharpValue &key) {
 }
 
 inline void Set(const SharpValue &key, double val) {
-  return std::visit(Overloaded{
-                        [&](double *p) { *p = val; },
-                        [&](const GetSetSharp &getset) {
-                          std::get<SetSharpValue>(getset)(val);
-                        },
-                    },
-                    key);
+  std::visit(Overloaded{
+                 [&](double *p) { *p = val; },
+                 [&](const GetSetSharp &getset) {
+                   std::get<SetSharpValue>(getset)(val);
+                 },
+             },
+             key);
 }
 } // namespace byfxxm
 

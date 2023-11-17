@@ -8,30 +8,29 @@
 namespace byfxxm {
 class Address {
 public:
-  using _Key = double;
-  using _VType = double;
-  using _Value = std::variant<std::unique_ptr<_VType>, _VType *>;
+  [[nodiscard]] SharpValue &operator[](double key) {
+    if (_dict.find(key) == _dict.end()) {
+      auto point = std::make_unique<double>(nan);
+      _dict.insert(std::make_pair(
+          key, GetSetSharp([p = point.get()]() { return *p; },
+                           [p = point.get()](double v) { *p = v; })));
+      _buffer.push_back(std::move(point));
+    }
 
-  [[nodiscard]] _VType *operator[](const _Key &key) {
-    if (_dict.find(key) == _dict.end())
-      _dict.insert(std::make_pair(key, std::make_unique<_VType>(nan)));
-
-    return std::visit(
-        Overloaded{[](std::unique_ptr<_VType> &p) { return p.get(); },
-                   [](_VType *p) { return p; }},
-        _dict.at(key));
+    return _dict.at(key);
   }
 
-  void Insert(const _Key &key, _VType *addr) {
+  void Insert(double key, double *addr) {
     _dict.insert(std::make_pair(key, addr));
   }
 
-  void Insert(const _Key &key, std::unique_ptr<_VType> addr) {
+  void Insert(double key, GetSetSharp addr) {
     _dict.insert(std::make_pair(key, std::move(addr)));
   }
 
 private:
-  std::pmr::unordered_map<_Key, _Value> _dict{&mempool};
+  std::pmr::unordered_map<double, SharpValue> _dict{&mempool};
+  std::pmr::vector<std::unique_ptr<double>> _buffer{&mempool};
 };
 } // namespace byfxxm
 

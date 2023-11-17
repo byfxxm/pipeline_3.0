@@ -74,13 +74,13 @@ void TestParser() {
     return;
   }
 
-  assert(*addr[1] == -10);
-  assert(*addr[2] == 20);
-  assert(*addr[30] == 5);
-  assert(*addr[10] == 87);
-  assert(*addr[-174] == -2);
-  assert(*addr[3] == -0.4);
-  assert(*addr[10000] == 5);
+  assert(byfxxm::Get(addr[1]) == -10.);
+  assert(byfxxm::Get(addr[2]) == 20);
+  assert(byfxxm::Get(addr[30]) == 5);
+  assert(byfxxm::Get(addr[10]) == 87);
+  assert(byfxxm::Get(addr[-174]) == -2);
+  assert(byfxxm::Get(addr[3]) == -0.4);
+  assert(byfxxm::Get(addr[10000]) == 5);
 }
 
 void TestParser1() {
@@ -93,10 +93,10 @@ void TestParser1() {
     return;
   }
 
-  assert(byfxxm::IsNaN(*addr[4]));
-  assert(*addr[3] == 2);
-  assert(*addr[2] == 1);
-  assert(byfxxm::IsNaN(*addr[20]));
+  assert(byfxxm::IsNaN(byfxxm::Get(addr[4])));
+  assert(byfxxm::Get(addr[3]) == 2);
+  assert(byfxxm::Get(addr[2]) == 1);
+  assert(byfxxm::IsNaN(byfxxm::Get(addr[20])));
 }
 
 void TestParser2() {
@@ -109,11 +109,11 @@ void TestParser2() {
     return;
   }
 
-  assert(*addr[1] == 1);
-  assert(*addr[6] == 6);
-  assert(*addr[3] == 3);
-  assert(*addr[2] == 2);
-  assert(*addr[5] == 5);
+  assert(byfxxm::Get(addr[1]) == 1);
+  assert(byfxxm::Get(addr[6]) == 6);
+  assert(byfxxm::Get(addr[3]) == 3);
+  assert(byfxxm::Get(addr[2]) == 2);
+  assert(byfxxm::Get(addr[5]) == 5);
 }
 
 void TestParser3() {
@@ -126,14 +126,14 @@ void TestParser3() {
     return;
   }
 
-  assert(*addr[1] == 20);
-  assert(*addr[3] == 22);
-  assert(*addr[2] == 20);
-  assert(*addr[5] == 5);
-  assert(*addr[10] == 234.5);
-  assert(*addr[20] == 25);
-  assert(*addr[25] == 100);
-  assert(*addr[100] == 100);
+  assert(byfxxm::Get(addr[1]) == 20);
+  assert(byfxxm::Get(addr[3]) == 22);
+  assert(byfxxm::Get(addr[2]) == 20);
+  assert(byfxxm::Get(addr[5]) == 5);
+  assert(byfxxm::Get(addr[10]) == 234.5);
+  assert(byfxxm::Get(addr[20]) == 25);
+  assert(byfxxm::Get(addr[25]) == 100);
+  assert(byfxxm::Get(addr[100]) == 100);
 }
 
 void TestParser4() {
@@ -146,9 +146,9 @@ void TestParser4() {
     return;
   }
 
-  assert(*addr[1] == 234.5);
-  assert(*addr[3] == 2);
-  assert(*addr[2] == 234.5);
+  assert(byfxxm::Get(addr[1]) == 234.5);
+  assert(byfxxm::Get(addr[3]) == 2);
+  assert(byfxxm::Get(addr[2]) == 234.5);
 }
 
 void TestParser5() {
@@ -161,7 +161,7 @@ void TestParser5() {
     return;
   }
 
-  assert(*addr[10] == 21);
+  assert(byfxxm::Get(addr[10]) == 21);
 }
 
 void TestParser6() {
@@ -174,8 +174,8 @@ void TestParser6() {
     return;
   }
 
-  assert(*addr[1] == 1);
-  assert(*addr[2] == 2);
+  assert(byfxxm::Get(addr[1]) == 1);
+  assert(byfxxm::Get(addr[2]) == 2);
 }
 
 void TestParser7() {

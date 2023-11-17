@@ -2,6 +2,7 @@
 #define _BYFXXM_ADDRESS_HPP_
 
 #include "common.hpp"
+#include "memory.hpp"
 #include <unordered_map>
 
 namespace byfxxm {

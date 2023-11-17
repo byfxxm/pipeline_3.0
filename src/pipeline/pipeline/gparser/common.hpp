@@ -32,14 +32,6 @@ using SetSharp = std::function<void(double)>;
 using GetSetSharp = std::tuple<GetSharp, SetSharp>;
 using SharpValue = std::variant<double *, GetSetSharp>;
 
-using Group = std::pmr::vector<double>;
-using Value = std::variant<std::monostate, double, SharpValue, std::string,
-                           bool, Gtag, Group>;
-using GetRetVal = std::function<Value()>;
-
-inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-inline constexpr bool IsNaN(double v) { return v != v; }
-
 inline double Get(const SharpValue &key) {
   return std::visit(Overloaded{
                         [](double *p) { return *p; },
@@ -58,6 +50,14 @@ inline void Set(const SharpValue &key, double val) {
       },
       key);
 }
+
+using Group = std::pmr::vector<double>;
+using Value = std::variant<std::monostate, double, SharpValue, std::string,
+                           bool, Gtag, Group>;
+using GetRetVal = std::function<Value()>;
+
+inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+inline constexpr bool IsNaN(double v) { return v != v; }
 } // namespace byfxxm
 
 #endif

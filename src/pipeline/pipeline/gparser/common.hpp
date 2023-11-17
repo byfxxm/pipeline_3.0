@@ -32,6 +32,7 @@ using SetSharp = std::function<void(double)>;
 using SharpValue = std::tuple<GetSharp, SetSharp>;
 
 inline double Get(const SharpValue &key) { return std::get<GetSharp>(key)(); }
+
 inline void Set(const SharpValue &key, double val) {
   std::get<SetSharp>(key)(val);
 }

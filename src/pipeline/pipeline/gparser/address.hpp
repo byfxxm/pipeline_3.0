@@ -20,13 +20,14 @@ public:
     return _dict.at(key);
   }
 
-  void Insert(double key, double *addr) {
-    _dict.insert(std::make_pair(key, SharpValue{[=]() { return *addr; },
-                                                [=](double v) { *addr = v; }}));
+  void Insert(double key, double *sharp) {
+    _dict.insert(
+        std::make_pair(key, SharpValue{[=]() { return *sharp; },
+                                       [=](double v) { *sharp = v; }}));
   }
 
-  void Insert(double key, SharpValue addr) {
-    _dict.insert(std::make_pair(key, std::move(addr)));
+  void Insert(double key, SharpValue sharp) {
+    _dict.insert(std::make_pair(key, std::move(sharp)));
   }
 
 private:

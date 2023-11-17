@@ -11,7 +11,9 @@ public:
   [[nodiscard]] SharpValue &operator[](double key) {
     if (_dict.find(key) == _dict.end()) {
       auto point = std::make_unique<double>(nan);
-      _dict.insert(std::make_pair(key, point.get()));
+      _dict.insert(std::make_pair(
+          key, SharpValue{[p = point.get()]() { return *p; },
+                          [p = point.get()](double v) { *p = v; }}));
       _buffer.push_back(std::move(point));
     }
 
@@ -19,10 +21,11 @@ public:
   }
 
   void Insert(double key, double *addr) {
-    _dict.insert(std::make_pair(key, addr));
+    _dict.insert(std::make_pair(key, SharpValue{[=]() { return *addr; },
+                                                [=](double v) { *addr = v; }}));
   }
 
-  void Insert(double key, GetSetSharp addr) {
+  void Insert(double key, SharpValue addr) {
     _dict.insert(std::make_pair(key, std::move(addr)));
   }
 

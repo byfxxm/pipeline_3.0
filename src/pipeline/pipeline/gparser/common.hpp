@@ -29,26 +29,11 @@ inline constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
 
 using GetSharp = std::function<double()>;
 using SetSharp = std::function<void(double)>;
-using GetSetSharp = std::tuple<GetSharp, SetSharp>;
-using SharpValue = std::variant<double *, GetSetSharp>;
+using SharpValue = std::tuple<GetSharp, SetSharp>;
 
-inline double Get(const SharpValue &key) {
-  return std::visit(Overloaded{
-                        [](double *p) { return *p; },
-                        [](const GetSetSharp &getset) {
-                          return std::get<GetSharp>(getset)();
-                        },
-                    },
-                    key);
-}
-
+inline double Get(const SharpValue &key) { return std::get<GetSharp>(key)(); }
 inline void Set(const SharpValue &key, double val) {
-  std::visit(
-      Overloaded{
-          [&](double *p) { *p = val; },
-          [&](const GetSetSharp &getset) { std::get<SetSharp>(getset)(val); },
-      },
-      key);
+  std::get<SetSharp>(key)(val);
 }
 
 using Group = std::pmr::vector<double>;

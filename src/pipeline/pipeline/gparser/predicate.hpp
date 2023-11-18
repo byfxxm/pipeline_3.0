@@ -380,7 +380,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
   if (!(gimpl->*func)(par, addr))
     throw AbstreeException();
 
-  return std::monostate{};
+  return {};
 };
 } // namespace predicate
 

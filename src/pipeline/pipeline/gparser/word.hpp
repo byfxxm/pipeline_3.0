@@ -41,6 +41,7 @@ class Constant : public Word {
       auto ch = utils.peek();
       if (!std::isdigit(ch) && ch != '.')
         break;
+
       word.push_back(utils.get());
     }
 
@@ -57,6 +58,7 @@ class Key : public Word {
       auto ch = utils.peek();
       if (!std::isalpha(ch))
         break;
+
       word.push_back(utils.get());
     }
 

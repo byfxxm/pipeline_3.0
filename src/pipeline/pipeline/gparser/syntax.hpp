@@ -5,7 +5,6 @@
 #include "block.hpp"
 #include "grammar.hpp"
 #include "lexer.hpp"
-#include "memory.hpp"
 #include "production.hpp"
 
 namespace byfxxm {

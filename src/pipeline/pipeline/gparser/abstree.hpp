@@ -1,7 +1,6 @@
 ﻿#ifndef _BYFXXM_ABSTREE_HPP_
 #define _BYFXXM_ABSTREE_HPP_
 
-#include "memory.hpp"
 #include "predicate.hpp"
 #include <cassert>
 #include <tuple>

@@ -2,7 +2,6 @@
 #define _BYFXXM_BLOCK_HPP_
 
 #include "abstree.hpp"
-#include "memory.hpp"
 #include <optional>
 
 namespace byfxxm {

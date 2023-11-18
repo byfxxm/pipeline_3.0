@@ -56,9 +56,6 @@
     <ClInclude Include="gparser\lexer.hpp">
       <Filter>gparser</Filter>
     </ClInclude>
-    <ClInclude Include="gparser\memory.hpp">
-      <Filter>gparser</Filter>
-    </ClInclude>
     <ClInclude Include="gparser\predicate.hpp">
       <Filter>gparser</Filter>
     </ClInclude>

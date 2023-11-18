@@ -154,7 +154,6 @@
     <ClInclude Include="gparser\gparser.hpp" />
     <ClInclude Include="gparser\grammar.hpp" />
     <ClInclude Include="gparser\lexer.hpp" />
-    <ClInclude Include="gparser\memory.hpp" />
     <ClInclude Include="gparser\predicate.hpp" />
     <ClInclude Include="gparser\production.hpp" />
     <ClInclude Include="gparser\syntax.hpp" />

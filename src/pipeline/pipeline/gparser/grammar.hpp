@@ -3,7 +3,6 @@
 
 #include "block.hpp"
 #include "common.hpp"
-#include "memory.hpp"
 #include "production.hpp"
 
 namespace byfxxm {

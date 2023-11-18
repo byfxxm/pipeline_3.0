@@ -46,7 +46,7 @@ public:
     return _pointer.reset(std::forward<decltype(pars)>(pars)...);
   }
 
-  decltype(auto) Get() const noexcept { return _pointer.get(); }
+  decltype(auto) get() const noexcept { return _pointer.get(); }
 
   explicit operator bool() const noexcept { return _pointer.operator bool(); }
 

@@ -15,7 +15,7 @@ inline Segment *GetSegment(UniquePtr<block::Block> &block) {
     if (tree)
       return tree;
     else
-      block.Reset();
+      block.reset();
   }
 
   return {};

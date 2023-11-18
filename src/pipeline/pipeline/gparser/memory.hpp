@@ -42,7 +42,7 @@ public:
     requires std::is_convertible_v<T1 *, T *>
   UniquePtr(T1 *p, D1 &&del) noexcept : _pointer(p, std::forward<D1>(del)) {}
 
-  decltype(auto) Reset(auto &&...pars) noexcept {
+  decltype(auto) reset(auto &&...pars) noexcept {
     return _pointer.reset(std::forward<decltype(pars)>(pars)...);
   }
 

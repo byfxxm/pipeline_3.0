@@ -8,18 +8,18 @@ template <class Ty, size_t Num>
   requires(Num > 0)
 class RingBuffer {
 public:
-  void Reset() { read_index_ = write_index_; }
+  void Reset() { _read_index = _write_index; }
 
-  bool IsEmpty() { return read_index_ == write_index_; }
+  bool IsEmpty() { return _read_index == _write_index; }
 
-  bool IsFull() { return _Mod(write_index_ + 1) == read_index_; }
+  bool IsFull() { return _Mod(_write_index + 1) == _read_index; }
 
   bool Write(Ty &&t) {
     if (IsFull())
       return false;
 
-    data_[write_index_] = std::move(t);
-    write_index_ = _Mod(write_index_ + 1);
+    _data[_write_index] = std::move(t);
+    _write_index = _Mod(_write_index + 1);
     return true;
   }
 
@@ -27,8 +27,8 @@ public:
     if (IsEmpty())
       return false;
 
-    t = std::move(data_[read_index_]);
-    read_index_ = _Mod(read_index_ + 1);
+    t = std::move(_data[_read_index]);
+    _read_index = _Mod(_read_index + 1);
     return true;
   }
 
@@ -41,9 +41,9 @@ private:
   }
 
 private:
-  std::atomic<size_t> read_index_{0};
-  std::atomic<size_t> write_index_{0};
-  Ty data_[Num];
+  std::atomic<size_t> _read_index{0};
+  std::atomic<size_t> _write_index{0};
+  Ty _data[Num];
 };
 } // namespace byfxxm
 

@@ -10,9 +10,9 @@ class RingBuffer {
 public:
   void Reset() { _read_index = _write_index; }
 
-  bool IsEmpty() { return _read_index == _write_index; }
+  bool IsEmpty() const { return _read_index == _write_index; }
 
-  bool IsFull() { return _Mod(_write_index + 1) == _read_index; }
+  bool IsFull() const { return _Mod(_write_index + 1) == _read_index; }
 
   bool Write(Ty &&t) {
     if (IsFull())
@@ -33,7 +33,7 @@ public:
   }
 
 private:
-  size_t _Mod(size_t num) {
+  size_t _Mod(size_t num) const {
     if constexpr ((Num & (Num - 1)) == 0)
       return (num & (Num - 1));
     else

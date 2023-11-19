@@ -43,8 +43,8 @@ class Coro {
 public:
   Coro() = default;
   ~Coro() {
-    if (_runtime.joinable())
-      _runtime.join();
+    if (_runtime.valid())
+      _runtime.wait();
   }
 
   void SetMain(const std::function<void(CoMainHelper *, void *)> &func,
@@ -58,24 +58,23 @@ public:
   }
 
   void AsyncRun() {
-    if (_runtime.joinable())
+    if (_runtime.valid())
       return;
 
-    _runtime = std::thread([this] { _DoRun(); });
+    _runtime = std::async(std::launch::async, [this] { _DoRun(); });
   }
 
   void Wait() {
-    if (_runtime.joinable())
-      _runtime.join();
+    if (_runtime.valid())
+      _runtime.wait();
   }
 
   void Run() {
-    if (_runtime.joinable())
+    if (_runtime.valid())
       return;
 
-    _runtime = std::thread([this] { _DoRun(); });
-
-    _runtime.join();
+    _runtime = std::async(std::launch::async, [this] { _DoRun(); });
+    _runtime.wait();
   }
 
 private:
@@ -108,7 +107,7 @@ private:
 private:
   _CoMain _co_main;
   std::vector<_CoSub> _co_subs;
-  std::thread _runtime;
+  std::future<void> _runtime;
 };
 } // namespace byfxxm
 

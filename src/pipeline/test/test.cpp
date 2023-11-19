@@ -215,6 +215,7 @@ void TestParser8() {
       {1, &y},
       {2, byfxxm::GetSetSharp{Getter{&x}, Setter{&x}}},
   };
+
   auto res = parser.Run(&addr, &gimpl);
   assert(res);
   puts(res.value().c_str());

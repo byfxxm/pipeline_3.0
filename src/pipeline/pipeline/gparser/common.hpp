@@ -13,6 +13,7 @@ concept StreamConcept = requires(T t) {
   { t.get() } -> std::integral;
   { t.peek() } -> std::integral;
   { t.eof() } -> std::same_as<bool>;
+  T(std::move(t));
 };
 
 template <class... Ts> struct Overloaded : Ts... {

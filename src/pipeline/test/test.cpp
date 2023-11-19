@@ -280,7 +280,7 @@ void TestPerformance() {
 void TestPerformance1() {
   perform(std::filesystem::path(std::filesystem::current_path().string() +
                                 R"(\ncfiles\macro1.nc)"),
-          100);
+          10000);
 }
 
 std::string _Format(const byfxxm::AxesArray &axes) {

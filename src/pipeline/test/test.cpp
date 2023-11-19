@@ -385,9 +385,9 @@ Y100
 }
 
 int main() {
-  std::thread thr[1];
+  std::jthread thr[1];
   for (auto &t : thr) {
-    t = std::thread([]() {
+    t = std::jthread([]() {
       TestParser();
       TestParser1();
       TestParser2();
@@ -402,10 +402,6 @@ int main() {
       TestPerformance();
       TestPerformance1();
     });
-  }
-
-  for (auto &t : thr) {
-    t.join();
   }
 
   return 0;

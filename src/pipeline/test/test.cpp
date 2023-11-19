@@ -195,6 +195,16 @@ void TestParser7() {
   }
 }
 
+struct Getter {
+  double operator()() const { return *p; }
+  double *p{nullptr};
+};
+
+struct Setter {
+  void operator()(double v) const { *p = v; }
+  double *p{nullptr};
+};
+
 void TestParser8() {
   auto parser = byfxxm::Gparser(std::ifstream(
       std::filesystem::current_path().string() + "/ncfiles/test8.nc"));
@@ -203,7 +213,7 @@ void TestParser8() {
   double y = 6;
   byfxxm::Address addr = {
       {1, &y},
-      {2, byfxxm::GetSetSharp{[&]() { return x; }, [&](double v) { x = v; }}},
+      {2, byfxxm::GetSetSharp{Getter{&x}, Setter{&x}}},
   };
   auto res = parser.Run(&addr, &gimpl);
   assert(res);

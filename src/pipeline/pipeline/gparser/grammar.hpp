@@ -176,8 +176,7 @@ class IfElse : public Grammar {
     if (tok.kind != token::Kind::ENDIF)
       throw SyntaxException();
 
-    return Statement(UniquePtr<block::Block>(
-        MakeUnique<block::IfElse>(mempool, std::move(ifelse))));
+    return Statement(MakeUnique<block::IfElse>(mempool, std::move(ifelse)));
   }
 };
 
@@ -228,8 +227,7 @@ class While : public Grammar {
     if (tok.kind != token::Kind::END)
       throw SyntaxException();
 
-    return Statement(UniquePtr<block::Block>(
-        MakeUnique<block::While>(mempool, std::move(wh))));
+    return Statement(MakeUnique<block::While>(mempool, std::move(wh)));
   }
 };
 

@@ -77,7 +77,7 @@
     <ClInclude Include="pipeline.hpp">
       <Filter>public</Filter>
     </ClInclude>
-    <ClInclude Include="array_nd.hpp">
+    <ClInclude Include="md_array.hpp">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="gparser\common.hpp">

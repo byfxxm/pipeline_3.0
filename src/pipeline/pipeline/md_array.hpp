@@ -26,7 +26,7 @@ using InitializerList_t = InitializerList<T, N>::type;
 // 多维数组
 template <ElementT Ty, size_t Num>
   requires(Num > 0)
-class ArrayNd final {
+class MdArray final {
 private:
   template <class T, size_t N, bool RO> class _Proxy {
   public:
@@ -67,7 +67,7 @@ private:
 public:
   template <std::integral... Args>
     requires(sizeof...(Args) == Num)
-  ArrayNd(Args &&...args)
+  MdArray(Args &&...args)
       : _count((... * std::forward<Args>(args))),
         _shapes{static_cast<size_t>(args)...} {
     _elems = std::make_unique<Ty[]>(_count);
@@ -75,7 +75,7 @@ public:
     _InitializeFactors();
   }
 
-  ArrayNd(InitializerList_t<Ty, Num> list) {
+  MdArray(InitializerList_t<Ty, Num> list) {
     _shapes.fill(0);
     _InitializeShapes(list, 0);
     _count = 1;
@@ -89,21 +89,21 @@ public:
     _Assignment(list, 0, 0);
   }
 
-  ArrayNd(const ArrayNd &rhs)
+  MdArray(const MdArray &rhs)
       : _count(rhs._count), _shapes(rhs._shapes), _factors(rhs._factors) {
     _elems = std::make_unique<Ty[]>(_count);
     std::copy(rhs._elems.get(), rhs._elems.get() + _count, _elems.get());
   }
 
-  ArrayNd &operator=(const ArrayNd &rhs) {
-    ArrayNd copy(rhs);
+  MdArray &operator=(const MdArray &rhs) {
+    MdArray copy(rhs);
     using std::swap;
     swap(*this, copy);
     return *this;
   }
 
-  ArrayNd(ArrayNd &&) noexcept = default;
-  ArrayNd &operator=(ArrayNd &&) noexcept = default;
+  MdArray(MdArray &&) noexcept = default;
+  MdArray &operator=(MdArray &&) noexcept = default;
 
   decltype(auto) operator[](size_t pos) const {
     return _Proxy<Ty, Num, true>(_elems.get(), &_shapes.front(),
@@ -186,7 +186,7 @@ private:
 };
 
 template <class First, class... Rest>
-ArrayNd(First, Rest...) -> ArrayNd<First, sizeof...(Rest) + 1>;
+MdArray(First, Rest...) -> MdArray<First, sizeof...(Rest) + 1>;
 } // namespace byfxxm
 
 #endif

@@ -1,10 +1,10 @@
 ﻿#ifndef _BYFXXM_CODE_HPP_
 #define _BYFXXM_CODE_HPP_
 
-#include "array_nd.hpp"
+#include "md_array.hpp"
 
 namespace byfxxm {
-using AxesArray = ArrayNd<double, 1>;
+using AxesArray = MdArray<double, 1>;
 
 enum class codetag {
   NA,

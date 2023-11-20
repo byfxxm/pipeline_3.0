@@ -58,8 +58,8 @@ using SyntaxNodeList = std::pmr::vector<SyntaxNode>;
 
 class Expression {
 public:
-  Abstree::NodePtr operator()(SyntaxNodeList &synlist) const {
-    return _Expression(synlist);
+  Abstree::NodePtr operator()(SyntaxNodeList &list) const {
+    return _Expression(list);
   }
 
 private:
@@ -70,14 +70,13 @@ private:
     if (range.empty())
       return {};
 
-    SyntaxNodeList synlist = _ProcessBracket(range);
-    auto minpri = _FindMinPriority(synlist);
+    SyntaxNodeList list = _ProcessBracket(range);
+    auto minpri = _FindMinPriority(list);
 
     auto node = _CurNode(*minpri);
-    if (auto first = _Expression(_SyntaxNodeListRng(synlist.begin(), minpri)))
+    if (auto first = _Expression(_SyntaxNodeListRng(list.begin(), minpri)))
       node->subs.push_back(std::move(first));
-    if (auto second =
-            _Expression(_SyntaxNodeListRng(minpri + 1, synlist.end())))
+    if (auto second = _Expression(_SyntaxNodeListRng(minpri + 1, list.end())))
       node->subs.push_back(std::move(second));
 
     _CheckError(node);
@@ -196,13 +195,13 @@ private:
 
 class Gtree {
 public:
-  Abstree::NodePtr operator()(SyntaxNodeList &synlist) const {
-    if (synlist.empty() || (synlist.size() & 0x1) != 0)
+  Abstree::NodePtr operator()(SyntaxNodeList &list) const {
+    if (list.empty() || (list.size() & 0x1) != 0)
       throw SyntaxException();
 
     auto root = MakeUnique<Abstree::Node>(mempool);
     root->pred = Gcmd{};
-    for (auto iter = synlist.begin(); iter != synlist.end();) {
+    for (auto iter = list.begin(); iter != list.end();) {
       auto node = MakeUnique<Abstree::Node>(mempool);
       node->pred = _TokToPred(std::get<token::Token>(*iter++));
       node->subs.push_back(std::move(std::get<Abstree::NodePtr>(*iter++)));

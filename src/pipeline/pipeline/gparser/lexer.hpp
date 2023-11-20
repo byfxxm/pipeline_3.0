@@ -19,18 +19,6 @@ template <StreamConcept T> class Lexer {
 public:
   Lexer(T &&stream) : _stream(std::move(stream)) {}
 
-  void Reset(const std::filesystem::path &file) {
-    using std::swap;
-    auto copy = Lexer(file);
-    swap(*this, copy);
-  }
-
-  void Reset(const std::string &memory) {
-    using std::swap;
-    auto copy = Lexer(memory);
-    swap(*this, copy);
-  }
-
   token::Token Get() {
     _lasttok = Peek();
     _peektok.reset();

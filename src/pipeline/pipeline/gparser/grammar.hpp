@@ -241,26 +241,30 @@ using GrammarsList =
                   grammar::IfElse, grammar::While>;
 
 inline std::optional<Statement> GetStatement(const Utils &utils) {
-  auto tok = utils.peek();
-  if (IsEndOfFile(tok))
-    return {};
+  for (;;) {
+    auto tok = utils.peek();
+    if (IsEndOfFile(tok))
+      return {};
 
-  SyntaxNodeList list{&mempool};
-  list.push_back(utils.get());
+    SyntaxNodeList list{&mempool};
+    list.push_back(utils.get());
 
-  for (const auto &elem : GrammarsList::grammars) {
-    if (elem->First(tok)) {
-      std::optional<Statement> stmt = elem->Rest(list, utils);
-      if (!stmt.has_value()) {
-        assert(dynamic_cast<grammar::Blank *>((*iter).get()));
-        return GetStatement(utils);
+    auto iter = std::begin(GrammarsList::grammars);
+    for (; iter != std::end(GrammarsList::grammars); ++iter) {
+      if (iter->get()->First(tok)) {
+        std::optional<Statement> stmt = iter->get()->Rest(list, utils);
+        if (!stmt.has_value()) {
+          assert(dynamic_cast<grammar::Blank *>(iter->get()));
+          break;
+        }
+
+        return std::move(stmt.value());
       }
-
-      return std::move(stmt.value());
     }
-  }
 
-  throw SyntaxException();
+    if (iter == std::end(GrammarsList::grammars))
+      throw SyntaxException();
+  }
 }
 } // namespace grammar
 } // namespace byfxxm

@@ -108,7 +108,7 @@ class IfElse : public Grammar {
     return tok.kind == token::Kind::IF;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &list,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &,
                                         const Utils &utils) const override {
     using If = block::IfElse::If;
     using Else = block::IfElse::Else;
@@ -185,7 +185,7 @@ class While : public Grammar {
     return tok.kind == token::Kind::WHILE;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &list,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &,
                                         const Utils &utils) const override {
     auto read_cond = [&]() -> Segment {
       SyntaxNodeList list{&mempool};

@@ -250,13 +250,13 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
 
   for (const auto &elem : GrammarsList::grammars) {
     if (elem->First(tok)) {
-      std::optional<Statement> sub = elem->Rest(list, utils);
-      if (!sub.has_value()) {
+      std::optional<Statement> stmt = elem->Rest(list, utils);
+      if (!stmt.has_value()) {
         assert(dynamic_cast<grammar::Blank *>((*iter).get()));
         return GetStatement(utils);
       }
 
-      return std::move(sub.value());
+      return std::move(stmt.value());
     }
   }
 

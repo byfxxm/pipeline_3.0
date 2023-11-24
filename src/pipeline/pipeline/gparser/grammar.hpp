@@ -34,7 +34,7 @@ class Grammar {
 public:
   virtual ~Grammar() = default;
   virtual bool First(const token::Token &) const = 0;
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &,
                                         const Utils &) const = 0;
 };
 
@@ -43,7 +43,7 @@ class Blank : public Grammar {
     return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &,
                                         const Utils &) const override {
     return {};
   }
@@ -54,7 +54,7 @@ class Expr : public Grammar {
     return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&list,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &list,
                                         const Utils &utils) const override {
     for (;;) {
       auto tok = utils.peek();
@@ -73,7 +73,7 @@ class Ggram : public Grammar {
     return IsGcode(tok);
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&list,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &list,
                                         const Utils &utils) const override {
     SyntaxNodeList gtag{&mempool};
     for (;;) {
@@ -108,7 +108,7 @@ class IfElse : public Grammar {
     return tok.kind == token::Kind::IF;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&list,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &list,
                                         const Utils &utils) const override {
     using If = block::IfElse::If;
     using Else = block::IfElse::Else;
@@ -185,7 +185,7 @@ class While : public Grammar {
     return tok.kind == token::Kind::WHILE;
   }
 
-  virtual std::optional<Statement> Rest(SyntaxNodeList &&list,
+  virtual std::optional<Statement> Rest(SyntaxNodeList &list,
                                         const Utils &utils) const override {
     auto read_cond = [&]() -> Segment {
       SyntaxNodeList list{&mempool};
@@ -253,7 +253,7 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
     for (; iter != std::end(GrammarsList::grammars); ++iter) {
       if ((*iter)->First(tok)) {
         std::optional<Statement> sub;
-        if (!(sub = (*iter)->Rest(std::move(list), utils)).has_value())
+        if (!(sub = (*iter)->Rest(list, utils)).has_value())
           break;
 
         return std::move(sub.value());

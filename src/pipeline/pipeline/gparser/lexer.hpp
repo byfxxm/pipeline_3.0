@@ -50,7 +50,7 @@ private:
     for (const auto &elem : word::WordsList::words) {
       std::optional<token::Token> tok;
       if (elem->First(word.front()) &&
-          (tok = elem->Rest(word, {peek, get, last})).has_value()) {
+          (tok = elem->Rest(word, {peek, get, last}))) {
         return tok.value();
       }
     }

@@ -47,10 +47,10 @@ private:
       return _lasttok;
     };
 
-    for (const auto &p : word::WordsList::words) {
+    for (const auto &elem : word::WordsList::words) {
       std::optional<token::Token> tok;
-      if (p->First(word.front()) &&
-          (tok = p->Rest(word, {peek, get, last})).has_value()) {
+      if (elem->First(word.front()) &&
+          (tok = elem->Rest(word, {peek, get, last})).has_value()) {
         return tok.value();
       }
     }

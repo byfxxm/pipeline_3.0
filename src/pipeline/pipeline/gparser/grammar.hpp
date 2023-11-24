@@ -252,8 +252,8 @@ inline std::optional<Statement> GetStatement(const Utils &utils) {
     auto iter = std::begin(GrammarsList::grammars);
     for (; iter != std::end(GrammarsList::grammars); ++iter) {
       if ((*iter)->First(tok)) {
-        std::optional<Statement> sub;
-        if (!(sub = (*iter)->Rest(list, utils)).has_value())
+        std::optional<Statement> sub = (*iter)->Rest(list, utils);
+        if (!sub.has_value())
           break;
 
         return std::move(sub.value());

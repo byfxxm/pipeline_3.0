@@ -360,12 +360,12 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
     throw AbstreeException();
 
   Gparams par{&mempool};
-  std::ranges::for_each(tags, [&](const Value &ele) {
-    auto tag = std::get<Gtag>(ele);
+  std::ranges::for_each(tags, [&](const Value &elem) {
+    auto tag = std::get<Gtag>(elem);
     if (IsNaN(tag.value) || gtag_to_ginterface.contains(tag))
       return;
 
-    par.push_back(std::get<Gtag>(ele));
+    par.push_back(std::get<Gtag>(elem));
   });
 
   auto iter = std::ranges::find_if(tags, [](auto &&tag) {

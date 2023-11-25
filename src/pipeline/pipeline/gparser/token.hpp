@@ -97,8 +97,8 @@ inline bool _IsMapping(const Dictionary &dict, const std::string &word) {
 }
 
 inline bool _IsMapping(const Dictionary &dict, char ch) {
-  return std::ranges::find_if(dict, [&](auto &&ele) {
-           return ch == ele.first[0];
+  return std::ranges::find_if(dict, [&](auto &&elem) {
+           return ch == elem.first[0];
          }) != dict.end();
 }
 

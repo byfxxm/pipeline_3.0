@@ -12,7 +12,7 @@ public:
   struct Utils {
     const Gparams &params;
     const Address *address{nullptr};
-    const GetSnapshot &get_snapshot;
+    const MarkSnapshot &mark_snapshot;
   };
 
   virtual ~Ginterface() = default;

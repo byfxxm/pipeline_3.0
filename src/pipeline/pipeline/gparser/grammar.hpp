@@ -50,7 +50,8 @@ class Blank : public Grammar {
 
 class Expr : public Grammar {
   virtual bool First(const token::Token &tok) const override {
-    return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB;
+    return tok.kind == token::Kind::SHARP || tok.kind == token::Kind::LB ||
+           tok.kind == token::Kind::GOTO;
   }
 
   virtual std::optional<Statement> Rest(SyntaxNodeList &list,

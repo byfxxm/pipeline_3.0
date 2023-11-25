@@ -66,6 +66,9 @@ struct Snapshot {
 };
 
 using GetSnapshot = std::function<Snapshot()>;
+using GotoSnapshot = std::function<void(const Snapshot &)>;
+using MarkSnapshot = std::function<void(double)>;
+using SnapshotTable = std::unordered_map<double, Snapshot>;
 
 template <class T> struct Deleter {
   Deleter(std::pmr::memory_resource *mr = nullptr) : mr_(mr) {}

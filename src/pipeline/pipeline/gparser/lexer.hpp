@@ -34,6 +34,8 @@ public:
 
   auto Tellg() const { return _pos; }
 
+  decltype(auto) Seekg(int64_t pos) { return _stream.seekg(pos); }
+
 private:
   token::Token _Next() {
     auto peek = [this]() { return _stream.peek(); };

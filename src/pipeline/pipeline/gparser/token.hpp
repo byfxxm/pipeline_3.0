@@ -45,6 +45,7 @@ enum class Kind {
   MIN,     // MIN
   STRING,  // "..."
   NOT,     // NOT
+  GOTO,    // GOTO
   G,
   M,
   X,
@@ -76,8 +77,7 @@ inline const Dictionary keywords = {
     {"DO", Kind::DO},       {"END", Kind::END},       {"GT", Kind::GT},
     {"GE", Kind::GE},       {"LT", Kind::LT},         {"LE", Kind::LE},
     {"EQ", Kind::EQ},       {"NE", Kind::NE},         {"MAX", Kind::MAX},
-    {"MIN", Kind::MIN},     {"NOT", Kind::NOT},
-};
+    {"MIN", Kind::MIN},     {"NOT", Kind::NOT},       {"GOTO", Kind::GOTO}};
 
 inline const Dictionary symbols = {
     {"[", Kind::LB},     {"]", Kind::RB},   {"+", Kind::PLUS},
@@ -142,7 +142,8 @@ inline constexpr bool IsSharp(char ch) { return ch == '#'; }
 inline constexpr bool IsNewline(char ch) { return ch == '\n'; }
 
 inline constexpr bool IsNewStatement(const Token &tok) {
-  return tok.kind == Kind::NEWLINE || tok.kind == Kind::SEMI;
+  return tok.kind == Kind::NEWLINE || tok.kind == Kind::SEMI ||
+         tok.kind == Kind::KEOF;
 }
 
 inline constexpr bool IsEndOfFile(const Token &tok) {

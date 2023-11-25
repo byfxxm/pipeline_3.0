@@ -56,5 +56,8 @@
     <None Include="ncfiles\test8.nc">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="ncfiles\test9.nc">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

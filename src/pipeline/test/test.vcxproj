@@ -148,6 +148,7 @@
     <None Include="ncfiles\test6.nc" />
     <None Include="ncfiles\test7.nc" />
     <None Include="ncfiles\test8.nc" />
+    <None Include="ncfiles\test9.nc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

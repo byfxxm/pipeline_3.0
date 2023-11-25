@@ -328,6 +328,29 @@ inline constexpr auto Not = [](const Value &value) {
       value);
 };
 
+inline constexpr auto Goto = [](const Value &value,
+                                const GotoSnapshot &goto_snapshot,
+                                const SnapshotTable &table) {
+  return std::visit(
+      [&](auto &&v) -> Value {
+        double val{};
+        if constexpr (byfxxm_IsDouble(v)) {
+          val = v;
+        } else if constexpr (byfxxm_IsSharpValue(v)) {
+          val = Get(v);
+        } else
+          throw AbstreeException("goto error");
+
+        auto iter = table.find(val);
+        if (iter == table.end())
+          throw AbstreeException("goto fail");
+
+        goto_snapshot(iter->second);
+        return {};
+      },
+      value);
+};
+
 using Gfunc = bool (Ginterface::*)(const Ginterface::Utils &);
 
 struct _GtagHash {
@@ -353,7 +376,7 @@ inline const std::pmr::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual>
 
 inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
                                 Address *addr, Ginterface *gimpl,
-                                const GetSnapshot &get_snapshot) -> Value {
+                                const MarkSnapshot &mark_snapshot) -> Value {
   if (!gimpl)
     return {};
 
@@ -378,7 +401,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
 
   auto func = iter == tags.end() ? &Ginterface::None
                                  : gtag_to_ginterface.at(std::get<Gtag>(*iter));
-  if (!(gimpl->*func)({par, addr, get_snapshot}))
+  if (!(gimpl->*func)({par, addr, mark_snapshot}))
     throw AbstreeException();
 
   return {};
@@ -414,8 +437,11 @@ using Sharp = decltype(ToVariant(predicate::Sharp));
 // G指令
 using Gcmd = decltype(ToVariant(predicate::Gcmd));
 
+// GOTO
+using Goto = decltype(ToVariant(predicate::Goto));
+
 // 定义谓词
-using Predicate = std::variant<Value, Unary, Binary, Sharp, Gcmd>;
+using Predicate = std::variant<Value, Unary, Binary, Sharp, Gcmd, Goto>;
 } // namespace byfxxm
 
 #endif

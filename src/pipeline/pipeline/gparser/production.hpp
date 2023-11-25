@@ -12,7 +12,7 @@ namespace byfxxm {
 struct TokenTraits {
   static constexpr size_t default_priority = -1;
   size_t priority{default_priority};
-  Predicate pred{Value()};
+  Predicate pred;
   bool left_to_right{false};
 };
 
@@ -51,6 +51,7 @@ inline const std::pmr::unordered_map<token::Kind, TokenTraits> token_traits = {
     {token::Kind::S, {5, Unary{predicate::Gcode<token::Kind::S>}}},
     {token::Kind::O, {5, Unary{predicate::Gcode<token::Kind::O>}}},
     {token::Kind::CON, {}},
+    {token::Kind::GOTO, {0, Goto{predicate::Goto}}},
 };
 
 using SyntaxNode = std::variant<token::Token, Abstree::NodePtr>;
@@ -183,6 +184,10 @@ private:
                    },
                    [&](const Gcmd &) {
                      if (node->subs.size() == 0)
+                       throw SyntaxException();
+                   },
+                   [&](const Goto &) {
+                     if (node->subs.size() != 1)
                        throw SyntaxException();
                    },
                    [](const auto &) { // default

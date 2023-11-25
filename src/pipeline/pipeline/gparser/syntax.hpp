@@ -55,12 +55,15 @@ public:
 private:
   AbstreeTuple _ToAbstreeTuple(Segment &seg) {
     auto &[root, snapshot] = seg;
-    return {Abstree(root, _return_val, _addr, _gimpl, _get_snapshot), snapshot};
+    return {Abstree(root, _return_val, _addr, _gimpl, _mark_snapshot,
+                    _goto_snapshot, _snapshot_table),
+            snapshot};
   }
 
   AbstreeTuple _ToAbstreeTuple(Segment &&seg) {
     auto &[root, snapshot] = seg;
-    return {Abstree(std::move(root), _return_val, _addr, _gimpl, _get_snapshot),
+    return {Abstree(std::move(root), _return_val, _addr, _gimpl, _mark_snapshot,
+                    _goto_snapshot, _snapshot_table),
             snapshot};
   }
 
@@ -82,12 +85,21 @@ private:
 
 private:
   Lexer<T> _lex;
-  Snapshot _snapshot{1, 0};
   Value _return_val;
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
   UniquePtr<block::Block> _remain_block;
+  Snapshot _snapshot{1, 0};
+  SnapshotTable _snapshot_table;
   const GetSnapshot _get_snapshot = [this]() { return _snapshot; };
+  const MarkSnapshot _mark_snapshot = [this](double k) {
+    _snapshot_table.insert(std::make_pair(k, _snapshot));
+  };
+  const GotoSnapshot _goto_snapshot = [this](const Snapshot &snapshot) {
+    _snapshot = snapshot;
+    _remain_block.reset();
+    _lex.Seekg(_snapshot.pos);
+  };
 };
 
 template <class T> Syntax(T) -> Syntax<T>;

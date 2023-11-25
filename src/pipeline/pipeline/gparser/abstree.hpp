@@ -19,16 +19,20 @@ public:
   };
 
   Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *gimpl,
-          const GetSnapshot &get_snapshot) noexcept
+          const MarkSnapshot &mark_snapshot, const GotoSnapshot &goto_snapshot,
+          const SnapshotTable &snapshot_table) noexcept
       : _root(&root), _return_val(&rval), _addr(addr), _gimpl(gimpl),
-        _get_snapshot(get_snapshot) {
+        _mark_snapshot(mark_snapshot), _goto_snapshot(goto_snapshot),
+        _snapshot_table(snapshot_table) {
     assert(*std::get<NodePtr *>(_root));
   }
 
   Abstree(NodePtr &&root, Value &rval, Address *addr, Ginterface *gimpl,
-          const GetSnapshot &get_snapshot) noexcept
+          const MarkSnapshot &mark_snapshot, const GotoSnapshot &goto_snapshot,
+          const SnapshotTable &snapshot_table) noexcept
       : _root(std::move(root)), _return_val(&rval), _addr(addr), _gimpl(gimpl),
-        _get_snapshot(get_snapshot) {
+        _mark_snapshot(mark_snapshot), _goto_snapshot(goto_snapshot),
+        _snapshot_table(snapshot_table) {
     assert(std::get<NodePtr>(_root));
   }
 
@@ -80,9 +84,17 @@ private:
               assert(!params.empty());
               return std::visit(
                   [&](auto &&func) {
-                    return func(params, _addr, _gimpl, _get_snapshot);
+                    return func(params, _addr, _gimpl, _mark_snapshot);
                   },
                   gcmd);
+            },
+            [&](const Goto &goto_) {
+              assert(params.size() == 1);
+              return std::visit(
+                  [&](auto &&func) {
+                    return func(params[0], _goto_snapshot, _snapshot_table);
+                  },
+                  goto_);
             },
             [](const auto &) -> Value { // default
               throw AbstreeException();
@@ -96,7 +108,9 @@ private:
   Value *_return_val{nullptr};
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
-  GetSnapshot _get_snapshot;
+  const MarkSnapshot &_mark_snapshot;
+  const GotoSnapshot &_goto_snapshot;
+  const SnapshotTable &_snapshot_table;
 };
 
 using Segment = std::tuple<Abstree::NodePtr, Snapshot>;

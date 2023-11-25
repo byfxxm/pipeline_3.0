@@ -207,6 +207,16 @@ void TestParser8() {
   assert(y == 1);
 }
 
+void TestParser9() {
+  auto parser = byfxxm::Gparser(std::ifstream(
+      std::filesystem::current_path().string() + "/ncfiles/test9.nc"));
+  auto gimpl = Gimpl();
+  byfxxm::Address addr;
+  auto res = parser.Run(&addr, &gimpl);
+  if (res)
+    puts(res.value().c_str());
+}
+
 class MyFileStream {
 public:
   explicit MyFileStream(const std::filesystem::path &pa) {
@@ -393,6 +403,8 @@ int main() {
   std::jthread thr[1];
   for (auto &t : thr) {
     t = std::jthread([]() {
+      TestPerformance();
+      TestPerformance1();
       TestParser();
       TestParser1();
       TestParser2();
@@ -402,10 +414,7 @@ int main() {
       TestParser6();
       TestParser7();
       TestParser8();
-      // TestPipeline();
-      // TestPipeline1();
-      TestPerformance();
-      TestPerformance1();
+      TestParser9();
     });
   }
 

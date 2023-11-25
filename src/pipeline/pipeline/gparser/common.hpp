@@ -61,8 +61,8 @@ inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
 inline constexpr bool IsNaN(double v) { return v != v; }
 
 struct Snapshot {
-  size_t line{0};
-  int64_t pos{0};
+  size_t line{};
+  int64_t pos{};
 };
 
 using CatchSnapshot = std::function<Snapshot()>;

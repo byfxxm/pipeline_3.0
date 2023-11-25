@@ -36,12 +36,12 @@ struct TestCode : byfxxm::Code {
 
 class Gimpl : public byfxxm::Ginterface {
 public:
-  virtual bool None(const byfxxm::Ginterface::Utils &) override { return true; }
-  virtual bool G0(const byfxxm::Ginterface::Utils &) override { return true; }
-  virtual bool G1(const byfxxm::Ginterface::Utils &) override { return true; }
-  virtual bool G2(const byfxxm::Ginterface::Utils &) override { return true; }
-  virtual bool G3(const byfxxm::Ginterface::Utils &) override { return true; }
-  virtual bool G4(const byfxxm::Ginterface::Utils &) override { return true; }
+  virtual bool None(const Utils &) override { return true; }
+  virtual bool G0(const Utils &) override { return true; }
+  virtual bool G1(const Utils &) override { return true; }
+  virtual bool G2(const Utils &) override { return true; }
+  virtual bool G3(const Utils &) override { return true; }
+  virtual bool G4(const Utils &) override { return true; }
 };
 
 void TestParser() {

@@ -377,7 +377,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
 
   auto func = iter == tags.end() ? &Ginterface::None
                                  : gtag_to_ginterface.at(std::get<Gtag>(*iter));
-  if (!(gimpl->*func)(std::forward_as_tuple(par, addr)))
+  if (!(gimpl->*func)({par, addr}))
     throw AbstreeException();
 
   return {};

@@ -2,7 +2,6 @@
 #define _BYFXXM_GINTERFACE_HPP_
 
 #include "common.hpp"
-#include <tuple>
 #include <vector>
 
 namespace byfxxm {
@@ -10,7 +9,10 @@ class Address;
 class Ginterface {
 public:
   using Gparams = std::pmr::vector<Gtag>;
-  using Utils = std::tuple<const Gparams &, const Address *>;
+  struct Utils {
+    const Gparams &params;
+    const Address *address{nullptr};
+  };
 
   virtual ~Ginterface() = default;
   virtual bool None(const Utils &) = 0;

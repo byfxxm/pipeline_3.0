@@ -70,54 +70,48 @@ public:
   Gimpl(const WriteFunc &writefn) : _writefn(writefn) {}
 
   virtual bool None(const Utils &utils) override {
-    auto &[params, _] = utils;
     if (_last == Gtag{token::Kind::G, 0})
-      _writefn(std::make_unique<Move>(GparamsToEnd(params)));
+      _writefn(std::make_unique<Move>(GparamsToEnd(utils.params)));
     else if (_last == Gtag{token::Kind::G, 1})
-      _writefn(std::make_unique<Line>(GparamsToEnd(params)));
+      _writefn(std::make_unique<Line>(GparamsToEnd(utils.params)));
     else if (_last == Gtag{token::Kind::G, 2})
-      _writefn(std::make_unique<Arc>(GparamsToEnd(params),
-                                     GparamsToCenter(params), false));
+      _writefn(std::make_unique<Arc>(GparamsToEnd(utils.params),
+                                     GparamsToCenter(utils.params), false));
     else if (_last == Gtag{token::Kind::G, 3})
-      _writefn(std::make_unique<Arc>(GparamsToEnd(params),
-                                     GparamsToCenter(params), true));
+      _writefn(std::make_unique<Arc>(GparamsToEnd(utils.params),
+                                     GparamsToCenter(utils.params), true));
 
     return true;
   }
 
   virtual bool G0(const Utils &utils) override {
-    auto &[params, _] = utils;
     _last = {token::Kind::G, 0};
-    _writefn(std::make_unique<Move>(GparamsToEnd(params)));
+    _writefn(std::make_unique<Move>(GparamsToEnd(utils.params)));
     return true;
   }
 
   virtual bool G1(const Utils &utils) override {
-    auto &[params, _] = utils;
     _last = {token::Kind::G, 1};
-    _writefn(std::make_unique<Line>(GparamsToEnd(params)));
+    _writefn(std::make_unique<Line>(GparamsToEnd(utils.params)));
     return true;
   }
 
   virtual bool G2(const Utils &utils) override {
-    auto &[params, _] = utils;
     _last = {token::Kind::G, 2};
-    _writefn(std::make_unique<Arc>(GparamsToEnd(params),
-                                   GparamsToCenter(params), false));
+    _writefn(std::make_unique<Arc>(GparamsToEnd(utils.params),
+                                   GparamsToCenter(utils.params), false));
     return true;
   }
 
   virtual bool G3(const Utils &utils) override {
-    auto &[params, _] = utils;
     _last = {token::Kind::G, 3};
-    _writefn(std::make_unique<Arc>(GparamsToEnd(params),
-                                   GparamsToCenter(params), true));
+    _writefn(std::make_unique<Arc>(GparamsToEnd(utils.params),
+                                   GparamsToCenter(utils.params), true));
     return true;
   }
 
   virtual bool G4(const Utils &utils) override {
-    auto &[params, _] = utils;
-    print_gparams("G4", params);
+    print_gparams("G4", utils.params);
     return true;
   }
 

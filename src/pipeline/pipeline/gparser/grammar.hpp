@@ -9,12 +9,12 @@ namespace byfxxm {
 namespace grammar {
 using Get = std::function<token::Token()>;
 using Peek = std::function<token::Token()>;
-using Line = std::function<size_t()>;
+using GetSnapshot = std::function<Snapshot()>;
 
 struct Utils {
   Get get;
   Peek peek;
-  Line line;
+  GetSnapshot get_snapshot;
   GetRetVal get_ret_val;
 };
 
@@ -64,7 +64,7 @@ class Expr : public Grammar {
       list.push_back(utils.get());
     }
 
-    return Statement(Segment(expr(list), utils.line()));
+    return Statement(Segment(expr(list), utils.get_snapshot()));
   }
 };
 
@@ -99,7 +99,7 @@ class Ggram : public Grammar {
 
     SyntaxNodeList res{&mempool};
     res.push_back(gtree(list));
-    return Statement(Segment(expr(res), utils.line()));
+    return Statement(Segment(expr(res), utils.get_snapshot()));
   }
 };
 
@@ -128,7 +128,7 @@ class IfElse : public Grammar {
         list.push_back(utils.get());
       }
 
-      return Segment(expr(list), utils.line());
+      return Segment(expr(list), utils.get_snapshot());
     };
 
     auto read_scope = [&](Scope &scope) {
@@ -200,7 +200,7 @@ class While : public Grammar {
         list.push_back(std::move(tok));
       }
 
-      return Segment(expr(list), utils.line());
+      return Segment(expr(list), utils.get_snapshot());
     };
 
     auto read_scope = [&](Scope &scope) {

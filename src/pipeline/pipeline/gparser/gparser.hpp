@@ -14,15 +14,16 @@ public:
   Gparser(const std::string &str) : _stream(std::istringstream(str)) {}
   Gparser(const std::filesystem::path &file) : _stream(std::ifstream(file)) {}
 
-  std::optional<std::string> Run(Address *addr, Ginterface *gimpl,
-                                 std::function<void(size_t)> updateline = {}) {
+  std::optional<std::string>
+  Run(Address *addr, Ginterface *gimpl,
+      std::function<void(const Snapshot &)> update = {}) {
     std::optional<std::string> ret;
     try {
       Syntax<T> syn(std::move(_stream), addr, gimpl);
       while (auto abstree = syn.Next()) {
-        auto &[tree, line] = abstree.value();
-        if (updateline)
-          updateline(line);
+        auto &[tree, snapshot] = abstree.value();
+        if (update)
+          update(snapshot);
 
         tree();
       }

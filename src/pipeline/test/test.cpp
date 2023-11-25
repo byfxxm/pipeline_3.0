@@ -168,10 +168,12 @@ void TestParser7() {
 
   constexpr size_t lines[] = {2, 3, 4, 5, 7, 8, 12, 14};
   auto iter = std::begin(lines);
-  if (auto res = parser.Run(&addr, &gimpl, [&iter](size_t line) {
-        PrintLine(line);
-        assert(line == (*iter++));
-      })) {
+  if (auto res =
+          parser.Run(&addr, &gimpl, [&iter](const byfxxm::Snapshot &pos) {
+            PrintLine(pos.line);
+            PrintLine(pos.pos);
+            assert(pos.line == (*iter++));
+          })) {
     PrintLine(res.value());
     return;
   }
@@ -236,10 +238,8 @@ public:
 
   bool eof() { return feof(_file) != 0; }
 
-  auto tellg() { return ftell(_file); }
-
   auto &seekg(auto pos) {
-    fseek(_file, pos, SEEK_SET);
+    fseek(_file, static_cast<long>(pos), SEEK_SET);
     return *this;
   }
 

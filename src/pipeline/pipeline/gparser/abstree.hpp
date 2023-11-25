@@ -18,14 +18,17 @@ public:
     std::pmr::vector<NodePtr> subs{&mempool};
   };
 
-  Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *gimpl) noexcept
-      : _root(&root), _return_val(&rval), _addr(addr), _gimpl(gimpl) {
+  Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *gimpl,
+          const CatchSnapshot &catch_snapshot) noexcept
+      : _root(&root), _return_val(&rval), _addr(addr), _gimpl(gimpl),
+        _catch_snapshot(catch_snapshot) {
     assert(*std::get<NodePtr *>(_root));
   }
 
-  Abstree(NodePtr &&root, Value &rval, Address *addr,
-          Ginterface *gimpl) noexcept
-      : _root(std::move(root)), _return_val(&rval), _addr(addr), _gimpl(gimpl) {
+  Abstree(NodePtr &&root, Value &rval, Address *addr, Ginterface *gimpl,
+          const CatchSnapshot &catch_snapshot) noexcept
+      : _root(std::move(root)), _return_val(&rval), _addr(addr), _gimpl(gimpl),
+        _catch_snapshot(catch_snapshot) {
     assert(std::get<NodePtr>(_root));
   }
 
@@ -76,7 +79,9 @@ private:
             [&](const Gcmd &gcmd) {
               assert(!params.empty());
               return std::visit(
-                  [&](auto &&func) { return func(params, _addr, _gimpl); },
+                  [&](auto &&func) {
+                    return func(params, _addr, _gimpl, _catch_snapshot);
+                  },
                   gcmd);
             },
             [](const auto &) -> Value { // default
@@ -91,9 +96,10 @@ private:
   Value *_return_val{nullptr};
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
+  CatchSnapshot _catch_snapshot;
 };
 
-using Segment = std::tuple<Abstree::NodePtr, size_t>;
+using Segment = std::tuple<Abstree::NodePtr, Snapshot>;
 } // namespace byfxxm
 
 #endif

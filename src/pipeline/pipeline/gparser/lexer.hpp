@@ -9,9 +9,9 @@
 #include <string>
 
 namespace byfxxm {
-inline void SkipSpaces(auto &&stream) {
-  while (token::IsSpace(stream.peek())) {
-    stream.get();
+inline void SkipSpaces(auto &&peek, auto &&get) {
+  while (token::IsSpace(peek())) {
+    get();
   }
 }
 
@@ -32,20 +32,26 @@ public:
     return _peektok.value();
   }
 
+  auto Tellg() const { return _pos; }
+
 private:
   token::Token _Next() {
-    SkipSpaces(_stream);
+    auto peek = [this]() { return _stream.peek(); };
+    auto get = [this]() {
+      auto ret = _stream.get();
+      _pos += (ret == '\n' ? 2 : 1);
+      return ret;
+    };
+    auto last = [this]() -> const std::optional<token::Token> & {
+      return _lasttok;
+    };
+
+    SkipSpaces(peek, get);
     if (_stream.eof())
       return token::Token{token::Kind::KEOF, nan};
 
     std::string word;
-    word.push_back(_stream.get());
-
-    auto peek = [this]() { return _stream.peek(); };
-    auto get = [this]() { return _stream.get(); };
-    auto last = [this]() -> const std::optional<token::Token> & {
-      return _lasttok;
-    };
+    word.push_back(get());
 
     for (const auto &elem : word::WordsList::words) {
       std::optional<token::Token> tok;
@@ -61,6 +67,7 @@ private:
   T _stream;
   std::optional<token::Token> _lasttok;
   std::optional<token::Token> _peektok;
+  int64_t _pos{0};
 };
 
 template <class T> Lexer(T) -> Lexer<T>;

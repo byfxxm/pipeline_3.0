@@ -14,7 +14,7 @@ concept StreamConcept = requires(T t) {
   { t.peek() } -> std::integral;
   { t.eof() } -> std::same_as<bool>;
   T(std::move(t));
-  requires std::is_convertible_v<T &, decltype(t.seekg(t.tellg()))>;
+  requires std::is_convertible_v<T &, decltype(t.seekg(int64_t()))>;
   requires std::is_convertible_v<T &, decltype(t.unget())>;
 };
 
@@ -59,6 +59,13 @@ using GetRetVal = std::function<Value()>;
 
 inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
 inline constexpr bool IsNaN(double v) { return v != v; }
+
+struct Snapshot {
+  size_t line{0};
+  int64_t pos{0};
+};
+
+using CatchSnapshot = std::function<Snapshot()>;
 
 template <class T> struct Deleter {
   Deleter(std::pmr::memory_resource *mr = nullptr) : mr_(mr) {}

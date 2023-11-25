@@ -20,7 +20,7 @@ inline Segment *GetSegment(UniquePtr<block::Block> &block) {
   return {};
 }
 
-using AbstreeTuple = std::tuple<Abstree, size_t>;
+using AbstreeTuple = std::tuple<Abstree, Snapshot>;
 
 template <StreamConcept T> class Syntax {
 public:
@@ -32,36 +32,36 @@ public:
       if (auto seg = GetSegment(_remain_block))
         return _ToAbstreeTuple(*seg);
 
+      auto peek = [this]() { return _lex.Peek(); };
       auto get = [this]() {
         auto tok = _lex.Get();
+        _snapshot.pos = _lex.Tellg();
         if (tok.kind == token::Kind::NEWLINE)
-          ++_lineno;
+          ++_snapshot.line;
 
         return tok;
       };
-
-      auto peek = [this]() { return _lex.Peek(); };
-      auto line = [this]() { return _lineno; };
       auto get_rval = [this]() { return _return_val; };
-
-      if (auto stmt = GetStatement(grammar::Utils{get, peek, line, get_rval}))
+      if (auto stmt =
+              GetStatement(grammar::Utils{get, peek, _get_snapshot, get_rval}))
         return _ToAbstreeTuple(std::move(stmt.value()));
 
       return {};
     } catch (const ParseException &ex) {
-      throw SyntaxException(_lineno, ex.what());
+      throw SyntaxException(_snapshot.line, ex.what());
     }
   }
 
 private:
   AbstreeTuple _ToAbstreeTuple(Segment &seg) {
-    auto &[root, line] = seg;
-    return {Abstree(root, _return_val, _addr, _gimpl), line};
+    auto &[root, snapshot] = seg;
+    return {Abstree(root, _return_val, _addr, _gimpl, _get_snapshot), snapshot};
   }
 
   AbstreeTuple _ToAbstreeTuple(Segment &&seg) {
-    auto &[root, line] = seg;
-    return {Abstree(std::move(root), _return_val, _addr, _gimpl), line};
+    auto &[root, snapshot] = seg;
+    return {Abstree(std::move(root), _return_val, _addr, _gimpl, _get_snapshot),
+            snapshot};
   }
 
   AbstreeTuple _ToAbstreeTuple(Statement &&stmt) {
@@ -82,11 +82,14 @@ private:
 
 private:
   Lexer<T> _lex;
-  size_t _lineno{1};
+  Snapshot _snapshot{1, 0};
   Value _return_val;
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
   UniquePtr<block::Block> _remain_block;
+  const std::function<Snapshot()> _get_snapshot = [this]() {
+    return _snapshot;
+  };
 };
 
 template <class T> Syntax(T) -> Syntax<T>;

@@ -2,6 +2,7 @@
 #define _BYFXXM_GINTERFACE_HPP_
 
 #include "common.hpp"
+#include <tuple>
 #include <vector>
 
 namespace byfxxm {

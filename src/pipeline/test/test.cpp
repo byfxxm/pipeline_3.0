@@ -236,6 +236,18 @@ public:
 
   bool eof() { return feof(_file) != 0; }
 
+  auto tellg() { return ftell(_file); }
+
+  auto &seekg(auto pos) {
+    fseek(_file, pos, SEEK_SET);
+    return *this;
+  }
+
+  auto &unget() {
+    fseek(_file, -1, SEEK_CUR);
+    return *this;
+  }
+
 private:
   FILE *_file{nullptr};
   std::optional<int> _cache;

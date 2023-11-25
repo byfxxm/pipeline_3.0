@@ -14,6 +14,8 @@ concept StreamConcept = requires(T t) {
   { t.peek() } -> std::integral;
   { t.eof() } -> std::same_as<bool>;
   T(std::move(t));
+  requires std::is_convertible_v<T &, decltype(t.seekg(t.tellg()))>;
+  requires std::is_convertible_v<T &, decltype(t.unget())>;
 };
 
 template <class... Ts> struct Overloaded : Ts... {

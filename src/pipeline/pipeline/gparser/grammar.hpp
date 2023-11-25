@@ -9,7 +9,6 @@ namespace byfxxm {
 namespace grammar {
 using Get = std::function<token::Token()>;
 using Peek = std::function<token::Token()>;
-using GetSnapshot = std::function<Snapshot()>;
 
 struct Utils {
   Get get;

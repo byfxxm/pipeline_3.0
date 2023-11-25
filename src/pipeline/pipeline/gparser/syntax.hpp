@@ -87,9 +87,7 @@ private:
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
   UniquePtr<block::Block> _remain_block;
-  const std::function<Snapshot()> _get_snapshot = [this]() {
-    return _snapshot;
-  };
+  const GetSnapshot _get_snapshot = [this]() { return _snapshot; };
 };
 
 template <class T> Syntax(T) -> Syntax<T>;

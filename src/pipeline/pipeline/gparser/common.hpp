@@ -65,7 +65,7 @@ struct Snapshot {
   int64_t pos{};
 };
 
-using CatchSnapshot = std::function<Snapshot()>;
+using GetSnapshot = std::function<Snapshot()>;
 
 template <class T> struct Deleter {
   Deleter(std::pmr::memory_resource *mr = nullptr) : mr_(mr) {}

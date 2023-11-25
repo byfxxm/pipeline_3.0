@@ -19,16 +19,16 @@ public:
   };
 
   Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *gimpl,
-          const CatchSnapshot &catch_snapshot) noexcept
+          const GetSnapshot &get_snapshot) noexcept
       : _root(&root), _return_val(&rval), _addr(addr), _gimpl(gimpl),
-        _catch_snapshot(catch_snapshot) {
+        _get_snapshot(get_snapshot) {
     assert(*std::get<NodePtr *>(_root));
   }
 
   Abstree(NodePtr &&root, Value &rval, Address *addr, Ginterface *gimpl,
-          const CatchSnapshot &catch_snapshot) noexcept
+          const GetSnapshot &get_snapshot) noexcept
       : _root(std::move(root)), _return_val(&rval), _addr(addr), _gimpl(gimpl),
-        _catch_snapshot(catch_snapshot) {
+        _get_snapshot(get_snapshot) {
     assert(std::get<NodePtr>(_root));
   }
 
@@ -80,7 +80,7 @@ private:
               assert(!params.empty());
               return std::visit(
                   [&](auto &&func) {
-                    return func(params, _addr, _gimpl, _catch_snapshot);
+                    return func(params, _addr, _gimpl, _get_snapshot);
                   },
                   gcmd);
             },
@@ -96,7 +96,7 @@ private:
   Value *_return_val{nullptr};
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
-  CatchSnapshot _catch_snapshot;
+  GetSnapshot _get_snapshot;
 };
 
 using Segment = std::tuple<Abstree::NodePtr, Snapshot>;

@@ -8,7 +8,7 @@
 #include <type_traits>
 
 namespace byfxxm {
-inline void print_gparams(std::string str, const Gparams &params) {
+inline void print_gparams(std::string str, const Ginterface::Gparams &params) {
   static const std::unordered_map<token::Kind, std::string> map = {
       {token::Kind::X, "X"},
       {token::Kind::Y, "Y"},
@@ -21,7 +21,7 @@ inline void print_gparams(std::string str, const Gparams &params) {
   puts(str.c_str());
 }
 
-inline AxesArray GparamsToEnd(const Gparams &params) {
+inline AxesArray GparamsToEnd(const Ginterface::Gparams &params) {
   AxesArray ret(6);
   ret.Memset(nan);
   std::ranges::for_each(params, [&](const Gtag &item) {
@@ -43,7 +43,7 @@ inline AxesArray GparamsToEnd(const Gparams &params) {
   return ret;
 }
 
-inline AxesArray GparamsToCenter(const Gparams &params) {
+inline AxesArray GparamsToCenter(const Ginterface::Gparams &params) {
   AxesArray ret(6);
   ret.Memset(nan);
   std::ranges::for_each(params, [&](const Gtag &item) {
@@ -69,7 +69,8 @@ class Gimpl : public Ginterface {
 public:
   Gimpl(const WriteFunc &writefn) : _writefn(writefn) {}
 
-  virtual bool None(const Gparams &params, const Address *addr) override {
+  virtual bool None(const Ginterface::Utils &utils) override {
+    auto &[params, _] = utils;
     if (_last == Gtag{token::Kind::G, 0})
       _writefn(std::make_unique<Move>(GparamsToEnd(params)));
     else if (_last == Gtag{token::Kind::G, 1})
@@ -84,33 +85,38 @@ public:
     return true;
   }
 
-  virtual bool G0(const Gparams &params, const Address *addr) override {
+  virtual bool G0(const Ginterface::Utils &utils) override {
+    auto &[params, _] = utils;
     _last = {token::Kind::G, 0};
     _writefn(std::make_unique<Move>(GparamsToEnd(params)));
     return true;
   }
 
-  virtual bool G1(const Gparams &params, const Address *addr) override {
+  virtual bool G1(const Ginterface::Utils &utils) override {
+    auto &[params, _] = utils;
     _last = {token::Kind::G, 1};
     _writefn(std::make_unique<Line>(GparamsToEnd(params)));
     return true;
   }
 
-  virtual bool G2(const Gparams &params, const Address *addr) override {
+  virtual bool G2(const Ginterface::Utils &utils) override {
+    auto &[params, _] = utils;
     _last = {token::Kind::G, 2};
     _writefn(std::make_unique<Arc>(GparamsToEnd(params),
                                    GparamsToCenter(params), false));
     return true;
   }
 
-  virtual bool G3(const Gparams &params, const Address *addr) override {
+  virtual bool G3(const Ginterface::Utils &utils) override {
+    auto &[params, _] = utils;
     _last = {token::Kind::G, 3};
     _writefn(std::make_unique<Arc>(GparamsToEnd(params),
                                    GparamsToCenter(params), true));
     return true;
   }
 
-  virtual bool G4(const Gparams &params, const Address *addr) override {
+  virtual bool G4(const Ginterface::Utils &utils) override {
+    auto &[params, _] = utils;
     print_gparams("G4", params);
     return true;
   }

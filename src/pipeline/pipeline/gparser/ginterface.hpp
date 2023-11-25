@@ -5,17 +5,19 @@
 #include <vector>
 
 namespace byfxxm {
-using Gparams = std::pmr::vector<Gtag>;
 class Address;
 class Ginterface {
 public:
+  using Gparams = std::pmr::vector<Gtag>;
+  using Utils = std::tuple<const Gparams &, const Address *>;
+
   virtual ~Ginterface() = default;
-  virtual bool None(const Gparams &, const Address *) = 0;
-  virtual bool G0(const Gparams &, const Address *) = 0;
-  virtual bool G1(const Gparams &, const Address *) = 0;
-  virtual bool G2(const Gparams &, const Address *) = 0;
-  virtual bool G3(const Gparams &, const Address *) = 0;
-  virtual bool G4(const Gparams &, const Address *) = 0;
+  virtual bool None(const Utils &) = 0;
+  virtual bool G0(const Utils &) = 0;
+  virtual bool G1(const Utils &) = 0;
+  virtual bool G2(const Utils &) = 0;
+  virtual bool G3(const Utils &) = 0;
+  virtual bool G4(const Utils &) = 0;
 };
 } // namespace byfxxm
 

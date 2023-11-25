@@ -328,7 +328,7 @@ inline constexpr auto Not = [](const Value &value) {
       value);
 };
 
-using Gfunc = bool (Ginterface::*)(const Gparams &, const Address *);
+using Gfunc = bool (Ginterface::*)(const Ginterface::Utils &);
 
 struct _GtagHash {
   size_t operator()(const Gtag &tag) const {
@@ -359,7 +359,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
   if (tags.empty())
     throw AbstreeException();
 
-  Gparams par{&mempool};
+  Ginterface::Gparams par{&mempool};
   std::ranges::for_each(tags, [&](const Value &elem) {
     auto tag = std::get<Gtag>(elem);
     if (IsNaN(tag.value) || gtag_to_ginterface.contains(tag))
@@ -377,7 +377,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
 
   auto func = iter == tags.end() ? &Ginterface::None
                                  : gtag_to_ginterface.at(std::get<Gtag>(*iter));
-  if (!(gimpl->*func)(par, addr))
+  if (!(gimpl->*func)(std::forward_as_tuple(par, addr)))
     throw AbstreeException();
 
   return {};

@@ -34,7 +34,21 @@ public:
 
   auto Tellg() const { return _pos; }
 
-  decltype(auto) Seekg(int64_t pos) { return _stream.seekg(pos); }
+  void Seekg(int64_t pos) { _stream.seekg(pos); }
+
+  auto BackToBeginningOfLine() {
+    while (_pos > 0) {
+      auto ch = _stream.unget().peek();
+      if (_pos == '\n') {
+        _stream.get();
+        break;
+      }
+
+      --_pos;
+    }
+
+    return _pos;
+  }
 
 private:
   token::Token _Next() {

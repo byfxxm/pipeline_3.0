@@ -99,6 +99,7 @@ private:
     _snapshot = snapshot;
     _remain_block.reset();
     _lex.Seekg(_snapshot.pos);
+    _snapshot.pos = _lex.BackToBeginningOfLine();
   };
 };
 

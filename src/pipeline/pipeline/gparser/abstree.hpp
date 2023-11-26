@@ -96,9 +96,6 @@ private:
                   },
                   goto_);
             },
-            [](const auto &) -> Value { // default
-              throw AbstreeException();
-            },
         },
         node->pred);
   }

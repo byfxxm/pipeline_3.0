@@ -190,9 +190,6 @@ private:
                      if (node->subs.size() != 1)
                        throw SyntaxException();
                    },
-                   [](const auto &) { // default
-                     throw SyntaxException();
-                   },
                },
                node->pred);
   }

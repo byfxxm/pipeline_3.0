@@ -21,7 +21,7 @@ public:
   Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *gimpl,
           const MarkSnapshot &mark_snapshot, const GotoSnapshot &goto_snapshot,
           const SnapshotTable &snapshot_table) noexcept
-      : _root(&root), _return_val(&rval), _addr(addr), _gimpl(gimpl),
+      : _root(&root), _return_val(rval), _addr(addr), _gimpl(gimpl),
         _mark_snapshot(mark_snapshot), _goto_snapshot(goto_snapshot),
         _snapshot_table(snapshot_table) {
     assert(*std::get<NodePtr *>(_root));
@@ -30,7 +30,7 @@ public:
   Abstree(NodePtr &&root, Value &rval, Address *addr, Ginterface *gimpl,
           const MarkSnapshot &mark_snapshot, const GotoSnapshot &goto_snapshot,
           const SnapshotTable &snapshot_table) noexcept
-      : _root(std::move(root)), _return_val(&rval), _addr(addr), _gimpl(gimpl),
+      : _root(std::move(root)), _return_val(rval), _addr(addr), _gimpl(gimpl),
         _mark_snapshot(mark_snapshot), _goto_snapshot(goto_snapshot),
         _snapshot_table(snapshot_table) {
     assert(std::get<NodePtr>(_root));
@@ -45,11 +45,11 @@ public:
   Value operator()() const {
     std::visit(
         Overloaded{
-            [this](const NodePtr &root) { *_return_val = _Execute(root); },
-            [this](const NodePtr *root) { *_return_val = _Execute(*root); }},
+            [this](const NodePtr &root) { _return_val = _Execute(root); },
+            [this](const NodePtr *root) { _return_val = _Execute(*root); }},
         _root);
 
-    return *_return_val;
+    return _return_val;
   }
 
 private:
@@ -105,7 +105,7 @@ private:
 
 private:
   std::variant<NodePtr, NodePtr *> _root;
-  Value *_return_val{nullptr};
+  Value &_return_val;
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
   const MarkSnapshot &_mark_snapshot;

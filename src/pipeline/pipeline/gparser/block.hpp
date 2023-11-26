@@ -50,7 +50,7 @@ class IfElse : public Block {
     Scope scope{&mempool};
   };
 
-  IfElse(GetRetVal func) : _get_ret_val_func(std::move(func)) {}
+  IfElse(const GetRetVal &func) : _get_ret_val_func(func) {}
 
   virtual Segment *Next() override {
     if (_iscond) {
@@ -99,7 +99,7 @@ class IfElse : public Block {
 };
 
 class While : public Block {
-  While(GetRetVal func) : _get_ret_val_func(std::move(func)) {}
+  While(const GetRetVal &func) : _get_ret_val_func(func) {}
 
   virtual Segment *Next() override {
     if (_iscond) {

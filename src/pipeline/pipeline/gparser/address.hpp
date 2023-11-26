@@ -29,12 +29,12 @@ public:
     _dict.insert(std::make_pair(key, sharp));
   }
 
-  void Insert(double key, GetSetSharp getset) {
-    _dict.insert(std::make_pair(key, std::move(getset)));
+  void Insert(double key, const GetSetSharp &getset) {
+    _dict.insert(std::make_pair(key, getset));
   }
 
-  void Insert(double key, SharpValue sharp) {
-    _dict.insert(std::make_pair(key, std::move(sharp)));
+  void Insert(double key, const SharpValue &sharp) {
+    _dict.insert(std::make_pair(key, sharp));
   }
 
 private:

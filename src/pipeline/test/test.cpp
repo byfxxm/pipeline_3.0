@@ -379,12 +379,11 @@ void TestPipeline() {
 
   pipeline.AddWorker(std::make_unique<LastWorker>());
   pipeline.Start();
-  auto t = std::thread([&]() {
+  auto t = std::jthread([&]() {
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     pipeline.Stop();
   });
   pipeline.Wait();
-  t.join();
 }
 
 void TestPipeline1() {

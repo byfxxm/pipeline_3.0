@@ -403,8 +403,6 @@ int main() {
   std::jthread thr[1];
   for (auto &t : thr) {
     t = std::jthread([]() {
-      TestPerformance();
-      TestPerformance1();
       TestParser();
       TestParser1();
       TestParser2();
@@ -415,6 +413,10 @@ int main() {
       TestParser7();
       TestParser8();
       TestParser9();
+#ifndef _DEBUG
+      TestPerformance();
+      TestPerformance1();
+#endif
     });
   }
 

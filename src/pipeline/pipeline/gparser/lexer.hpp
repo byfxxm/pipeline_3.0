@@ -34,7 +34,10 @@ public:
 
   auto Tellg() const { return _pos; }
 
-  void Seekg(int64_t pos) { _stream.seekg(pos); }
+  void Seekg(int64_t pos) {
+    _stream.seekg(pos);
+    _pos = pos;
+  }
 
   auto BackToBeginningOfLine() {
     while (_pos > 0) {

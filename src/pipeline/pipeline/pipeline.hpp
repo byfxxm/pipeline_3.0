@@ -58,7 +58,7 @@ public:
         };
 
         auto write = [&](std::unique_ptr<Code> code) {
-          while (!sta->next->Write(code)) {
+          while (!sta->next->Write(std::move(code))) {
             ++_cur_station;
             helper->SwitchToMain();
           }

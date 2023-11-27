@@ -12,7 +12,7 @@ public:
 
   bool IsFull() const { return _Mod(_write_index + 1) == _read_index; }
 
-  bool Write(Ty &t) {
+  bool Write(Ty &&t) {
     if (IsFull())
       return false;
 

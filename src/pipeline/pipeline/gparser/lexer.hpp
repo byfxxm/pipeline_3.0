@@ -38,7 +38,6 @@ public:
     _stream.seekg(pos);
     _pos = pos;
     _peektok.reset();
-    _lasttok.reset();
   }
 
   auto BackToBeginningOfLine() {
@@ -52,6 +51,7 @@ public:
       --_pos;
     }
 
+    _peektok.reset();
     return _pos;
   }
 

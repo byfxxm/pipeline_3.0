@@ -94,7 +94,7 @@ private:
   SnapshotTable _snapshot_table;
   const GetSnapshot _get_snapshot = [this]() { return _snapshot; };
   const MarkSnapshot _mark_snapshot = [this](double k) {
-    _snapshot_table.insert(std::make_pair(k, _snapshot));
+    _snapshot_table[k] = _snapshot;
   };
   const GotoSnapshot _goto_snapshot = [this](const Snapshot &snapshot) {
     _snapshot = snapshot;

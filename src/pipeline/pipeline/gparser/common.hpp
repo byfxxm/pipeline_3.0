@@ -33,32 +33,31 @@ inline constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
 
 class SharpValue {
 public:
-  using GetSharp = std::function<double()>;
-  using SetSharp = std::function<void(double)>;
-  using GetSetSharp = std::tuple<GetSharp, SetSharp>;
+  using Get = std::function<double()>;
+  using Set = std::function<void(double)>;
+  using GetSet = std::tuple<Get, Set>;
 
   SharpValue(double *v) : _value(v) {}
-  SharpValue(const GetSetSharp &f) : _value(f) {}
+  SharpValue(const GetSet &f) : _value(f) {}
 
   [[nodiscard]] operator double() const {
     return std::visit(Overloaded{[](double *p) { return *p; },
-                                 [](const GetSetSharp &getset) {
-                                   return std::get<GetSharp>(getset)();
+                                 [](const GetSet &getset) {
+                                   return std::get<Get>(getset)();
                                  }},
                       _value);
   }
 
   SharpValue &operator=(double val) {
-    std::visit(Overloaded{[=](double *p) { *p = val; },
-                          [=](const GetSetSharp &getset) {
-                            std::get<SetSharp>(getset)(val);
-                          }},
-               _value);
+    std::visit(
+        Overloaded{[=](double *p) { *p = val; },
+                   [=](const GetSet &getset) { std::get<Set>(getset)(val); }},
+        _value);
     return *this;
   }
 
 private:
-  std::variant<double *, GetSetSharp> _value;
+  std::variant<double *, GetSet> _value;
 };
 
 using Group = std::pmr::vector<double>;

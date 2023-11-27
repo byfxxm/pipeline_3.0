@@ -197,7 +197,7 @@ void TestParser8() {
   double y = 6;
   byfxxm::Address addr = {
       {1, &y},
-      {2, byfxxm::SharpValue::GetSetSharp{Getter{&x}, Setter{&x}}},
+      {2, byfxxm::SharpValue::GetSet{Getter{&x}, Setter{&x}}},
   };
 
   auto res = parser.Run(&addr, &gimpl);

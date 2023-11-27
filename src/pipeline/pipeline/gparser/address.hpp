@@ -25,8 +25,8 @@ public:
     return _dict.at(key);
   }
 
-  void Insert(double key, SharpValue sharp) {
-    _dict.insert(std::make_pair(key, std::move(sharp)));
+  void Insert(double key, const SharpValue &sharp) {
+    _dict.insert(std::make_pair(key, sharp));
   }
 
 private:

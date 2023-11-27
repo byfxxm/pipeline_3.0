@@ -16,19 +16,16 @@
 #define byfxxm_IsGroup(v) byfxxm_IsType(v, Group)
 #define byfxxm_IsBool(v) byfxxm_IsType(v, bool)
 #define byfxxm_IsSharpValue(v) byfxxm_IsType(v, byfxxm::SharpValue)
+#define byfxxm_CanConvertToDouble(v)                                           \
+  (byfxxm_IsDouble(v) || byfxxm_IsSharpValue(v))
 
 namespace byfxxm {
 namespace predicate {
 inline constexpr auto Plus = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) + Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) + r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l + Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l + r};
         else if constexpr (byfxxm_IsString(l) && byfxxm_IsString(r))
           return Value{l + r};
@@ -41,13 +38,8 @@ inline constexpr auto Plus = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto Minus = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) - Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) - r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l - Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l - r};
         else
           throw AbstreeException("minus error");
@@ -58,13 +50,8 @@ inline constexpr auto Minus = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto Multi = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) * Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) * r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l * Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l * r};
         else
           throw AbstreeException("multiple error");
@@ -75,13 +62,8 @@ inline constexpr auto Multi = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto Div = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) / Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) / r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l / Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l / r};
         else
           throw AbstreeException("divide error");
@@ -92,10 +74,8 @@ inline constexpr auto Div = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto Assign = [](Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          Set(l, Get(r));
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          Set(l, r);
+        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_CanConvertToDouble(r))
+          l = r;
         else
           throw AbstreeException("assign error");
 
@@ -107,10 +87,8 @@ inline constexpr auto Assign = [](Value &lhs, const Value &rhs) {
 inline constexpr auto Neg = [](const Value &value) {
   return std::visit(
       [](auto &&v) -> Value {
-        if constexpr (byfxxm_IsDouble(v))
+        if constexpr (byfxxm_CanConvertToDouble(v))
           return Value{-v};
-        else if constexpr (byfxxm_IsSharpValue(v))
-          return Value{-Get(v)};
         else
           throw AbstreeException("negative error");
       },
@@ -120,10 +98,8 @@ inline constexpr auto Neg = [](const Value &value) {
 inline constexpr auto Pos = [](const Value &value) {
   return std::visit(
       [](auto &&v) -> Value {
-        if constexpr (byfxxm_IsDouble(v))
+        if constexpr (byfxxm_CanConvertToDouble(v))
           return Value{v};
-        else if constexpr (byfxxm_IsSharpValue(v))
-          return Value{Get(v)};
         else
           throw AbstreeException("positive error");
       },
@@ -136,10 +112,8 @@ inline constexpr auto Sharp = [](const Value &value, Address *addr) {
 
   return std::visit(
       [&](auto &&v) -> Value {
-        if constexpr (byfxxm_IsDouble(v))
+        if constexpr (byfxxm_CanConvertToDouble(v))
           return (*addr)[v];
-        else if constexpr (byfxxm_IsSharpValue(v))
-          return (*addr)[Get(v)];
         else
           throw AbstreeException("sharp error");
       },
@@ -149,13 +123,8 @@ inline constexpr auto Sharp = [](const Value &value, Address *addr) {
 inline constexpr auto GT = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) > Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) > r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l > Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l > r};
         else
           throw AbstreeException();
@@ -166,13 +135,8 @@ inline constexpr auto GT = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto GE = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) >= Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) >= r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l >= Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l >= r};
         else
           throw AbstreeException();
@@ -183,13 +147,8 @@ inline constexpr auto GE = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto LT = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) < Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) < r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l < Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l < r};
         else
           throw AbstreeException();
@@ -200,13 +159,8 @@ inline constexpr auto LT = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto LE = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) <= Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) <= r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l <= Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l <= r};
         else
           throw AbstreeException();
@@ -217,13 +171,8 @@ inline constexpr auto LE = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto EQ = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) == Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) == r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l == Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l == r};
         else
           throw AbstreeException();
@@ -234,13 +183,8 @@ inline constexpr auto EQ = [](const Value &lhs, const Value &rhs) {
 inline constexpr auto NE = [](const Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Value{Get(l) != Get(r)};
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Value{Get(l) != r};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Value{l != Get(r)};
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        if constexpr (byfxxm_CanConvertToDouble(l) &&
+                      byfxxm_CanConvertToDouble(r))
           return Value{l != r};
         else
           throw AbstreeException();
@@ -252,9 +196,7 @@ template <token::Kind Tok>
 inline constexpr auto Gcode = [](const Value &value) {
   return std::visit(
       [&](auto &&v) -> Value {
-        if constexpr (byfxxm_IsSharpValue(v))
-          return Gtag{Tok, Get(v)};
-        else if constexpr (byfxxm_IsDouble(v))
+        if constexpr (byfxxm_CanConvertToDouble(v))
           return Gtag{Tok, v};
         else
           throw AbstreeException("gcode error");
@@ -265,20 +207,12 @@ inline constexpr auto Gcode = [](const Value &value) {
 inline constexpr auto Comma = [](Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
-        if constexpr (byfxxm_IsGroup(l) && byfxxm_IsDouble(r)) {
+        if constexpr (byfxxm_IsGroup(l) && byfxxm_CanConvertToDouble(r)) {
           l.push_back(r);
           return l;
-        } else if constexpr (byfxxm_IsGroup(l) && byfxxm_IsSharpValue(r)) {
-          l.push_back(Get(r));
-          return l;
-        } else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsDouble(r))
+        } else if constexpr (byfxxm_CanConvertToDouble(l) &&
+                             byfxxm_CanConvertToDouble(r))
           return Group({l, r});
-        else if constexpr (byfxxm_IsDouble(l) && byfxxm_IsSharpValue(r))
-          return Group({l, Get(r)});
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsDouble(r))
-          return Group({Get(l), r});
-        else if constexpr (byfxxm_IsSharpValue(l) && byfxxm_IsSharpValue(r))
-          return Group({Get(l), Get(r)});
         else
           throw AbstreeException("comma error");
       },
@@ -291,10 +225,8 @@ inline constexpr auto Max = [](Value &value) -> Value {
         if constexpr (byfxxm_IsGroup(v)) {
           return *std::ranges::max_element(
               v, [](double lhs, double rhs) { return lhs < rhs; });
-        } else if constexpr (byfxxm_IsDouble(v))
+        } else if constexpr (byfxxm_CanConvertToDouble(v))
           return v;
-        else if constexpr (byfxxm_IsSharpValue(v))
-          return Get(v);
         else
           throw AbstreeException("max error");
       },
@@ -307,10 +239,8 @@ inline constexpr auto Min = [](Value &value) {
         if constexpr (byfxxm_IsGroup(v)) {
           return *std::ranges::min_element(
               v, [](double lhs, double rhs) { return lhs < rhs; });
-        } else if constexpr (byfxxm_IsDouble(v))
+        } else if constexpr (byfxxm_CanConvertToDouble(v))
           return v;
-        else if constexpr (byfxxm_IsSharpValue(v))
-          return Get(v);
         else
           throw AbstreeException("min error");
       },
@@ -334,10 +264,8 @@ inline constexpr auto Goto = [](const Value &value,
   return std::visit(
       [&](auto &&v) -> Value {
         double val{};
-        if constexpr (byfxxm_IsDouble(v)) {
+        if constexpr (byfxxm_CanConvertToDouble(v)) {
           val = v;
-        } else if constexpr (byfxxm_IsSharpValue(v)) {
-          val = Get(v);
         } else
           throw AbstreeException("goto error");
 

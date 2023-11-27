@@ -18,23 +18,15 @@ public:
   [[nodiscard]] SharpValue &operator[](double key) {
     if (_dict.find(key) == _dict.end()) {
       auto point = std::make_unique<double>(nan);
-      Insert(key, point.get());
+      Insert(key, SharpValue(point.get()));
       _buffer.push_back(std::move(point));
     }
 
     return _dict.at(key);
   }
 
-  void Insert(double key, double *sharp) {
-    _dict.insert(std::make_pair(key, sharp));
-  }
-
-  void Insert(double key, const GetSetSharp &getset) {
-    _dict.insert(std::make_pair(key, getset));
-  }
-
-  void Insert(double key, const SharpValue &sharp) {
-    _dict.insert(std::make_pair(key, sharp));
+  void Insert(double key, SharpValue sharp) {
+    _dict.insert(std::make_pair(key, std::move(sharp)));
   }
 
 private:

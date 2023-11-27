@@ -37,6 +37,8 @@ public:
   void Seekg(int64_t pos) {
     _stream.seekg(pos);
     _pos = pos;
+    _peektok.reset();
+    _lasttok.reset();
   }
 
   auto BackToBeginningOfLine() {

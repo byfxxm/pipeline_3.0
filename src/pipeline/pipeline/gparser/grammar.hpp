@@ -11,10 +11,10 @@ using Get = std::function<token::Token()>;
 using Peek = std::function<token::Token()>;
 
 struct Utils {
-  Get get;
-  Peek peek;
-  GetSnapshot get_snapshot;
-  GetRetVal get_ret_val;
+  const Get &get;
+  const Peek &peek;
+  const GetRetVal &get_ret_val;
+  const GetSnapshot &get_snapshot;
 };
 
 inline void SkipNewlines(const Utils &utils) {

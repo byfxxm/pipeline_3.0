@@ -42,6 +42,7 @@ public:
         return tok;
       };
       auto get_rval = [this]() { return _return_val; };
+
       if (auto stmt =
               GetStatement(grammar::Utils{get, peek, _get_snapshot, get_rval}))
         return _ToAbstreeTuple(std::move(stmt.value()));

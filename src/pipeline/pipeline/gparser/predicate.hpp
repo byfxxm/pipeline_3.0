@@ -75,7 +75,7 @@ inline constexpr auto Assign = [](Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsSharpValue(l) && byfxxm_CanConvertToDouble(r))
-          l = static_cast<double>(r);
+          l = +r;
         else
           throw AbstreeException("assign error");
 
@@ -99,7 +99,7 @@ inline constexpr auto Pos = [](const Value &value) {
   return std::visit(
       [](auto &&v) -> Value {
         if constexpr (byfxxm_CanConvertToDouble(v))
-          return Value{v};
+          return Value{+v};
         else
           throw AbstreeException("positive error");
       },

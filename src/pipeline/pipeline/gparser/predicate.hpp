@@ -75,7 +75,7 @@ inline constexpr auto Assign = [](Value &lhs, const Value &rhs) {
   return std::visit(
       [](auto &&l, auto &&r) -> Value {
         if constexpr (byfxxm_IsSharpValue(l) && byfxxm_CanConvertToDouble(r))
-          l = r;
+          l = static_cast<double>(r);
         else
           throw AbstreeException("assign error");
 

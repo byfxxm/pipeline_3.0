@@ -76,9 +76,9 @@ void TestParser1() {
   }
 
   assert(byfxxm::IsNaN(addr[4]));
-  assert(addr[3] == 2);
+  assert(addr[3] == -2);
   assert(addr[2] == 1);
-  assert(addr[20] == 2);
+  assert(addr[20] == -2);
 }
 
 void TestParser2() {

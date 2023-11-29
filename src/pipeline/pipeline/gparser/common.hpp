@@ -38,21 +38,19 @@ public:
   using GetSet = std::tuple<Get, Set>;
 
   SharpValue(double *v) : _value(v) {}
-  SharpValue(const GetSet &f) : _value(f) {}
+  SharpValue(GetSet f) : _value(std::move(f)) {}
 
   [[nodiscard]] operator double() const {
-    return std::visit(Overloaded{[](double *p) { return *p; },
-                                 [](const GetSet &getset) {
-                                   return std::get<Get>(getset)();
-                                 }},
-                      _value);
+    return std::visit(
+        Overloaded{[](double *p) { return *p; },
+                   [](const GetSet &f) { return std::get<Get>(f)(); }},
+        _value);
   }
 
   SharpValue &operator=(double val) {
-    std::visit(
-        Overloaded{[=](double *p) { *p = val; },
-                   [=](const GetSet &getset) { std::get<Set>(getset)(val); }},
-        _value);
+    std::visit(Overloaded{[=](double *p) { *p = val; },
+                          [=](const GetSet &f) { std::get<Set>(f)(val); }},
+               _value);
     return *this;
   }
 

@@ -10,8 +10,8 @@ public:
   Address() = default;
 
   Address(std::initializer_list<std::pair<double, SharpValue>> list) {
-    for (auto &it : list) {
-      Insert(it.first, it.second);
+    for (auto &elem : list) {
+      Insert(elem.first, elem.second);
     }
   }
 

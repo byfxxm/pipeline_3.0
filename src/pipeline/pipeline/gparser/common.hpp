@@ -37,7 +37,7 @@ public:
   using Set = std::function<void(double)>;
   using GetSet = std::tuple<Get, Set>;
 
-  SharpValue(double *v) : _value(v) {}
+  SharpValue(double *p) : _value(p) {}
   SharpValue(GetSet f) : _value(std::move(f)) {}
 
   [[nodiscard]] operator double() const {

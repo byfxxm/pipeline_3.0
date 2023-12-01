@@ -195,7 +195,7 @@ inline constexpr auto NE = [](const Value &lhs, const Value &rhs) {
 template <token::Kind Tok>
 inline constexpr auto Gcode = [](const Value &value) {
   return std::visit(
-      [&](auto &&v) -> Value {
+      [](auto &&v) -> Value {
         if constexpr (byfxxm_CanConvertToDouble(v))
           return Gtag{Tok, v};
         else

@@ -37,7 +37,7 @@ public:
   }
 
 private:
-  size_t _Mod(size_t num) const {
+  static size_t _Mod(size_t num) {
     if constexpr ((Num & (Num - 1)) == 0)
       return (num & (Num - 1));
     else

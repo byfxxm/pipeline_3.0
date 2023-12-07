@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_ADDRESS_HPP_
+#ifndef _BYFXXM_ADDRESS_HPP_
 #define _BYFXXM_ADDRESS_HPP_
 
 #include "common.hpp"
@@ -33,7 +33,7 @@ public:
   }
 
 private:
-  std::unordered_map<_Key, SharpValue> _dict;
+  std::unordered_map<_Key, _Value> _dict;
   std::vector<std::unique_ptr<double>> _buffer;
 };
 } // namespace byfxxm

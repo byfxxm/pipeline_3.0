@@ -16,7 +16,7 @@ public:
 
   std::optional<std::string>
   Run(Address *addr, Ginterface *gimpl,
-      std::function<void(const Snapshot &)> update = {}) {
+      const std::function<void(const Snapshot &)> &update = {}) {
     std::optional<std::string> ret;
     try {
       Syntax<T> syn(std::move(_stream), addr, gimpl);

@@ -1,4 +1,4 @@
-#ifndef _BYFXXM_ADDRESS_HPP_
+﻿#ifndef _BYFXXM_ADDRESS_HPP_
 #define _BYFXXM_ADDRESS_HPP_
 
 #include "common.hpp"

@@ -1,4 +1,4 @@
-#ifndef _BYFXXM_SYNTAX_HPP_
+﻿#ifndef _BYFXXM_SYNTAX_HPP_
 #define _BYFXXM_SYNTAX_HPP_
 
 #include "address.hpp"

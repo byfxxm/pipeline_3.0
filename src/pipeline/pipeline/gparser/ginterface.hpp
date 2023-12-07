@@ -1,4 +1,4 @@
-#ifndef _BYFXXM_GINTERFACE_HPP_
+﻿#ifndef _BYFXXM_GINTERFACE_HPP_
 #define _BYFXXM_GINTERFACE_HPP_
 
 #include "common.hpp"

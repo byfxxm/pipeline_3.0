@@ -1,4 +1,4 @@
-#ifndef _BYFXXM_BLOCK_HPP_
+﻿#ifndef _BYFXXM_BLOCK_HPP_
 #define _BYFXXM_BLOCK_HPP_
 
 #include "abstree.hpp"

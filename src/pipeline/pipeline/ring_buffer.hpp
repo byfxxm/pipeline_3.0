@@ -1,4 +1,4 @@
-#ifndef _BYFXXM_RING_BUFFER_HPP_
+﻿#ifndef _BYFXXM_RING_BUFFER_HPP_
 #define _BYFXXM_RING_BUFFER_HPP_
 
 #include <atomic>

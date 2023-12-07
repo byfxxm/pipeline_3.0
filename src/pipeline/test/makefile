@@ -1,4 +1,4 @@
-VPATH=../pipeline
+﻿VPATH=../pipeline
 ifeq ($(MAKECMDGOALS),r)
 	gcc_config=-std=c++20 -O3 -DNDEBUG
 	show_msg=release

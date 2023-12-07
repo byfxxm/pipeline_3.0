@@ -1,4 +1,4 @@
-#ifndef _BYFXXM_TOKEN_HPP_
+﻿#ifndef _BYFXXM_TOKEN_HPP_
 #define _BYFXXM_TOKEN_HPP_
 
 #include <functional>
@@ -10,8 +10,8 @@
 namespace byfxxm {
 namespace token {
 enum class Kind {
-  CON,     // 常量
-  IDN,     // 标识符
+  CON,     // ����
+  IDN,     // ��ʶ��
   FOR,     // for
   IF,      // IF
   ELSE,    // ELSE
@@ -63,7 +63,7 @@ enum class Kind {
   O,
 };
 
-// 种别码
+// �ֱ���
 struct Token {
   Kind kind;
   std::optional<std::variant<double, std::string>> value;

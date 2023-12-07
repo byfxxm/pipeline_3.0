@@ -62,7 +62,6 @@ enum class Kind {
   O,
 };
 
-// �ֱ���
 struct Token {
   Kind kind;
   std::optional<std::variant<double, std::string>> value;

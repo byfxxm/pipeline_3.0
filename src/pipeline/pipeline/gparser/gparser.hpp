@@ -22,13 +22,14 @@ public:
       Syntax<T> syn(std::move(_stream), addr, gimpl);
       while (auto abstree = syn.Next()) {
         auto &[tree, snapshot] = abstree.value();
+        _line = snapshot.line;
         if (update)
           update(snapshot);
 
         tree();
       }
     } catch (const ParseException &ex) {
-      ret = std::format("#error: {}", ex.what());
+      ret = std::format("#error: line: {} : {}", _line, ex.what());
     }
 
     return ret;
@@ -36,6 +37,7 @@ public:
 
 private:
   T _stream;
+  size_t _line{0};
 };
 
 template <class T> Gparser(T) -> Gparser<T>;

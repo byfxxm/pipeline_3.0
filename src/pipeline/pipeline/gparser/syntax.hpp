@@ -28,25 +28,29 @@ public:
       : _lex(std::move(stream)), _addr(addr), _gimpl(gimpl) {}
 
   std::optional<AbstreeTuple> Next() {
-    if (auto seg = GetSegment(_remain_block))
-      return _ToAbstreeTuple(*seg);
+    try {
+      if (auto seg = GetSegment(_remain_block))
+        return _ToAbstreeTuple(*seg);
 
-    auto peek = [this]() { return _lex.Peek(); };
-    auto get = [this]() {
-      auto tok = _lex.Get();
-      _snapshot.pos = _lex.Tellg();
-      if (tok.kind == token::Kind::NEWLINE)
-        ++_snapshot.line;
+      auto peek = [this]() { return _lex.Peek(); };
+      auto get = [this]() {
+        auto tok = _lex.Get();
+        _snapshot.pos = _lex.Tellg();
+        if (tok.kind == token::Kind::NEWLINE)
+          ++_snapshot.line;
 
-      return tok;
-    };
-    auto get_rval = [this]() { return _return_val; };
+        return tok;
+      };
+      auto get_rval = [this]() { return _return_val; };
 
-    if (auto stmt =
-            GetStatement(grammar::Utils{get, peek, get_rval, _get_snapshot}))
-      return _ToAbstreeTuple(std::move(stmt.value()));
+      if (auto stmt =
+              GetStatement(grammar::Utils{get, peek, get_rval, _get_snapshot}))
+        return _ToAbstreeTuple(std::move(stmt.value()));
 
-    return {};
+      return {};
+    } catch (const ParseException &ex) {
+      throw SyntaxException(_snapshot.line, ex.what());
+    }
   }
 
 private:

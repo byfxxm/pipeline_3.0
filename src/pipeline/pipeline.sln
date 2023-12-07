@@ -10,11 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj",
 		{61415DD8-4899-4F1E-BC9A-A165880E55B1} = {61415DD8-4899-4F1E-BC9A-A165880E55B1}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test_ui", "test_ui\test_ui.csproj", "{A0BD7424-8288-47B3-9719-4936C50245C9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2AF5A7A4-49EA-4A9E-AEED-04BD8CB351E4} = {2AF5A7A4-49EA-4A9E-AEED-04BD8CB351E4}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -29,10 +24,6 @@ Global
 		{2AF5A7A4-49EA-4A9E-AEED-04BD8CB351E4}.Debug|x64.Build.0 = Debug|x64
 		{2AF5A7A4-49EA-4A9E-AEED-04BD8CB351E4}.Release|x64.ActiveCfg = Release|x64
 		{2AF5A7A4-49EA-4A9E-AEED-04BD8CB351E4}.Release|x64.Build.0 = Release|x64
-		{A0BD7424-8288-47B3-9719-4936C50245C9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A0BD7424-8288-47B3-9719-4936C50245C9}.Debug|x64.Build.0 = Debug|Any CPU
-		{A0BD7424-8288-47B3-9719-4936C50245C9}.Release|x64.ActiveCfg = Release|Any CPU
-		{A0BD7424-8288-47B3-9719-4936C50245C9}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

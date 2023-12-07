@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_ARRAY_ND_HPP_
+#ifndef _BYFXXM_ARRAY_ND_HPP_
 #define _BYFXXM_ARRAY_ND_HPP_
 
 #include <array>

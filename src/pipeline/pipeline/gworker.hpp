@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_GWORKER_HPP_
+#ifndef _BYFXXM_GWORKER_HPP_
 #define _BYFXXM_GWORKER_HPP_
 
 #include "code.hpp"

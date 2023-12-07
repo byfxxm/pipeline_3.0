@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_CORO_HPP_
+#ifndef _BYFXXM_CORO_HPP_
 #define _BYFXXM_CORO_HPP_
 
 #include <Windows.h>

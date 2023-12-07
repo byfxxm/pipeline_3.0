@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_ABSTREE_HPP_
+#ifndef _BYFXXM_ABSTREE_HPP_
 #define _BYFXXM_ABSTREE_HPP_
 
 #include "predicate.hpp"

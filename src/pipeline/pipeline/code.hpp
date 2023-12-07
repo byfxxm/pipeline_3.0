@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_CODE_HPP_
+#ifndef _BYFXXM_CODE_HPP_
 #define _BYFXXM_CODE_HPP_
 
 #include "md_array.hpp"

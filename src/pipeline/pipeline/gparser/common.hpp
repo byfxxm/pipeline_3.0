@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_TYPEDEFS_HPP_
+#ifndef _BYFXXM_TYPEDEFS_HPP_
 #define _BYFXXM_TYPEDEFS_HPP_
 
 #include "token.hpp"

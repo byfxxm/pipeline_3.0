@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_WORKER_HPP_
+#ifndef _BYFXXM_WORKER_HPP_
 #define _BYFXXM_WORKER_HPP_
 
 #include <functional>

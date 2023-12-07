@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_GRAMMAR_HPP_
+#ifndef _BYFXXM_GRAMMAR_HPP_
 #define _BYFXXM_GRAMMAR_HPP_
 
 #include "block.hpp"

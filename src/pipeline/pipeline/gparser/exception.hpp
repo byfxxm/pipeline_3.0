@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_EXCEPTION_HPP_
+#ifndef _BYFXXM_EXCEPTION_HPP_
 #define _BYFXXM_EXCEPTION_HPP_
 
 #include <exception>

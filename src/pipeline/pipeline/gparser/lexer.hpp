@@ -1,4 +1,4 @@
-﻿#ifndef _BYFXXM_LEXER_HPP_
+#ifndef _BYFXXM_LEXER_HPP_
 #define _BYFXXM_LEXER_HPP_
 
 #include "exception.hpp"

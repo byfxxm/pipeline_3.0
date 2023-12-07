@@ -10,9 +10,8 @@
 namespace byfxxm {
 namespace token {
 enum class Kind {
-  CON,     // ����
-  IDN,     // ��ʶ��
-  FOR,     // for
+  CON,     // 常量
+  IDN,     // 标识符
   IF,      // IF
   ELSE,    // ELSE
   LB,      // [

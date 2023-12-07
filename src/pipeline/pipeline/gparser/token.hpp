@@ -138,15 +138,6 @@ inline bool IsSpace(char ch) {
 inline constexpr bool IsSharp(char ch) { return ch == '#'; }
 
 inline constexpr bool IsNewline(char ch) { return ch == '\n'; }
-
-inline constexpr bool IsNewStatement(const Token &tok) {
-  return tok.kind == Kind::NEWLINE || tok.kind == Kind::SEMI ||
-         tok.kind == Kind::KEOF;
-}
-
-inline constexpr bool IsEndOfFile(const Token &tok) {
-  return tok.kind == Kind::KEOF;
-}
 } // namespace token
 } // namespace byfxxm
 

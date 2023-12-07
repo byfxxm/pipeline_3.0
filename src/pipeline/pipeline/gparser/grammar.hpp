@@ -27,6 +27,15 @@ inline void SkipNewlines(const Utils &utils) {
   }
 }
 
+inline constexpr bool IsNewStatement(const token::Token &tok) {
+  return tok.kind == token::Kind::NEWLINE || tok.kind == token::Kind::SEMI ||
+         tok.kind == token::Kind::KEOF;
+}
+
+inline constexpr bool IsEndOfFile(const token::Token &tok) {
+  return tok.kind == token::Kind::KEOF;
+}
+
 inline std::optional<Statement> GetStatement(const Utils &);
 
 class Grammar {

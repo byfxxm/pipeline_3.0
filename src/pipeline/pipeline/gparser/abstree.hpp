@@ -7,6 +7,13 @@
 #include <variant>
 
 namespace byfxxm {
+struct SnapshotHelper {
+  const GetSnapshot &get_snapshot;
+  const MarkSnapshot &mark_snapshot;
+  const GotoSnapshot &goto_snapshot;
+  const SnapshotTable &snapshot_table;
+};
+
 class Ginterface;
 class Abstree {
 public:
@@ -19,22 +26,16 @@ public:
   };
 
   Abstree(NodePtr &root, Value &rval, Address *addr, Ginterface *gimpl,
-          const GetSnapshot &get_snapshot, const MarkSnapshot &mark_snapshot,
-          const GotoSnapshot &goto_snapshot,
-          const SnapshotTable &snapshot_table) noexcept
+          const SnapshotHelper &helper) noexcept
       : _root(&root), _return_val(rval), _addr(addr), _gimpl(gimpl),
-        _get_snapshot(get_snapshot), _mark_snapshot(mark_snapshot),
-        _goto_snapshot(goto_snapshot), _snapshot_table(snapshot_table) {
+        _snapshot_helper(helper) {
     assert(*std::get<NodePtr *>(_root));
   }
 
   Abstree(NodePtr &&root, Value &rval, Address *addr, Ginterface *gimpl,
-          const GetSnapshot &get_snapshot, const MarkSnapshot &mark_snapshot,
-          const GotoSnapshot &goto_snapshot,
-          const SnapshotTable &snapshot_table) noexcept
+          SnapshotHelper helper) noexcept
       : _root(std::move(root)), _return_val(rval), _addr(addr), _gimpl(gimpl),
-        _get_snapshot(get_snapshot), _mark_snapshot(mark_snapshot),
-        _goto_snapshot(goto_snapshot), _snapshot_table(snapshot_table) {
+        _snapshot_helper(helper) {
     assert(std::get<NodePtr>(_root));
   }
 
@@ -52,7 +53,7 @@ public:
               [this](const NodePtr *root) { _return_val = _Execute(*root); }},
           _root);
     } catch (const ParseException &ex) {
-      throw SyntaxException(_get_snapshot().line, ex.what());
+      throw SyntaxException(_snapshot_helper.get_snapshot().line, ex.what());
     }
 
     return _return_val;
@@ -90,7 +91,8 @@ private:
               assert(!params.empty());
               return std::visit(
                   [&](auto &&func) {
-                    return func(params, _addr, _gimpl, _mark_snapshot);
+                    return func(params, _addr, _gimpl,
+                                _snapshot_helper.mark_snapshot);
                   },
                   gcmd);
             },
@@ -98,7 +100,8 @@ private:
               assert(params.size() == 1);
               return std::visit(
                   [&](auto &&func) {
-                    return func(params[0], _goto_snapshot, _snapshot_table);
+                    return func(params[0], _snapshot_helper.goto_snapshot,
+                                _snapshot_helper.snapshot_table);
                   },
                   goto_);
             },
@@ -111,10 +114,7 @@ private:
   Value &_return_val;
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
-  const GetSnapshot &_get_snapshot;
-  const MarkSnapshot &_mark_snapshot;
-  const GotoSnapshot &_goto_snapshot;
-  const SnapshotTable &_snapshot_table;
+  const SnapshotHelper &_snapshot_helper;
 };
 
 using Segment = std::tuple<Abstree::NodePtr, Snapshot>;

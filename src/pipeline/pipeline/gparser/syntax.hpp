@@ -56,15 +56,15 @@ public:
 private:
   AbstreeTuple _ToAbstreeTuple(Segment &seg) {
     auto &[root, snapshot] = seg;
-    return {Abstree(root, _return_val, _addr, _gimpl, _mark_snapshot,
-                    _goto_snapshot, _snapshot_table),
+    return {Abstree(root, _return_val, _addr, _gimpl, _get_snapshot,
+                    _mark_snapshot, _goto_snapshot, _snapshot_table),
             snapshot};
   }
 
   AbstreeTuple _ToAbstreeTuple(Segment &&seg) {
     auto &[root, snapshot] = seg;
-    return {Abstree(std::move(root), _return_val, _addr, _gimpl, _mark_snapshot,
-                    _goto_snapshot, _snapshot_table),
+    return {Abstree(std::move(root), _return_val, _addr, _gimpl, _get_snapshot,
+                    _mark_snapshot, _goto_snapshot, _snapshot_table),
             snapshot};
   }
 

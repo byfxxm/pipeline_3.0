@@ -1,11 +1,11 @@
 ﻿#ifndef _BYFXXM_SYNTAX_HPP_
 #define _BYFXXM_SYNTAX_HPP_
 
+#include "abstree.hpp"
 #include "address.hpp"
 #include "block.hpp"
 #include "grammar.hpp"
 #include "lexer.hpp"
-#include "production.hpp"
 
 namespace byfxxm {
 inline Segment *GetSegment(UniquePtr<block::Block> &block) {

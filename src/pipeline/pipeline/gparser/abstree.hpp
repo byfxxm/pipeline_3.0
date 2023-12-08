@@ -115,7 +115,7 @@ private:
   Value &_return_val;
   Address *_addr{nullptr};
   Ginterface *_gimpl{nullptr};
-  const SnapshotHelper &_snapshot_helper;
+  SnapshotHelper _snapshot_helper;
 };
 
 using Segment = std::tuple<Abstree::NodePtr, Snapshot>;

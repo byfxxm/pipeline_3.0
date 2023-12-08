@@ -15,7 +15,6 @@ struct SnapshotHelper {
 };
 
 class Ginterface;
-
 class Abstree {
 public:
   struct Node;

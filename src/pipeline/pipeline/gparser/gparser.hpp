@@ -9,9 +9,9 @@ namespace byfxxm {
 class Gparser {
 public:
   template <StreamConcept T>
-  Gparser(T &&par_)
+  Gparser(T &&stream)
       : _gparser_impl(
-            std::make_unique<_GparserImpl<T>>(std::forward<T>(par_))) {}
+            std::make_unique<_GparserImpl<T>>(std::forward<T>(stream))) {}
 
   std::optional<std::string>
   Run(Address *addr, Ginterface *gimpl,

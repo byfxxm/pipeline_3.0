@@ -4,8 +4,6 @@
 #include "address.hpp"
 #include "ginterface.hpp"
 #include "syntax.hpp"
-#include <fstream>
-#include <sstream>
 
 namespace byfxxm {
 class Gparser {

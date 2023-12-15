@@ -15,7 +15,6 @@
 
 using OutputFunc = void (*)(const char *);
 OutputFunc g_outputfunc = [](const char *str) { printf(str); };
-
 std::mutex g_mutex;
 
 template <class T> void PrintLine(T &&t) {

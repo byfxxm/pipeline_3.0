@@ -128,25 +128,14 @@ public:
 private:
   virtual bool Do(std::unique_ptr<Code>,
                   const WriteFunc &writefn) noexcept override {
-    std::visit(
-        [&](auto &&parser) {
-          if constexpr (std::is_same_v<std::monostate,
-                                       std::decay_t<decltype(parser)>>)
-            assert(0);
-          else {
-            Address addr;
-            Gimpl gimpl(writefn);
-            parser.Run(&addr, &gimpl);
-          }
-        },
-        _parser);
+    Address addr;
+    Gimpl gimpl(writefn);
+    _parser.Run(&addr, &gimpl);
     return true;
   }
 
 private:
-  std::variant<std::monostate, Gparser<std::fstream>,
-               Gparser<std::stringstream>>
-      _parser;
+  Gparser _parser;
 };
 } // namespace byfxxm
 

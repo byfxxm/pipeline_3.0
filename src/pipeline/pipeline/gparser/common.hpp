@@ -16,6 +16,7 @@ concept StreamConcept = requires(T t) {
   T(std::move(t));
   requires std::is_convertible_v<T &, decltype(t.seekg(int64_t()))>;
   requires std::is_convertible_v<T &, decltype(t.unget())>;
+  requires !std::is_reference_v<T>;
 };
 
 template <class... Ts> struct Overloaded : Ts... {

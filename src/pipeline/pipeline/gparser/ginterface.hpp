@@ -4,6 +4,8 @@
 #include "common.hpp"
 #include <vector>
 
+#define byfxxm_VF(f) virtual bool f(const Utils &) = 0
+
 namespace byfxxm {
 class Address;
 class Ginterface {
@@ -16,12 +18,13 @@ public:
   };
 
   virtual ~Ginterface() = default;
-  virtual bool None(const Utils &) = 0;
-  virtual bool G0(const Utils &) = 0;
-  virtual bool G1(const Utils &) = 0;
-  virtual bool G2(const Utils &) = 0;
-  virtual bool G3(const Utils &) = 0;
-  virtual bool G4(const Utils &) = 0;
+
+  byfxxm_VF(None);
+  byfxxm_VF(G0);
+  byfxxm_VF(G1);
+  byfxxm_VF(G2);
+  byfxxm_VF(G3);
+  byfxxm_VF(G4);
 };
 } // namespace byfxxm
 

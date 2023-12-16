@@ -8,14 +8,15 @@
 namespace byfxxm {
 class Gparser {
 public:
+  using UpdateSnapshot = std::function<void(const Snapshot &)>;
+
   template <StreamConcept T>
   Gparser(T &&stream)
       : _gparser_impl(
             std::make_unique<_GparserImpl<T>>(std::forward<T>(stream))) {}
 
-  std::optional<std::string>
-  Run(Address *addr, Ginterface *gimpl,
-      const std::function<void(const Snapshot &)> &update = {}) {
+  std::optional<std::string> Run(Address *addr, Ginterface *gimpl,
+                                 const UpdateSnapshot &update = {}) {
     return _gparser_impl->Run(addr, gimpl, update);
   }
 
@@ -23,18 +24,16 @@ private:
   class _GparserBase {
   public:
     virtual ~_GparserBase() = default;
-    virtual std::optional<std::string>
-    Run(Address *, Ginterface *,
-        const std::function<void(const Snapshot &)> &) = 0;
+    virtual std::optional<std::string> Run(Address *, Ginterface *,
+                                           const UpdateSnapshot &) = 0;
   };
 
   template <StreamConcept T> class _GparserImpl : public _GparserBase {
   public:
     _GparserImpl(T &&stream) : _stream(std::move(stream)) {}
 
-    std::optional<std::string>
-    Run(Address *addr, Ginterface *gimpl,
-        const std::function<void(const Snapshot &)> &update) override {
+    std::optional<std::string> Run(Address *addr, Ginterface *gimpl,
+                                   const UpdateSnapshot &update) override {
       std::optional<std::string> ret;
       try {
         Syntax<T> syn(std::move(_stream), addr, gimpl);

@@ -69,7 +69,7 @@ class Gimpl : public Ginterface {
 public:
   Gimpl(const WriteFunc &writefn) : _writefn(writefn) {}
 
-  virtual bool None(const Utils &utils) override {
+  virtual void None(const Utils &utils) override {
     if (_last == Gtag{token::Kind::G, 0})
       _writefn(std::make_unique<Move>(GparamsToEnd(utils.params)));
     else if (_last == Gtag{token::Kind::G, 1})
@@ -80,39 +80,32 @@ public:
     else if (_last == Gtag{token::Kind::G, 3})
       _writefn(std::make_unique<Arc>(GparamsToEnd(utils.params),
                                      GparamsToCenter(utils.params), true));
-
-    return true;
   }
 
-  virtual bool G0(const Utils &utils) override {
+  virtual void G0(const Utils &utils) override {
     _last = {token::Kind::G, 0};
     _writefn(std::make_unique<Move>(GparamsToEnd(utils.params)));
-    return true;
   }
 
-  virtual bool G1(const Utils &utils) override {
+  virtual void G1(const Utils &utils) override {
     _last = {token::Kind::G, 1};
     _writefn(std::make_unique<Line>(GparamsToEnd(utils.params)));
-    return true;
   }
 
-  virtual bool G2(const Utils &utils) override {
+  virtual void G2(const Utils &utils) override {
     _last = {token::Kind::G, 2};
     _writefn(std::make_unique<Arc>(GparamsToEnd(utils.params),
                                    GparamsToCenter(utils.params), false));
-    return true;
   }
 
-  virtual bool G3(const Utils &utils) override {
+  virtual void G3(const Utils &utils) override {
     _last = {token::Kind::G, 3};
     _writefn(std::make_unique<Arc>(GparamsToEnd(utils.params),
                                    GparamsToCenter(utils.params), true));
-    return true;
   }
 
-  virtual bool G4(const Utils &utils) override {
+  virtual void G4(const Utils &utils) override {
     print_gparams("G4", utils.params);
-    return true;
   }
 
 private:

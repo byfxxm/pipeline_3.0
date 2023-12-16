@@ -279,7 +279,7 @@ inline constexpr auto Goto = [](const Value &value,
       value);
 };
 
-using Gfunc = bool (Ginterface::*)(const Ginterface::Utils &);
+using Gfunc = void (Ginterface::*)(const Ginterface::Utils &);
 
 struct _GtagHash {
   size_t operator()(const Gtag &tag) const {
@@ -327,11 +327,10 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
     return gtag_to_ginterface.contains(std::get<Gtag>(tag));
   });
 
-  auto func = iter == tags.end() ? &Ginterface::None
-                                 : gtag_to_ginterface.at(std::get<Gtag>(*iter));
-  if (!(gimpl->*func)({par, addr, mark_snapshot}))
-    throw AbstreeException();
-
+  auto func = (iter == tags.end())
+                  ? &Ginterface::None
+                  : gtag_to_ginterface.at(std::get<Gtag>(*iter));
+  (gimpl->*func)({par, addr, mark_snapshot});
   return {};
 };
 } // namespace predicate

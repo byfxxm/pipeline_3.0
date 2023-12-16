@@ -16,12 +16,12 @@ public:
   };
 
   virtual ~Ginterface() = default;
-  virtual bool None(const Utils &) = 0;
-  virtual bool G0(const Utils &) = 0;
-  virtual bool G1(const Utils &) = 0;
-  virtual bool G2(const Utils &) = 0;
-  virtual bool G3(const Utils &) = 0;
-  virtual bool G4(const Utils &) = 0;
+  virtual void None(const Utils &) = 0;
+  virtual void G0(const Utils &) = 0;
+  virtual void G1(const Utils &) = 0;
+  virtual void G2(const Utils &) = 0;
+  virtual void G3(const Utils &) = 0;
+  virtual void G4(const Utils &) = 0;
 };
 } // namespace byfxxm
 

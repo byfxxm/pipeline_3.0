@@ -311,7 +311,7 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
   if (tags.empty())
     throw AbstreeException();
 
-  Ginterface::Params params;
+  Ginterface::Params params{&mempool};
   auto cmds = tags | std::views::filter([&](const Value &elem) {
                 auto tag = std::get<Gtag>(elem);
                 if (gtag_to_ginterface.contains(tag) ||

@@ -11,9 +11,9 @@ class Ginterface {
 public:
   using Params = std::pmr::vector<Gtag>;
   struct Utils {
-    double value{Gtag::default_value};
-    Params &params;
-    Address *address{nullptr};
+    const double value{Gtag::default_value};
+    const Params &params;
+    const Address *address{nullptr};
     const MarkSnapshot &mark_snapshot;
   };
 

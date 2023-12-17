@@ -17,6 +17,7 @@ concept StreamConcept = requires(T t) {
   { t.peek() } -> std::integral;
   { t.eof() } -> std::same_as<bool>;
   T(std::move(t));
+  t.clear();
   requires std::is_convertible_v<T &, decltype(t.seekg(int64_t()))>;
   requires !std::is_reference_v<T>;
 };

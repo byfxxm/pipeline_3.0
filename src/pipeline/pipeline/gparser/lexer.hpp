@@ -35,6 +35,9 @@ public:
   auto Tellg() const { return _pos; }
 
   void Seekg(int64_t pos) {
+    if (_stream.eof())
+      _stream.clear();
+
     _stream.seekg(pos);
     _pos = pos;
     _peektok.reset();
@@ -42,13 +45,13 @@ public:
 
   auto BackToBeginningOfLine() {
     while (_pos > 0) {
-      auto ch = _stream.unget().peek();
-      if (_pos == '\n') {
+      --_pos;
+      _stream.seekg(_pos);
+
+      if (_stream.peek() == '\n') {
         _stream.get();
         break;
       }
-
-      --_pos;
     }
 
     _peektok.reset();

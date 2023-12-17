@@ -8,6 +8,9 @@
 #include <variant>
 
 namespace byfxxm {
+inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+inline constexpr bool IsNaN(double v) { return v != v; }
+
 template <class T>
 concept StreamConcept = requires(T t) {
   { t.get() } -> std::integral;
@@ -15,7 +18,6 @@ concept StreamConcept = requires(T t) {
   { t.eof() } -> std::same_as<bool>;
   T(std::move(t));
   requires std::is_convertible_v<T &, decltype(t.seekg(int64_t()))>;
-  requires std::is_convertible_v<T &, decltype(t.unget())>;
   requires !std::is_reference_v<T>;
 };
 
@@ -24,8 +26,9 @@ template <class... Ts> struct Overloaded : Ts... {
 };
 
 struct Gtag {
+  static constexpr double default_value{-1};
   token::Kind code;
-  double value;
+  double value{default_value};
 };
 
 inline constexpr bool operator==(const Gtag &lhs, const Gtag &rhs) {
@@ -63,9 +66,6 @@ using Group = std::pmr::vector<double>;
 using Value = std::variant<std::monostate, double, SharpValue, std::string,
                            bool, Gtag, Group>;
 using GetRetVal = std::function<Value()>;
-
-inline constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-inline constexpr bool IsNaN(double v) { return v != v; }
 
 struct Snapshot {
   size_t line{};

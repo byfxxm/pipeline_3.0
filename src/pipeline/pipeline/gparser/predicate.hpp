@@ -6,6 +6,7 @@
 #include "exception.hpp"
 #include "ginterface.hpp"
 #include <algorithm>
+#include <ranges>
 #include <string>
 #include <type_traits>
 #include <variant>
@@ -294,13 +295,12 @@ struct _GtagEqual {
 };
 
 inline const std::pmr::unordered_map<Gtag, Gfunc, _GtagHash, _GtagEqual>
-    gtag_to_ginterface = {
-        {{token::Kind::G, 0}, &Ginterface::G0},
-        {{token::Kind::G, 1}, &Ginterface::G1},
-        {{token::Kind::G, 2}, &Ginterface::G2},
-        {{token::Kind::G, 3}, &Ginterface::G3},
-        {{token::Kind::G, 4}, &Ginterface::G4},
-};
+    gtag_to_ginterface = {{{token::Kind::G, 0}, &Ginterface::G0},
+                          {{token::Kind::G, 1}, &Ginterface::G1},
+                          {{token::Kind::G, 2}, &Ginterface::G2},
+                          {{token::Kind::G, 3}, &Ginterface::G3},
+                          {{token::Kind::G, 4}, &Ginterface::G4},
+                          {{token::Kind::N}, &Ginterface::N}};
 
 inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
                                 Address *addr, Ginterface *gimpl,
@@ -311,26 +311,25 @@ inline constexpr auto Gcmd = [](const std::pmr::vector<Value> &tags,
   if (tags.empty())
     throw AbstreeException();
 
-  Ginterface::Gparams par{&mempool};
-  std::ranges::for_each(tags, [&](const Value &elem) {
+  Ginterface::Params params;
+  auto cmds = tags | std::views::filter([&](const Value &elem) {
+                auto tag = std::get<Gtag>(elem);
+                if (gtag_to_ginterface.contains(tag) ||
+                    gtag_to_ginterface.contains(Gtag{tag.code})) {
+                  return true;
+                }
+
+                params.push_back(tag);
+                return false;
+              });
+
+  std::ranges::for_each(cmds, [&](auto &&elem) {
     auto tag = std::get<Gtag>(elem);
-    if (IsNaN(tag.value) || gtag_to_ginterface.contains(tag))
-      return;
-
-    par.push_back(std::get<Gtag>(elem));
+    auto func = gtag_to_ginterface.at(
+        gtag_to_ginterface.contains(Gtag{tag.code}) ? Gtag{tag.code} : tag);
+    (gimpl->*func)({tag.value, params, addr, mark_snapshot});
   });
 
-  auto iter = std::ranges::find_if(tags, [](auto &&tag) {
-    if (!std::holds_alternative<Gtag>(tag))
-      throw AbstreeException();
-
-    return gtag_to_ginterface.contains(std::get<Gtag>(tag));
-  });
-
-  auto func = (iter == tags.end())
-                  ? &Ginterface::None
-                  : gtag_to_ginterface.at(std::get<Gtag>(*iter));
-  (gimpl->*func)({par, addr, mark_snapshot});
   return {};
 };
 } // namespace predicate

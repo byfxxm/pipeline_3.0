@@ -8,7 +8,7 @@
 #include <type_traits>
 
 namespace byfxxm {
-inline void print_gparams(std::string str, const Ginterface::Gparams &params) {
+inline void print_gparams(std::string str, const Ginterface::Params &params) {
   static const std::unordered_map<token::Kind, std::string> map = {
       {token::Kind::X, "X"},
       {token::Kind::Y, "Y"},
@@ -21,7 +21,7 @@ inline void print_gparams(std::string str, const Ginterface::Gparams &params) {
   puts(str.c_str());
 }
 
-inline AxesArray GparamsToEnd(const Ginterface::Gparams &params) {
+inline AxesArray GparamsToEnd(const Ginterface::Params &params) {
   AxesArray ret(6);
   ret.Memset(nan);
   std::ranges::for_each(params, [&](const Gtag &item) {
@@ -43,7 +43,7 @@ inline AxesArray GparamsToEnd(const Ginterface::Gparams &params) {
   return ret;
 }
 
-inline AxesArray GparamsToCenter(const Ginterface::Gparams &params) {
+inline AxesArray GparamsToCenter(const Ginterface::Params &params) {
   AxesArray ret(6);
   ret.Memset(nan);
   std::ranges::for_each(params, [&](const Gtag &item) {
@@ -106,6 +106,10 @@ public:
 
   virtual void G4(const Utils &utils) override {
     print_gparams("G4", utils.params);
+  }
+
+  virtual void N(const Utils &utils) override {
+    print_gparams("N", utils.params);
   }
 
 private:

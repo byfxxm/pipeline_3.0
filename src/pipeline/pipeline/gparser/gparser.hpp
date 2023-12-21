@@ -16,7 +16,7 @@ public:
             std::make_unique<_GparserImpl<T>>(std::forward<T>(stream))) {}
 
   std::optional<std::string> Run(Address *addr, Ginterface *gimpl,
-                                 const UpdateSnapshot &update = {}) {
+                                 const UpdateSnapshot &update = {}) noexcept {
     return _gparser_impl->Run(addr, gimpl, update);
   }
 
@@ -25,15 +25,16 @@ private:
   public:
     virtual ~_GparserBase() = default;
     virtual std::optional<std::string> Run(Address *, Ginterface *,
-                                           const UpdateSnapshot &) = 0;
+                                           const UpdateSnapshot &) noexcept = 0;
   };
 
   template <StreamConcept T> class _GparserImpl : public _GparserBase {
   public:
     _GparserImpl(T &&stream) : _stream(std::move(stream)) {}
 
-    std::optional<std::string> Run(Address *addr, Ginterface *gimpl,
-                                   const UpdateSnapshot &update) override {
+    std::optional<std::string>
+    Run(Address *addr, Ginterface *gimpl,
+        const UpdateSnapshot &update) noexcept override {
       std::optional<std::string> ret;
       try {
         Syntax<T> syn(std::move(_stream), addr, gimpl);

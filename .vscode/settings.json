@@ -79,6 +79,8 @@
     },
     "C_Cpp.errorSquiggles": "disabled",
     "editor.formatOnSave": true,
-    "C_Cpp.clang_format_fallbackStyle": "LLVM",
-    "editor.fontFamily": "Cascadia Code, 'Courier New', monospace"
+    "editor.fontFamily": "Cascadia Code, 'Courier New', monospace",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSaveMode": "file",
+    "C_Cpp.clang_format_fallbackStyle": "LLVM"
 }

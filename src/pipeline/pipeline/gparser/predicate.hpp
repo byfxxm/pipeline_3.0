@@ -255,10 +255,9 @@ struct Max {
   auto operator()(Value &value) const {
     return std::visit(
         [](auto &&v) -> Value {
-          if constexpr (byfxxm_IsGroup(v)) {
-            return *std::ranges::max_element(
-                v, [](double lhs, double rhs) { return lhs < rhs; });
-          } else if constexpr (byfxxm_CanConvertToDouble(v))
+          if constexpr (byfxxm_IsGroup(v))
+            return *std::ranges::max_element(v);
+          else if constexpr (byfxxm_CanConvertToDouble(v))
             return v;
           else
             throw AbstreeException("max error");
@@ -271,10 +270,9 @@ struct Min {
   auto operator()(Value &value) const {
     return std::visit(
         [](auto &&v) -> Value {
-          if constexpr (byfxxm_IsGroup(v)) {
-            return *std::ranges::min_element(
-                v, [](double lhs, double rhs) { return lhs < rhs; });
-          } else if constexpr (byfxxm_CanConvertToDouble(v))
+          if constexpr (byfxxm_IsGroup(v))
+            return *std::ranges::min_element(v);
+          else if constexpr (byfxxm_CanConvertToDouble(v))
             return v;
           else
             throw AbstreeException("min error");

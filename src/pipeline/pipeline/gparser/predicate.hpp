@@ -364,7 +364,8 @@ struct Gcmd {
       auto tag = std::get<Gtag>(elem);
       auto func = gtag_to_ginterface.at(
           gtag_to_ginterface.contains(Gtag{tag.code}) ? Gtag{tag.code} : tag);
-      std::invoke(func, gimpl, {tag.value, params, addr, mark_snapshot});
+      std::invoke(func, gimpl,
+                  Ginterface::Utils{tag.value, params, addr, mark_snapshot});
     });
 
     return {};

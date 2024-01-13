@@ -183,14 +183,22 @@ void TestParser7() {
   }
 }
 
-struct Getter {
-  double operator()() const { return *p; }
-  double *p{nullptr};
+class Getter {
+public:
+  Getter(double *p) : _addr(p) {}
+  double operator()() const { return *_addr; }
+
+private:
+  double *_addr{nullptr};
 };
 
-struct Setter {
-  void operator()(double v) const { *p = v; }
-  double *p{nullptr};
+class Setter {
+public:
+  Setter(double *p) : _addr(p) {}
+  void operator()(double v) const { *_addr = v; }
+
+private:
+  double *_addr{nullptr};
 };
 
 void TestParser8() {

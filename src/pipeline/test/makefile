@@ -7,14 +7,17 @@ else
 	show_msg=debug
 endif
 
-d: clean test.o dup.cpp
-	g++ test.o dup.cpp -o a $(gcc_config)
+d: clean test.o gparser.o
+	g++ test.o gparser.o -o a $(gcc_config)
 	@echo $(show_msg)
 
 r: d
 
 test.o: test.cpp
 	g++ test.cpp -c -o test.o $(gcc_config)
+
+gparser.o:
+	g++ ./../pipeline/gparser/gparser.cpp -c -o gparser.o $(gcc_config)
 
 .PHONY: clean
 clean:

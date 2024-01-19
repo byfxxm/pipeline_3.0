@@ -245,6 +245,8 @@ public:
       : _file(std::exchange(rhs._file, nullptr)),
         _cache(std::move(rhs._cache)) {}
 
+  void clear() {}
+
   int get() {
     auto ret = peek();
     _cache.reset();
@@ -278,7 +280,7 @@ private:
 inline auto perform = [](const std::filesystem::path &pa, int times) {
   auto t0 = std::chrono::high_resolution_clock::now();
   for (auto i = 0; i < times; ++i) {
-    auto parser = byfxxm::Gparser(std::ifstream(pa));
+    auto parser = byfxxm::Gparser(MyFileStream(pa));
     byfxxm::Address addr;
     parser.Run(&addr, nullptr);
   }

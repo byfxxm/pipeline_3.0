@@ -267,11 +267,6 @@ public:
     return *this;
   }
 
-  auto &unget() {
-    fseek(_file, -1, SEEK_CUR);
-    return *this;
-  }
-
 private:
   FILE *_file{nullptr};
   std::optional<int> _cache;

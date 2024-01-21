@@ -135,9 +135,10 @@ private:
 
     auto ret = std::ranges::min_element(rng, less);
     if (auto p = std::get_if<token::Token>(&*ret);
-        p && (token_traits.at(p->kind).left_to_right))
+        p && (token_traits.at(p->kind).left_to_right)) {
       ret =
           std::ranges::min_element(rng | std::views::reverse, less).base() - 1;
+    }
 
     return ret;
   }

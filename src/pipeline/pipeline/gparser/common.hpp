@@ -4,6 +4,7 @@
 #include "token.hpp"
 #include <concepts>
 #include <limits>
+#include <memory>
 #include <memory_resource>
 #include <variant>
 

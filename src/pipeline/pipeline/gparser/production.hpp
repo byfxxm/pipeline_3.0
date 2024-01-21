@@ -120,8 +120,7 @@ private:
     return main;
   }
 
-  SyntaxNodeList::iterator
-  _FindMinPriority(std::ranges::range auto &&range) const {
+  auto _FindMinPriority(std::ranges::range auto &&range) const {
     auto less = [](const SyntaxNode &lhs, const SyntaxNode &rhs) {
       size_t lhs_pri = TokenTraits::default_priority;
       size_t rhs_pri = TokenTraits::default_priority;

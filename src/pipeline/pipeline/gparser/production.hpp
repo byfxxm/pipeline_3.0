@@ -64,10 +64,8 @@ public:
   }
 
 private:
-  using _SyntaxNodeListRng =
-      decltype(std::ranges::subrange(std::declval<SyntaxNodeList &>()));
-
-  Abstree::NodePtr _Expression(_SyntaxNodeListRng range) const {
+  template <std::ranges::range Rng>
+  Abstree::NodePtr _Expression(Rng &&range) const {
     if (range.empty())
       return {};
 
@@ -75,16 +73,18 @@ private:
     auto minpri = _FindMinPriority(list);
 
     auto node = _CurNode(*minpri);
-    if (auto first = _Expression(_SyntaxNodeListRng(list.begin(), minpri)))
+    if (auto first = _Expression(std::ranges::subrange(list.begin(), minpri)))
       node->subs.push_back(std::move(first));
-    if (auto second = _Expression(_SyntaxNodeListRng(minpri + 1, list.end())))
+    if (auto second =
+            _Expression(std::ranges::subrange(minpri + 1, list.end())))
       node->subs.push_back(std::move(second));
 
     _CheckError(node);
     return node;
   }
 
-  SyntaxNodeList _ProcessBracket(_SyntaxNodeListRng range) const {
+  template <std::ranges::range Rng>
+  SyntaxNodeList _ProcessBracket(Rng &&range) const {
     SyntaxNodeList main{&mempool};
     SyntaxNodeList sub{&mempool};
     int level = 0;
@@ -122,7 +122,8 @@ private:
     return main;
   }
 
-  SyntaxNodeList::iterator _FindMinPriority(_SyntaxNodeListRng range) const {
+  template <std::ranges::range Rng>
+  SyntaxNodeList::iterator _FindMinPriority(Rng &&range) const {
     auto less = [](const SyntaxNode &lhs, const SyntaxNode &rhs) {
       size_t lhs_pri = TokenTraits::default_priority;
       size_t rhs_pri = TokenTraits::default_priority;

@@ -64,8 +64,7 @@ public:
   }
 
 private:
-  template <std::ranges::range Rng>
-  Abstree::NodePtr _Expression(Rng &&range) const {
+  Abstree::NodePtr _Expression(std::ranges::range auto &&range) const {
     if (range.empty())
       return {};
 
@@ -83,8 +82,7 @@ private:
     return node;
   }
 
-  template <std::ranges::range Rng>
-  SyntaxNodeList _ProcessBracket(Rng &&range) const {
+  SyntaxNodeList _ProcessBracket(std::ranges::range auto &&range) const {
     SyntaxNodeList main{&mempool};
     SyntaxNodeList sub{&mempool};
     int level = 0;
@@ -122,8 +120,8 @@ private:
     return main;
   }
 
-  template <std::ranges::range Rng>
-  SyntaxNodeList::iterator _FindMinPriority(Rng &&range) const {
+  SyntaxNodeList::iterator
+  _FindMinPriority(std::ranges::range auto &&range) const {
     auto less = [](const SyntaxNode &lhs, const SyntaxNode &rhs) {
       size_t lhs_pri = TokenTraits::default_priority;
       size_t rhs_pri = TokenTraits::default_priority;

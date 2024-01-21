@@ -33,7 +33,7 @@ public:
   }
 
   Abstree(NodePtr &&root, Value &rval, Address *addr, Ginterface *gimpl,
-          SnapshotHelper helper) noexcept
+          const SnapshotHelper &helper) noexcept
       : _root(std::move(root)), _return_val(rval), _addr(addr), _gimpl(gimpl),
         _snapshot_helper(helper) {
     assert(std::get<NodePtr>(_root));

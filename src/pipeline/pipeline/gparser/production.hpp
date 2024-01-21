@@ -64,11 +64,11 @@ public:
   }
 
 private:
-  Abstree::NodePtr _Expression(std::ranges::range auto &&range) const {
-    if (range.empty())
+  Abstree::NodePtr _Expression(std::ranges::range auto &&rng) const {
+    if (rng.empty())
       return {};
 
-    SyntaxNodeList list = _ProcessBracket(range);
+    SyntaxNodeList list = _ProcessBracket(rng);
     auto minpri = _FindMinPriority(list);
 
     auto node = _CurNode(*minpri);
@@ -82,11 +82,11 @@ private:
     return node;
   }
 
-  SyntaxNodeList _ProcessBracket(std::ranges::range auto &&range) const {
+  SyntaxNodeList _ProcessBracket(std::ranges::range auto &&rng) const {
     SyntaxNodeList main{&mempool};
     SyntaxNodeList sub{&mempool};
     int level = 0;
-    for (auto &node : range) {
+    for (auto &node : rng) {
       if (std::holds_alternative<Abstree::NodePtr>(node)) {
         main.push_back(std::move(node));
         continue;
@@ -120,7 +120,7 @@ private:
     return main;
   }
 
-  auto _FindMinPriority(std::ranges::range auto &&range) const {
+  auto _FindMinPriority(std::ranges::range auto &&rng) const {
     auto less = [](const SyntaxNode &lhs, const SyntaxNode &rhs) {
       size_t lhs_pri = TokenTraits::default_priority;
       size_t rhs_pri = TokenTraits::default_priority;
@@ -133,11 +133,11 @@ private:
       return lhs_pri < rhs_pri;
     };
 
-    auto ret = std::ranges::min_element(range, less);
+    auto ret = std::ranges::min_element(rng, less);
     if (auto p = std::get_if<token::Token>(&*ret);
         p && (token_traits.at(p->kind).left_to_right))
-      ret = std::ranges::min_element(range | std::views::reverse, less).base() -
-            1;
+      ret =
+          std::ranges::min_element(rng | std::views::reverse, less).base() - 1;
 
     return ret;
   }
